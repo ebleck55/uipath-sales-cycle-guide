@@ -2547,7 +2547,7 @@ if (typeof window !== 'undefined') {
 // ==================== USE CASE PDF FUNCTIONALITY ====================
 class UseCasePDFHandler {
   constructor() {
-    this.pdfPath = '/Users/eric.bouchard/Downloads/FINS - MAESTRO - Use Case Deck- Aug 2025.pdf';
+    this.pdfFileName = 'FINS - MAESTRO - Use Case Deck- Aug 2025.pdf';
     this.initializeEventListeners();
   }
 
@@ -2637,17 +2637,23 @@ class UseCasePDFHandler {
                     </svg>
                     <h4 class="text-lg font-medium text-blue-900">${this.escapeHtml(useCaseName)}</h4>
                   </div>
-                  <div class="text-sm text-blue-800 space-y-2">
-                    <p><strong>Document:</strong> FINS - MAESTRO - Use Case Deck- Aug 2025.pdf</p>
+                  <div class="text-sm text-blue-800 space-y-3">
+                    <p><strong>Document:</strong> ${this.pdfFileName}</p>
                     <p><strong>Page Reference:</strong> ${pageNumber}</p>
-                    <p class="mt-4 text-blue-700">Please refer to page <strong>${pageNumber}</strong> in your UiPath use case document for detailed information about this use case.</p>
+                    <div class="bg-blue-100 border border-blue-300 rounded p-3 mt-4">
+                      <p class="text-blue-900 font-medium mb-2">📄 Use Case Details:</p>
+                      <p class="text-blue-800">Please refer to <strong>page ${pageNumber}</strong> in your UiPath use case document for detailed information about this use case.</p>
+                    </div>
                   </div>
                   <div class="mt-6 space-y-3">
-                    <button onclick="this.tryOpenPDF('${pageNumber}')" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
-                      Try to Open PDF Directly
+                    <button onclick="window.useCasePDFHandler.openPDFInstructions('${pageNumber}', '${this.escapeHtml(useCaseName)}')" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
+                      📖 View PDF Instructions
                     </button>
-                    <p class="text-xs text-blue-600">
-                      Click above to attempt opening the PDF with your system's default viewer.
+                    <button onclick="window.useCasePDFHandler.contactSupport('${this.escapeHtml(useCaseName)}', '${pageNumber}')" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
+                      💬 Request Use Case Details
+                    </button>
+                    <p class="text-xs text-blue-600 text-center">
+                      Need help accessing the PDF or want more details about this use case?
                     </p>
                   </div>
                 </div>
@@ -2665,27 +2671,104 @@ class UseCasePDFHandler {
       }
     });
 
-    // Add PDF opening functionality
-    window.tryOpenPDF = (pageNum) => {
-      const pdfUrls = [
-        `file://${encodeURIComponent(pdfPath)}#page=${pageNum}`,
-        `file:///Users/eric.bouchard/Downloads/FINS%20-%20MAESTRO%20-%20Use%20Case%20Deck-%20Aug%202025.pdf#page=${pageNum}`,
-        `file:///Users/eric.bouchard/Downloads/`
-      ];
-      
-      // Try each URL
-      for (const url of pdfUrls) {
-        try {
-          window.open(url, '_blank');
-          break;
-        } catch (error) {
-          console.warn('Failed to open PDF URL:', url, error);
-          continue;
-        }
-      }
-    };
+    // Store reference for cleanup
+    window.currentPDFModal = modal;
 
     document.body.appendChild(modal);
+  }
+
+  openPDFInstructions(pageNumber, useCaseName) {
+    // Close current modal
+    if (window.currentPDFModal) {
+      window.currentPDFModal.remove();
+    }
+    
+    // Create instructions modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    modal.innerHTML = `
+      <div class="relative top-4 mx-auto p-4 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">📖 How to Access ${this.escapeHtml(useCaseName)}</h3>
+          <button onclick="this.remove()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="space-y-6">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 class="font-semibold text-blue-900 mb-3">📄 Document Information</h4>
+            <ul class="space-y-2 text-sm text-blue-800">
+              <li><strong>Document:</strong> ${this.pdfFileName}</li>
+              <li><strong>Page Number:</strong> ${pageNumber}</li>
+              <li><strong>Use Case:</strong> ${this.escapeHtml(useCaseName)}</li>
+            </ul>
+          </div>
+          
+          <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 class="font-semibold text-green-900 mb-3">💡 How to Access the PDF</h4>
+            <ol class="space-y-2 text-sm text-green-800 list-decimal list-inside">
+              <li>Request the <strong>${this.pdfFileName}</strong> from your UiPath sales representative</li>
+              <li>Download and save the PDF to your computer</li>
+              <li>Open the PDF and navigate to <strong>page ${pageNumber}</strong></li>
+              <li>Find the detailed information about <strong>${this.escapeHtml(useCaseName)}</strong></li>
+            </ol>
+          </div>
+          
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <h4 class="font-semibold text-yellow-900 mb-3">📞 Need Help?</h4>
+            <p class="text-sm text-yellow-800">
+              Contact your UiPath sales team or use the "Request Use Case Details" button to get more information about this specific use case.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
+    
+    document.body.appendChild(modal);
+  }
+  
+  contactSupport(useCaseName, pageNumber) {
+    // Close current modal  
+    if (window.currentPDFModal) {
+      window.currentPDFModal.remove();
+    }
+    
+    const subject = encodeURIComponent(`Use Case Request: ${useCaseName}`);
+    const body = encodeURIComponent(`Hi,
+
+I would like more information about the following use case:
+
+Use Case: ${useCaseName}
+Document: ${this.pdfFileName} 
+Page Reference: ${pageNumber}
+
+Could you please provide:
+1. Detailed information about this use case
+2. Access to the complete use case document
+3. Implementation examples or customer success stories
+
+Thank you!`);
+    
+    // Try to open default email client
+    const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
+    
+    try {
+      window.location.href = mailtoUrl;
+    } catch (error) {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(`Use Case Request: ${useCaseName}\nDocument: ${this.pdfFileName}\nPage: ${pageNumber}`).then(() => {
+        this.showNotification('Request details copied to clipboard!', 'success');
+      }).catch(() => {
+        this.showNotification('Please contact your UiPath sales representative for more details about this use case.', 'info');
+      });
+    }
   }
 
   escapeHtml(text) {
@@ -2693,7 +2776,6 @@ class UseCasePDFHandler {
     div.textContent = text;
     return div.innerHTML;
   }
-
 
   showNotification(message, type = 'info') {
     // Reuse the existing notification system
