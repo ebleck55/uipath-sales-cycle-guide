@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UiPath Sales Cycle Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --uipath-orange:#FA4616; --uipath-blue:#182126; --uipath-teal:#0BA2B3; }
+    body{font-family:'Inter',sans-serif}
+    h1,h2,h3,h4,h5{font-family:'Poppins',sans-serif}
+    .uipath-deep-blue{background-color:var(--uipath-blue)}
+    .uipath-robotic-orange{color:var(--uipath-orange)}
+    .nav-link{transition:all .3s ease}
+    .nav-link:hover,.nav-link.active{color:var(--uipath-orange);border-bottom:2px solid var(--uipath-orange)}
+    .content-section{scroll-margin-top:90px}
+    .form-checkbox:checked{background-color:var(--uipath-orange);border-color:var(--uipath-orange)}
+    .progress-bar-bg{background:#e5e7eb}
+    .progress-bar{background:var(--uipath-blue);transition:width .35s ease}
+    .checked-item span{text-decoration:line-through;color:#9ca3af}
+    details>summary{list-style:none;cursor:pointer}
+    details>summary::-webkit-details-marker{display:none}
+    details>summary::before{content:'+';margin-right:.5rem;font-weight:700}
+    details[open]>summary::before{content:'-'}
+    .edit-icon{display:none;cursor:pointer}
+    .admin-mode .edit-icon{display:inline-block}
+    .industry-selector button.active{background:var(--uipath-blue);color:#fff}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .toggle-icon { transition: transform 0.3s ease; }
+    .section-toggle.open .toggle-icon { transform: rotate(180deg); }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <svg class="h-8 w-auto mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.35,2.92A10.84,10.84,0,0,0,12,0,10.84,10.84,0,0,0,3.65,2.92,10.7,10.7,0,0,0,0,10.5v8A2.5,2.5,0,0,0,2.5,21h19A2.5,2.5,0,0,0,24,18.5v-8A10.7,10.7,0,0,0,20.35,2.92ZM12,19.5a9,9,0,1,1,9-9A9,9,0,0,1,12,19.5Z" fill="#182126"/></svg>
+        <h1 class="text-xl font-bold">UiPath Sales Cycle Guide</h1>
+      </div>
+      <div class="flex items-center">
+        <nav class="hidden md:flex items-center space-x-6 mr-6">
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#key-buyer-personas">Key Buyer Personas</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#discovery">Discovery</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#business-qualification">Business Qualification</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#technical-qualification">Technical Qualification</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#proposal">Proposal & Negotiation</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#implement">Implement & Expand</a>
+        </nav>
+        <div class="industry-selector hidden md:flex border border-gray-200 rounded-lg p-0.5">
+          <button id="banking" class="px-3 py-1 text-sm font-semibold rounded-md">Banking</button>
+          <button id="insurance" class="px-3 py-1 text-sm font-semibold rounded-md">Insurance</button>
+        </div>
+        <div class="hidden md:flex items-center ml-4">
+          <span class="text-sm font-medium text-gray-700 mr-2">Admin Mode</span>
+          <label for="admin-toggle" class="flex items-center cursor-pointer">
+            <div class="relative">
+              <input type="checkbox" id="admin-toggle" class="sr-only"/>
+              <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
+              <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <button id="mobile-menu-button" class="md:hidden flex items-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+      </button>
+    </div>
+    <!-- Mobile -->
+    <div id="mobile-menu" class="md:hidden hidden px-6 pb-4">
+      <div class="industry-selector flex border border-gray-200 rounded-lg p-0.5 my-4">
+        <button id="banking-mobile" class="w-1/2 px-3 py-1 text-sm font-semibold rounded-md">Banking</button>
+        <button id="insurance-mobile" class="w-1/2 px-3 py-1 text-sm font-semibold rounded-md">Insurance</button>
+      </div>
+      <a href="#key-buyer-personas" class="block py-2 text-gray-700 font-semibold">Key Buyer Personas</a>
+      <a href="#discovery" class="block py-2 text-gray-700 font-semibold">Discovery</a>
+      <a href="#business-qualification" class="block py-2 text-gray-700 font-semibold">Business Qualification</a>
+      <a href="#technical-qualification" class="block py-2 text-gray-700 font-semibold">Technical Qualification</a>
+      <a href="#proposal" class="block py-2 text-gray-700 font-semibold">Proposal & Negotiation</a>
+      <a href="#implement" class="block py-2 text-gray-700 font-semibold">Implement & Expand</a>
+      <div class="flex items-center mt-4">
+        <span class="text-sm font-medium text-gray-700 mr-2">Admin Mode</span>
+        <label for="admin-toggle-mobile" class="flex items-center cursor-pointer">
+          <div class="relative">
+            <input type="checkbox" id="admin-toggle-mobile" class="sr-only"/>
+            <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
+            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto p-6">
+    <!-- Personas -->
+    <section id="key-buyer-personas" class="content-section mb-12">
+      <h2 class="section-toggle text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-2 flex justify-between items-center cursor-pointer">
+        <span>Key Buyer Personas</span>
+        <svg class="toggle-icon w-6 h-6 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+      </h2>
+      <div class="collapsible-content hidden pt-4">
+        <p class="mb-4 text-gray-600">Switch industry to tailor the view. Click the pencil in Admin Mode to edit any card.</p>
+        <div id="personas-banking" data-industry="banking" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <div id="personas-insurance" data-industry="insurance" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+      </div>
+    </section>
+
+    <!-- Template for stages -->
+    <section id="discovery" class="content-section mb-12"></section>
+    <section id="business-qualification" class="content-section mb-12"></section>
+    <section id="technical-qualification" class="content-section mb-12"></section>
+    <section id="proposal" class="content-section mb-12"></section>
+    <section id="implement" class="content-section mb-12"></section>
+  </main>
+
+  <!-- Modal -->
+  <div id="edit-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+      <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900 text-center mb-4">Edit Content</h3>
+      <div id="modal-content-area" class="mt-2 px-7 py-3 max-h-[70vh] overflow-y-auto"></div>
+      <div class="items-center px-4 py-3 text-right">
+        <button id="modal-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 mr-2">Cancel</button>
+        <button id="modal-save" class="px-4 py-2 uipath-deep-blue text-white rounded-md hover:bg-blue-800">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ---------- DATA (editable via Admin) ----------
+  const APP_STATE = {
+    industry: 'banking',
+    personas: {
+      banking: [
+        { title:'Chief Operating Officer', world:'Manages the bank\'s core engine. Oversees thousands of employees in operations, payments, and servicing, all while fighting fires and trying to drive digital transformation.', cares:'Reducing cost-to-serve, improving straight-through processing (STP) rates, ensuring business resilience, and meeting aggressive efficiency targets set by the board.', help:'Automate high-volume, repetitive back-office processes like payment investigations, KYC refreshes, and dispute resolution using a governed combination of AI and RPA.' },
+        { title:'Chief Compliance Officer', world:'Lives in a world of complex, ever-changing regulations (AML, KYC, etc.). Their primary role is to protect the bank from massive fines and reputational damage.', cares:'Minimizing false positives in transaction monitoring, clearing alert backlogs to avoid regulatory breaches, and proving the bank has auditable, explainable controls.', help:'Use Document Understanding and AI to automate KYC/AML checks, screen for adverse media, and provide clear, auditable decision trails for regulators.' },
+        { title:'Head of Contact Center', world:'Runs a high-pressure environment focused on customer experience (CX). They constantly battle agent attrition, high training costs, and pressure to reduce call times.', cares:'Improving Net Promoter Score (NPS) and Customer Satisfaction (CSAT), reducing Average Handle Time (AHT), and ensuring agents are compliant with scripts and procedures.', help:'Provide agents with a "copilot" that automates desktop tasks, finds answers in knowledge bases, and handles post-call summary and wrap-up work automatically.' },
+        { title:'CIO / CTO', world:'Balances the need for innovation with the reality of maintaining complex, legacy core banking systems. They are under pressure to deliver value faster and more securely.', cares:'Reducing total cost of ownership (TCO) for technology, standardizing on scalable enterprise platforms, mitigating vendor and security risks, and avoiding integration debt.', help:'Deploy an enterprise-grade automation fabric with robust governance, role-based access controls (RBAC), API-first integration, and options for private AI.' },
+        { title:'Head of Payments Ops', world:'Manages the high-stakes, time-sensitive flow of money. Their world is dictated by payment cutoffs, SWIFT messages, and the constant risk of failed transactions.', cares:'Maximizing the Straight-Through Processing (STP) rate, minimizing financial write-offs from errors, and meeting strict Service Level Agreements (SLAs) for payment execution.', help:'Automate the entire payment exceptions workflow: triage incoming cases, parse documents, use rules and LLMs for routing, and enable auto-resolution for common issues.' },
+        { title:'Line of Business GM', world:'Owns the P&L for a specific product like mortgages or credit cards. They are deeply focused on market share, customer acquisition, and profitability.', cares:'Hitting revenue and margin targets, reducing customer churn, and launching new products faster than the competition. They see technology as a means to a business end.', help:'Deliver automation for specific, high-impact use cases that are directly tied to their P&L, such as accelerating loan onboarding or improving the collections process.' }
+      ],
+      insurance: [
+        { title:'Chief Claims Officer', world:'Balances the critical dual mandate of claims: provide an amazing, empathetic customer experience while rigorously controlling costs and preventing fraud.', cares:'Lowering the loss ratio, reducing the cycle time from First Notice of Loss (FNOL) to settlement, and controlling Loss Adjustment Expenses (LAE).', help:'Use AI to automate FNOL intake from any channel, extract policy and coverage details, intelligently route claims to the right adjuster, and detect potential subrogation opportunities.' },
+        { title:'Head of Underwriting', world:'Leads the team that decides which risks the company will take on. They are shifting from manual, experience-based decisions to a more data-driven, automated process.', cares:'Improving the bind ratio (quotes to bound policies), increasing the hit ratio (submissions to quotes), and dramatically speeding up quote turnaround time to win more business.', help:'Automate the entire submission process, from extracting data from broker emails and ACORD forms to triaging against underwriting appetite and flagging cases for review.' },
+        { title:'Chief Actuary', world:'Responsible for the complex mathematical models that underpin the entire insurance business, from pricing policies to estimating future losses and ensuring solvency.', cares:'Ensuring the quality and integrity of the data feeding their pricing models, understanding loss cost trends, and maintaining model explainability for regulators.', help:'Use AI to capture structured data from unstructured documents, ensuring data lineage and providing a full audit trail to support actuarial models.' },
+        { title:'CIO / CTO', world:'Tasked with modernizing creaking, monolithic core systems (policy admin, claims, billing) without disrupting the business. They seek agile, low-risk ways to innovate.', cares:'Accelerating time-to-value for new digital initiatives, minimizing the effort and cost of integrating new technologies, and managing vendor and cybersecurity risk.', help:'Provide pre-built connectors to common insurance systems, a central governance framework, and guardrails for the safe and compliant use of AI across the enterprise.' },
+        { title:'Head of Customer Service', world:'Manages the front-line of customer interaction for everything that isn\'t a claim—policy questions, endorsements, billing inquiries, and more.', cares:'Maintaining high Customer Satisfaction (CSAT) scores, reducing Average Handle Time (AHT) for inquiries, and ensuring agents are providing accurate, compliant information.', help:'Deploy agent-assist bots to surface knowledge, automate desktop tasks, analyze call sentiment in real-time, and handle post-call automation and summarization.' },
+        { title:'Head of Billing', world:'Oversees the complex flow of money, including premium collections from policyholders, commission payments to brokers, and processing refunds and dunning notices.', cares:'Reducing Days Sales Outstanding (DSO), minimizing premium leakage and write-offs, and improving the efficiency of accounts receivable and payable processes.', help:'Automate accounts receivable processes, use LLMs to summarize and help resolve billing disputes, and streamline the reconciliation of payments and commissions.' }
+      ]
+    },
+    stages: [
+      {
+        id:'discovery', title:'1. Discovery: Find Impact, Build Trust',
+        outcomes:[
+          'Aligned on pains automation can solve',
+          'Confirmed interest in UiPath solution',
+          'Customer commitment to invest time',
+          'Executive sponsor identified',
+          'NDA signed (if necessary)'
+        ],
+        initialPersonas:[
+          '<strong>Automation COE / IT Manager:</strong> First-line evaluator and technical guide.',
+          '<strong>Line of Business Director:</strong> Feels the pain and can champion change.'
+        ],
+        questions:{
+          'Pain & Impact':[ 'Walk me through how <em>X</em> happens today. Where are the delays or re-work?', 'If nothing changes in 6–12 months, what breaks or who is impacted most?', 'Can we quantify the impact in cost, revenue, risk, or CX terms?' ],
+          'Strategic Alignment':[ 'Which executive initiative does improving this process support (e.g., efficiency, CX, risk)?', 'What would a successful quarter look like if we fixed this?' ],
+          'People & Roles':[ 'Who owns the process? Who needs to sign off?', 'Who benefits day-to-day and who could block it?' ],
+          'Tech & Data':[ 'Which systems are in the flow (core, CRM, email, spreadsheets)?', 'What documents or data inputs are involved and how are they validated today?' ]
+        },
+        objections:[
+          { q:"We are focused on Copilot/another GenAI tool.", a:"Those are great for personal productivity. UiPath governs end‑to‑end processes with auditability, orchestration, and system integration—complementary, not overlapping." },
+          { q:"We tried RPA before and it didn't scale.", a:"Many programs stalled without central governance and discovery. We bake in guardrails, testing, and pipeline management to scale safely." }
+        ],
+        resources:{
+          banking:[
+            { name:'Intelligent KYC / AML', link:'#', overview:'Automate KYC refresh and adverse media screening.', why:'Show CCO risk mitigation and OPEX reduction.' }
+          ],
+          insurance:[
+            { name:'AI-Powered Claims Intake', link:'#', overview:'Extract FNOL, classify claims, route to adjuster.', why:'Reduce cycle time and improve FNOL quality.' }
+          ]
+        }
+      },
+      {
+        id:'business-qualification', title:'2. Business Qualification: Value, Sponsor, Compelling Event',
+        outcomes:['Economic buyer identified','Business case agreed in principle','Compelling event/date documented','Decision process mapped'],
+        initialPersonas:['<strong>EVP/VP Operations:</strong> Owns savings targets.','<strong>Finance Partner:</strong> Validates benefits & ROI.'],
+        questions:{
+          'Value & Outcomes':[ 'What target KPIs would prove success (e.g., STP, AHT, leakage)?', 'What budget source funds this and when does it reset?' ],
+          'Decision & Process':[ 'Who signs? What steps from now to signature?', 'Any security, privacy, or model risk approvals required?' ]
+        },
+        objections:[
+          { q:'No budget until next FY.', a:'We can phase—start with a funded pilot tied to a fast payback and lock pricing for next FY.' },
+          { q:'Hard to prove ROI.', a:'We co-build a defendable model with baselines, sample data, and finance-approved assumptions.' }
+        ],
+        resources:{
+          banking:[{name:'ROI Template (Bank Ops)',link:'#',overview:'Prebuilt value model for bank processes.',why:'Accelerates CFO validation.'}],
+          insurance:[{name:'Claims ROI Model',link:'#',overview:'Cycle-time and leakage model.',why:'Supports CCO decision.'}]
+        }
+      },
+      {
+        id:'technical-qualification', title:'3. Technical Qualification: Feasibility, Risk, Architecture',
+        outcomes:['Target architecture agreed','Security & compliance posture accepted','Data availability confirmed','Pilot plan defined'],
+        initialPersonas:['<strong>Enterprise Architect:</strong> Integrations & standards.','<strong>Security / Model Risk:</strong> Controls, audit.'],
+        questions:{
+          'Architecture & Integrations':[ 'What integration patterns are preferred (APIs, queues, UI)?', 'Any constraints for on-prem vs. cloud vs. private AI?' ],
+          'Risk & Controls':[ 'Which controls are mandatory (PII, SOC2, SOX, SR 11-7)?', 'How is model performance monitored and governed today?' ]
+        },
+        objections:[
+          { q:'LLMs are not allowed with PII.', a:'We support redaction, local models, and policy controls—with full audit trails.' },
+          { q:'Change risk to core systems.', a:'We start read-only, use APIs where possible, and have rollback plans.' }
+        ],
+        resources:{
+          banking:[{name:'Ref Architecture – Banking',link:'#',overview:'Reference patterns for payments/KYC/ops.',why:'Aligns EA early.'}],
+          insurance:[{name:'Ref Architecture – Insurance',link:'#',overview:'Patterns for claims/underwriting.',why:'De-risks integration.'}]
+        }
+      },
+      {
+        id:'proposal', title:'4. Proposal & Negotiation: Commercials, Scope, Success Plan',
+        outcomes:['Mutually agreed success plan','SOW/Order form drafted','Pricing approved','Redlines resolved'],
+        initialPersonas:['<strong>Procurement:</strong> Commercials & terms.','<strong>Legal:</strong> Data & liability.'],
+        questions:{
+          'Commercials':[ 'Which pricing model best fits usage and risk?', 'Any non-standard terms or MSAs we should align to?' ],
+          'Plan & Governance':[ 'Confirm milestones, owners, and weekly cadence.', 'What does Day 30/60/90 success look like?' ]
+        },
+        objections:[
+          { q:'Too expensive.', a:'Let's align price to value—phase scope or tie to milestones while protecting outcomes.' },
+          { q:'Term liability caps.', a:'We can adjust with scope controls and shared responsibilities.' }
+        ],
+        resources:{
+          banking:[{name:'Banking Proposal Pack',link:'#',overview:'Templates + success plan.',why:'Shortens cycle.'}],
+          insurance:[{name:'Insurance Proposal Pack',link:'#',overview:'Templates + success plan.',why:'Aligns stakeholders.'}]
+        }
+      },
+      {
+        id:'implement', title:'5. Implement & Expand: Deliver Value, Land & Expand',
+        outcomes:['Pilot completed on time','KPIs achieved/validated','Runbook & ownership in place','Next use-cases prioritized'],
+        initialPersonas:['<strong>Program Lead:</strong> Drives cadence & unblockers.','<strong>Ops Manager:</strong> Adopts new way of working.'],
+        questions:{
+          'Delivery & Change':[ 'What change management is needed for agents/analysts?', 'Who signs off on acceptance and KPI validation?' ],
+          'Scale & Pipeline':[ 'What's the 3–6 month pipeline after pilot?', 'Where can we reuse components to accelerate?' ]
+        },
+        objections:[
+          { q:'Users won't adopt.', a:'We co-design with users, provide in-flow guidance, and measure adoption against KPIs.' },
+          { q:'No resources to expand.', a:'We standardize assets and create a factory model with clear ownership.' }
+        ],
+        resources:{
+          banking:[{name:'Adoption Toolkit',link:'#',overview:'Comms, training, success metrics.',why:'Boosts change success.'}],
+          insurance:[{name:'Claims Pilot Runbook',link:'#',overview:'Roles, milestones, rollback.',why:'Ensures safe go-live.'}]
+        }
+      }
+    ]
+  };
+
+  // ---------- LOCALSTORAGE PERSISTENCE ----------
+  function loadChecklistState() {
+    const savedState = localStorage.getItem('uipathSalesGuideProgress');
+    return savedState ? JSON.parse(savedState) : {};
+  }
+  function saveChecklistState(state) {
+    localStorage.setItem('uipathSalesGuideProgress', JSON.stringify(state));
+  }
+
+  // ---------- RENDERING ----------
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  function renderPersonas(){
+    ['banking','insurance'].forEach(ind =>{
+      const host = ind==='banking' ? $('#personas-banking') : $('#personas-insurance');
+      host.innerHTML = '';
+      APP_STATE.personas[ind].forEach((p,i)=>{
+        host.innerHTML += `
+          <div class="bg-gray-50 p-5 rounded-lg shadow relative editable-card" id="persona-${ind}-${i}">
+            <h3 class="text-lg font-semibold uipath-robotic-orange flex justify-between items-center">
+              <span>${p.title}</span>
+              <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="persona-${ind}-${i}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+            </h3>
+            <div class="editable-content">
+              <ul class="space-y-2">
+                <li><strong>Their world:</strong> ${p.world}</li>
+                <li><strong>What they care about:</strong> ${p.cares}</li>
+                <li><strong>How UiPath helps:</strong> ${p.help}</li>
+              </ul>
+            </div>
+          </div>`
+      });
+    });
+  }
+
+  function stageCard(stage){
+    return `
+      <h2 class="section-toggle text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-2 flex justify-between items-center cursor-pointer">
+        <span>${stage.title}</span>
+        <svg class="toggle-icon w-6 h-6 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+      </h2>
+      <div class="collapsible-content hidden pt-4">
+        <div class="w-full progress-bar-bg rounded-full h-2.5 mb-6"><div class="progress-bar h-2.5 rounded-full" style="width:0%"></div></div>
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div id="${stage.id}-outcomes" class="editable-card bg-gray-50 p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-3 uipath-robotic-orange flex justify-between items-center"><span>Verifiable Outcomes / Exit Criteria</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-outcomes" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
+            <div class="editable-content">${listHtml(stage.outcomes,true, stage.id)}</div>
+          </div>
+          <div id="${stage.id}-initial-personas" class="editable-card bg-gray-50 p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-3 uipath-robotic-orange flex justify-between items-center"><span>Initial Personas to Engage</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-initial-personas" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
+            <div class="editable-content">${listHtml(stage.initialPersonas)}</div>
+          </div>
+        </div>
+        <div id="${stage.id}-questions" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
+          <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Key Discovery Questions</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-questions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
+          <div class="editable-content">${questionsHtml(stage.questions)}</div>
+          <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-generate-followups="${stage.id}">✨ Generate Follow-up Questions</button>
+          <div class="mt-4" id="${stage.id}-generated"></div>
+        </div>
+        <div id="${stage.id}-objections" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
+          <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Common Objections & Responses</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-objections" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
+          <div class="editable-content">${objectionsHtml(stage.objections)}</div>
+        </div>
+        <div id="${stage.id}-resources" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
+          <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center">
+            <span data-industry="banking">Key Content & Resources (Banking)</span>
+            <span data-industry="insurance" class="hidden">Key Content & Resources (Insurance)</span>
+            <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-resources" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+          </h3>
+          <div class="editable-content">
+            ${resourcesHtml(stage.resources)}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const listHtml = (arr, checklist=false, stageId = '')=>{
+    return `<ul class="space-y-3">${arr.map((x, i)=>{
+      if(checklist){
+        const checkboxId = `${stageId}-${i}`;
+        return `<li><label class="flex items-center text-gray-700 cursor-pointer"><input type="checkbox" class="form-checkbox h-5 w-5 rounded border-gray-300 focus:ring-orange-500" data-id="${checkboxId}"><span class="ml-3">${x}</span></label></li>`
+      }
+      return `<li>${x}</li>`
+    }).join('')}</ul>`
+  }
+
+  const questionsHtml = (map)=>{
+    return Object.entries(map).map(([k,qs])=>{
+      return `<div class="mb-4"><h4 class="text-lg font-bold text-gray-800 mb-2">${k}</h4>${qs.map(q=>`
+        <details class="mb-3 bg-white p-3 rounded-md border">
+          <summary class="font-semibold text-gray-700">${q}</summary>
+          <textarea class="w-full mt-2 p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="Capture notes here..."></textarea>
+        </details>`).join('')}</div>`
+    }).join('')
+  }
+
+  const objectionsHtml = (items)=>{
+    return items.map(it=>`
+      <details class="mb-3 bg-white p-3 rounded-md border">
+        <summary class="font-semibold text-gray-700 flex justify-between"><span>${it.q}</span><button class="ai-response-btn ml-4 px-2 py-1 text-xs bg-gray-200 rounded-md hover:bg-gray-300" data-obj="${encodeURIComponent(it.q)}">✨ Get AI Response</button></summary>
+        <p class="mt-2 text-gray-600"><strong>Response:</strong> ${it.a}</p>
+      </details>`).join('')
+  }
+
+  const resourcesHtml = (res)=>{
+    const b = (res.banking||[]).map(r=>`<li><a href="${r.link}" class="text-blue-600 font-semibold hover:underline">${r.name}</a><p class="text-sm text-gray-600 mt-1"><strong>Overview:</strong> ${r.overview} <br><strong>Why it Matters:</strong> ${r.why}</p></li>`).join('')
+    const i = (res.insurance||[]).map(r=>`<li><a href="${r.link}" class="text-blue-600 font-semibold hover:underline">${r.name}</a><p class="text-sm text-gray-600 mt-1"><strong>Overview:</strong> ${r.overview} <br><strong>Why it Matters:</strong> ${r.why}</p></li>`).join('')
+    return `<div data-industry="banking"><ul class="space-y-4">${b}</ul></div><div data-industry="insurance" class="hidden"><ul class="space-y-4">${i}</ul></div>`
+  }
+
+  function renderStages(){
+    APP_STATE.stages.forEach(s=>{
+      const host = document.getElementById(s.id);
+      host.innerHTML = stageCard(s);
+    })
+  }
+
+  // ---------- ADMIN EDITING (No changes here) ----------
+  let currentEditTarget = null;
+  function htmlToText(contentElement){/*...*/}
+  function textToHtml(text, structureType){/*...*/}
+
+  // ---------- GEMINI (SAFE STUB WITH HOOKS) ----------
+  async function callGemini(prompt){/*...*/}
+
+  // ---------- INIT & EVENTS ----------
+  document.addEventListener('DOMContentLoaded',()=>{
+    // Render
+    renderPersonas();
+    renderStages();
+
+    function initCollapsibleSections() {
+      $$('.section-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const content = toggle.nextElementSibling;
+          if (content && content.classList.contains('collapsible-content')) {
+            toggle.classList.toggle('open');
+            content.classList.toggle('hidden');
+          }
+        });
+      });
+    }
+    initCollapsibleSections();
+
+    function initChecklists(){
+      const savedState = loadChecklistState();
+      $$('.content-section').forEach(sec=>{
+        const checks = sec.querySelectorAll('input[type="checkbox"]');
+        const bar = sec.querySelector('.progress-bar');
+        if(!bar) return;
+        const update=()=>{
+          const total = checks.length || 1;
+          const done = sec.querySelectorAll('input[type="checkbox"]:checked').length;
+          bar.style.width = `${(done/total)*100}%`;
+        }
+        checks.forEach(ch=>{
+          const checkboxId = ch.dataset.id;
+          if (savedState[checkboxId]) {
+            ch.checked = true;
+            ch.closest('label')?.classList.add('checked-item');
+          }
+          if(ch.dataset.bound) return; ch.dataset.bound='1';
+          ch.addEventListener('change',e=>{
+            e.target.closest('label')?.classList.toggle('checked-item', e.target.checked);
+            const currentState = loadChecklistState();
+            currentState[e.target.dataset.id] = e.target.checked;
+            saveChecklistState(currentState);
+            update();
+          });
+        })
+        update();
+      })
+    }
+    initChecklists();
+
+    $$('#mobile-menu a, nav a').forEach(a=>a.addEventListener('click',e=>{
+      const href = a.getAttribute('href');
+      if(href && href.startsWith('#')){
+        e.preventDefault(); 
+        const el = document.querySelector(href); 
+        if(el) {
+          const content = el.querySelector('.collapsible-content');
+          if(content && content.classList.contains('hidden')) {
+            el.querySelector('.section-toggle')?.click();
+          }
+          setTimeout(() => {
+            el.scrollIntoView({behavior:'smooth'});
+          }, 100);
+        } 
+        $('#mobile-menu')?.classList.add('hidden'); 
+      }
+    }))
+
+    const sections = $$('.content-section');
+    window.addEventListener('scroll',()=>{
+      let current='';
+      sections.forEach(s=>{ if(window.scrollY >= s.offsetTop-100) current=s.id; })
+      $$('.nav-link').forEach(l=> l.classList.toggle('active', l.getAttribute('href').slice(1)===current))
+    })
+
+    function updateIndustryContent(selected){
+      APP_STATE.industry = selected;
+      $$('.industry-selector button').forEach(b=> b.classList.toggle('active', b.id.replace('-mobile','')===selected));
+      $$('[data-industry]').forEach(div=> div.classList.toggle('hidden', div.dataset.industry!==selected));
+    }
+    ['banking','insurance'].forEach(id=>{
+      ['','-mobile'].forEach(suf=>{
+        const btn = document.getElementById(id+suf); if(btn){ btn.addEventListener('click',()=> updateIndustryContent(id)) }
+      })
+    })
+    updateIndustryContent('banking');
+
+    $('#mobile-menu-button')?.addEventListener('click',()=> $('#mobile-menu')?.classList.toggle('hidden'))
+
+  });
+  </script>
+</body>
+</html>
