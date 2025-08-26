@@ -391,10 +391,20 @@ class HardenedUiPathApp {
   loadData() {
     // Check if SALES_CYCLE_DATA exists
     if (typeof SALES_CYCLE_DATA === 'undefined') {
-      console.error('Sales cycle data not loaded');
-      this.showError('Failed to load sales data. Please ensure data.js is loaded.');
+      console.error('Sales cycle data not loaded, waiting...');
+      // Wait a bit for data.js to load
+      setTimeout(() => {
+        if (typeof SALES_CYCLE_DATA === 'undefined') {
+          console.error('Sales cycle data still not loaded');
+          this.showError('Failed to load sales data. Please refresh the page.');
+          return;
+        }
+        this.loadData();
+      }, 500);
       return;
     }
+    
+    console.log('Loading data with', SALES_CYCLE_DATA.stages?.length, 'stages');
     
     // Render personas
     this.renderPersonas();
@@ -410,14 +420,18 @@ class HardenedUiPathApp {
     const container = $('#personas-container');
     if (!container || !SALES_CYCLE_DATA.personas) return;
     
-    const personasHTML = SALES_CYCLE_DATA.personas.map(persona => `
+    const currentIndustry = appState.get('currentIndustry');
+    const personas = SALES_CYCLE_DATA.personas[currentIndustry] || [];
+    
+    const personasHTML = personas.map(persona => `
       <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <h3 class="text-lg font-semibold mb-2">${sanitizer.escapeHtml(persona.title)}</h3>
-        <p class="text-sm text-gray-600">${sanitizer.escapeHtml(persona.level)}</p>
+        <p class="text-sm text-gray-600 mb-2"><strong>Their World:</strong> ${sanitizer.escapeHtml(persona.world || '')}</p>
+        <p class="text-sm text-gray-600"><strong>What They Care About:</strong> ${sanitizer.escapeHtml(persona.cares || '')}</p>
       </div>
     `).join('');
     
-    container.innerHTML = personasHTML;
+    container.innerHTML = personasHTML || '<p class="text-gray-500">No personas available for this industry.</p>';
   }
 
   renderStages() {
