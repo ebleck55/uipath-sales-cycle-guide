@@ -31,7 +31,7 @@ class HTMLSanitizer {
     // Allow specific safe HTML tags and escape the rest
     return content
       .replace(/&lt;strong&gt;(.*?)&lt;\/strong&gt;/gi, '<strong>$1</strong>')
-      .replace /<strong>(.*?)<\/strong>/gi, '<strong>$1</strong>')
+      .replace(/<strong>(.*?)<\/strong>/gi, '<strong>$1</strong>')
       .replace(/&lt;em&gt;(.*?)&lt;\/em&gt;/gi, '<em>$1</em>')
       .replace(/<em>(.*?)<\/em>/gi, '<em>$1</em>')
       .replace(/&lt;br&gt;/gi, '<br>')
@@ -855,10 +855,6 @@ class TimelineUiPathApp {
       
       // Load and render data
       this.loadData();
-
-      // Initialize AI chatbot
-      this.chatbot = new AIChatbot();
-      window.chatbot = this.chatbot; // Make globally accessible for action buttons
       
       this.initialized = true;
       console.log('Application initialized successfully');
@@ -1053,6 +1049,18 @@ class TimelineUiPathApp {
     }
     
     console.log('Loading data with', SALES_CYCLE_DATA.stages?.length, 'stages');
+    
+    // Initialize AI chatbot after data is loaded
+    if (!this.chatbot) {
+      try {
+        this.chatbot = new AIChatbot();
+        window.chatbot = this.chatbot; // Make globally accessible for action buttons
+        console.log('AI Chatbot initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize AI Chatbot:', error);
+        // Continue without chatbot if initialization fails
+      }
+    }
     
     // Render personas
     this.renderPersonas();
