@@ -1762,17 +1762,17 @@ class TimelineUiPathApp {
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
-          <div class="space-y-6">
+          <div class="grid md:grid-cols-2 gap-4">
             ${Object.entries(stage.questions || {}).map(([category, questions]) => `
               <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.renderSafeHTML(category)}</h4>
+                <h4 class="font-semibold text-gray-700 mb-3 text-left">${sanitizer.renderSafeHTML(category)}</h4>
                 <div class="space-y-3">
                   ${questions.map((q, i) => {
                     const noteId = `stage-${stageIndex}-q-${category.replace(/\s+/g, '-')}-${i}`;
                     return `
                       <details class="bg-white rounded border border-gray-200 question-details">
                         <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm flex items-center justify-between">
-                          <span data-editable>${sanitizer.renderSafeHTML(q)}</span>
+                          <span class="text-left flex-1" data-editable>${sanitizer.renderSafeHTML(q)}</span>
                           <button class="edit-btn hidden p-1 text-gray-400 hover:text-purple-600 transition-colors ml-2" 
                                   data-edit-type="question" data-edit-id="${stageIndex}-${category}-${i}">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1836,14 +1836,14 @@ class TimelineUiPathApp {
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
-          <div class="space-y-4">
+          <div class="grid md:grid-cols-2 gap-4">
             ${(stage.objections || []).map((objection, i) => {
               const objectionId = `stage-${stageIndex}-obj-${i}`;
               return `
                 <div class="bg-gray-50 p-4 rounded-lg">
                   <details class="bg-white rounded border border-gray-200 objection-details">
                     <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm flex items-center justify-between">
-                      <span data-editable>${sanitizer.renderSafeHTML(objection.q)}</span>
+                      <span class="text-left flex-1" data-editable>${sanitizer.renderSafeHTML(objection.q)}</span>
                       <button class="edit-btn hidden p-1 text-gray-400 hover:text-red-600 transition-colors ml-2" 
                               data-edit-type="objection-question" data-edit-id="${stageIndex}-${i}">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1893,7 +1893,7 @@ class TimelineUiPathApp {
               `;
             }).join('')}
             <!-- Add New Objection Button -->
-            <div class="edit-btn hidden mt-4">
+            <div class="edit-btn hidden col-span-2 mt-4">
               <button class="w-full p-4 border-2 border-dashed border-red-300 rounded-lg text-red-600 hover:border-red-400 hover:bg-red-50 transition-colors" 
                       data-edit-type="new-objection" data-edit-id="${stageIndex}">
                 <div class="flex items-center justify-center">
