@@ -2575,8 +2575,8 @@ class UseCasePDFHandler {
       button.style.opacity = '0.6';
       button.disabled = true;
       
-      // Navigate to the PDF viewer page
-      this.openPDFViewer(pageNumber, useCaseName);
+      // Show the slide image modal
+      this.showSlideModal(pageNumber, useCaseName);
       
     } catch (error) {
       console.error('Error opening PDF viewer:', error);
@@ -2586,6 +2586,108 @@ class UseCasePDFHandler {
       button.style.opacity = '1';
       button.disabled = false;
     }
+  }
+
+  showSlideModal(pageNumber, useCaseName) {
+    // Close any existing modal
+    if (window.currentSlideModal) {
+      window.currentSlideModal.remove();
+    }
+    
+    // Create the slide modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center';
+    
+    modal.innerHTML = `
+      <div class="relative bg-white rounded-lg shadow-xl max-w-6xl max-h-[95vh] w-full mx-4 flex flex-col">
+        <!-- Header -->
+        <div class="flex justify-between items-center p-4 border-b border-gray-200">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">${useCaseName}</h3>
+            <p class="text-sm text-gray-600">Page ${pageNumber} - UiPath Use Case Deck</p>
+          </div>
+          <button type="button" class="modal-close text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Image Container -->
+        <div class="flex-1 p-4 flex items-center justify-center overflow-hidden">
+          <div class="relative w-full h-full flex items-center justify-center">
+            <div id="slide-loading" class="text-center">
+              <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mb-2"></div>
+              <p class="text-gray-600">Loading slide...</p>
+            </div>
+            <img id="slide-image" src="" alt="${useCaseName} - Page ${pageNumber}" 
+                 class="hidden max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                 onload="document.getElementById('slide-loading').classList.add('hidden'); this.classList.remove('hidden');"
+                 onerror="this.parentElement.innerHTML='<div class=\\"text-center\\"><div class=\\"text-red-600 mb-2\\"><svg class=\\"w-12 h-12 mx-auto mb-2\\" fill=\\"currentColor\\" viewBox=\\"0 0 20 20\\"><path fill-rule=\\"evenodd\\" d=\\"M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z\\" clip-rule=\\"evenodd\\"></path></svg></div><h4 class=\\"font-semibold text-gray-900 mb-2\\">Slide Image Not Available</h4><p class=\\"text-gray-600 mb-4\\">The slide image for page ${pageNumber} hasn\\'t been uploaded yet.</p><div class=\\"space-y-2\\"><button onclick=\\"window.useCasePDFHandler.contactSupport(\\'${useCaseName}\\', \\'${pageNumber}\\')\\" class=\\"inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors\\"><svg class=\\"w-4 h-4 mr-2\\" fill=\\"currentColor\\" viewBox=\\"0 0 20 20\\"><path d=\\"M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z\\"></path><path d=\\"m18 8.118-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z\\"></path></svg>Request Slide</button></div></div>';">
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="flex justify-between items-center p-4 border-t border-gray-200 bg-gray-50">
+          <div class="text-sm text-gray-600">
+            💡 <strong>Tip:</strong> Right-click the image to save or copy for your presentation
+          </div>
+          <div class="flex gap-2">
+            <button type="button" class="contact-support-btn px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" onclick="window.useCasePDFHandler.contactSupport('${useCaseName}', '${pageNumber}')">
+              Request Details
+            </button>
+            <button type="button" class="modal-close px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // Set the image source - try multiple possible formats
+    const slideImage = modal.querySelector('#slide-image');
+    const possibleExtensions = ['png', 'jpg', 'jpeg'];
+    let currentExtensionIndex = 0;
+    
+    const tryNextExtension = () => {
+      if (currentExtensionIndex < possibleExtensions.length) {
+        const ext = possibleExtensions[currentExtensionIndex];
+        slideImage.src = `assets/slides/page-${pageNumber}.${ext}`;
+        currentExtensionIndex++;
+      }
+    };
+    
+    // Start with first extension
+    tryNextExtension();
+    
+    // If image fails to load, try next extension
+    slideImage.addEventListener('error', () => {
+      if (currentExtensionIndex < possibleExtensions.length) {
+        tryNextExtension();
+      }
+    });
+    
+    // Add event listeners for closing
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal || e.target.closest('.modal-close')) {
+        modal.remove();
+        window.currentSlideModal = null;
+      }
+    });
+    
+    // ESC key support
+    const escHandler = (e) => {
+      if (e.key === 'Escape') {
+        modal.remove();
+        window.currentSlideModal = null;
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
+    
+    // Store reference and show modal
+    window.currentSlideModal = modal;
+    document.body.appendChild(modal);
   }
 
   openPDFViewer(pageNumber, useCaseName) {
