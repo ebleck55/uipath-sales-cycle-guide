@@ -245,9 +245,10 @@
   </footer>
 
   <!-- Application Scripts -->
-  <!-- Note: Using ES modules for better security and maintainability -->
-  <script type="module" src="src/app.js"></script>
-  <script type="module" src="js/data.js"></script>
+  <!-- Load data first -->
+  <script src="js/data.js"></script>
+  <!-- Load hardened application -->
+  <script src="hardened-app.js"></script>
 
   <!-- Hide loading indicator once app is ready -->
   <script>
