@@ -149,8 +149,37 @@
                 ➕ Add New Use Case
               </button>
             </div>
-            <div class="text-center py-12 text-gray-500">
-              <p>Use Cases management will be implemented next...</p>
+
+            <!-- Search and Filters for Use Cases -->
+            <div class="mb-6 grid md:grid-cols-4 gap-4">
+              <input type="text" id="use-case-search" placeholder="Search use cases..." 
+                     class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500">
+              <select id="use-case-vertical-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
+                <option value="">All Verticals</option>
+                <option value="banking">Banking</option>
+                <option value="insurance">Insurance</option>
+                <option value="general">General</option>
+              </select>
+              <select id="use-case-category-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
+                <option value="">All Categories</option>
+                <option value="RPA">RPA</option>
+                <option value="IDP">IDP</option>
+                <option value="Agentic">Agentic</option>
+                <option value="RPA + IDP">RPA + IDP</option>
+                <option value="IDP + Agentic">IDP + Agentic</option>
+                <option value="Maestro">Maestro</option>
+              </select>
+              <select id="use-case-complexity-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
+                <option value="">All Complexity</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+
+            <!-- Use Cases List -->
+            <div id="use-cases-list" class="space-y-4">
+              <!-- Use cases will be populated here -->
             </div>
           </div>
         </section>

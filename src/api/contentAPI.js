@@ -238,6 +238,139 @@ class ContentAPI {
   }
 
   /**
+   * Save data to JSON file (browser download)
+   */
+  async saveData(filename, data) {
+    try {
+      const jsonData = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      console.log(`Data saved as ${filename}`);
+      return true;
+    } catch (error) {
+      console.error('Failed to save data:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Import data from JSON file
+   */
+  async importData(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          resolve(data);
+        } catch (error) {
+          reject(new Error('Invalid JSON file'));
+        }
+      };
+      
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
+  }
+
+  /**
+   * Export all content as backup
+   */
+  async exportAllContent() {
+    try {
+      const [personas, resources, useCases] = await Promise.all([
+        this.loadData('personas.json'),
+        this.loadData('resources.json'),
+        this.loadData('use-cases.json')
+      ]);
+
+      const backup = {
+        version: '1.0',
+        exportDate: new Date().toISOString(),
+        content: {
+          personas: personas || {},
+          resources: resources || {},
+          useCases: useCases || {}
+        }
+      };
+
+      return this.saveData(`uipath-sales-guide-backup-${Date.now()}.json`, backup);
+    } catch (error) {
+      console.error('Failed to export content:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Update cached data (for admin interface)
+   */
+  updateCachedData(filename, data) {
+    this.cache.set(filename, data);
+  }
+
+  /**
+   * Get use cases with filtering
+   */
+  async getUseCases(vertical = null, lob = null) {
+    const data = await this.loadData('use-cases.json');
+    if (!data) return [];
+
+    if (vertical && lob) {
+      // Get use cases for specific vertical and LOB
+      return data.useCases[vertical]?.[lob] || [];
+    } else if (vertical) {
+      // Get all use cases from the vertical
+      const verticalUseCases = data.useCases[vertical];
+      if (!verticalUseCases) return [];
+      return Object.values(verticalUseCases).flat();
+    }
+
+    // Return all use cases from all verticals
+    return Object.values(data.useCases).flatMap(vertical => 
+      Object.values(vertical).flat()
+    );
+  }
+
+  /**
+   * Get use cases filtered by tags
+   */
+  async getUseCasesByTags(tags = [], vertical = null) {
+    const useCases = await this.getUseCases(vertical);
+    
+    if (!tags.length) return useCases;
+
+    return useCases.filter(useCase => {
+      const useCaseTags = [
+        ...(useCase.tags?.primary || []),
+        ...(useCase.tags?.secondary || []),
+        ...(useCase.tags?.outcomes || []),
+        ...(useCase.tags?.pain_points || [])
+      ];
+      
+      return tags.some(tag => useCaseTags.includes(tag));
+    });
+  }
+
+  /**
+   * Get use cases by category (RPA, IDP, Agentic, etc.)
+   */
+  async getUseCasesByCategory(category, vertical = null) {
+    const useCases = await this.getUseCases(vertical);
+    
+    return useCases.filter(useCase => useCase.category === category);
+  }
+
+  /**
    * Clear cache (useful for testing)
    */
   clearCache() {

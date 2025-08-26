@@ -1,0 +1,409 @@
+{
+  "version": "1.0",
+  "lastModified": "2025-08-26",
+  "useCases": {
+    "banking": {
+      "consumer-banking": [
+        {
+          "id": "consumer-account-opening",
+          "name": "Account Opening Automation",
+          "category": "RPA",
+          "vertical": "banking",
+          "lob": ["consumer-banking"],
+          "description": "Automated customer data entry, document processing, and account setup workflows",
+          "businessValue": "Reduce account opening time from 2 days to 2 hours while improving accuracy",
+          "complexity": "Medium",
+          "timeToValue": "4-6 weeks",
+          "processes": ["Customer data entry", "Document verification", "System provisioning", "Welcome communications"],
+          "page": 10,
+          "tags": {
+            "primary": ["account-opening", "customer-onboarding", "document-processing"],
+            "secondary": ["data-entry", "verification", "system-integration"],
+            "outcomes": ["faster-onboarding", "improved-accuracy", "better-customer-experience"],
+            "pain_points": ["manual-data-entry", "document-delays", "system-fragmentation"]
+          },
+          "priority": "high",
+          "estimatedROI": "300%"
+        },
+        {
+          "id": "consumer-loan-processing",
+          "name": "Loan Application Processing",
+          "category": "IDP + Agentic",
+          "vertical": "banking",
+          "lob": ["consumer-banking"],
+          "description": "AI-powered document extraction, credit analysis, and automated decision workflows",
+          "businessValue": "Accelerate loan approvals by 70% while maintaining risk standards",
+          "complexity": "High",
+          "timeToValue": "8-12 weeks",
+          "processes": ["Application intake", "Document extraction", "Credit scoring", "Underwriting decisions"],
+          "page": 15,
+          "tags": {
+            "primary": ["loan-processing", "document-extraction", "credit-analysis", "ai-decisioning"],
+            "secondary": ["underwriting", "risk-assessment", "application-automation"],
+            "outcomes": ["faster-approvals", "maintained-risk-standards", "improved-throughput"],
+            "pain_points": ["manual-processing", "slow-approvals", "document-bottlenecks"]
+          },
+          "priority": "high",
+          "estimatedROI": "450%"
+        },
+        {
+          "id": "consumer-customer-service",
+          "name": "Customer Service Automation",
+          "category": "Agentic",
+          "vertical": "banking",
+          "lob": ["consumer-banking"],
+          "description": "Intelligent ticket routing, automated responses, and escalation management",
+          "businessValue": "Handle 60% more inquiries with same staff while improving satisfaction",
+          "complexity": "Medium",
+          "timeToValue": "6-8 weeks",
+          "processes": ["Inquiry classification", "Automated responses", "Escalation routing", "Follow-up tracking"],
+          "page": 20,
+          "tags": {
+            "primary": ["customer-service", "intelligent-routing", "automated-responses"],
+            "secondary": ["inquiry-classification", "escalation-management", "satisfaction-improvement"],
+            "outcomes": ["increased-capacity", "improved-satisfaction", "faster-resolution"],
+            "pain_points": ["high-inquiry-volume", "inconsistent-responses", "manual-routing"]
+          },
+          "priority": "medium",
+          "estimatedROI": "250%"
+        }
+      ],
+      "capital-markets": [
+        {
+          "id": "capital-trade-settlement",
+          "name": "Trade Settlement Automation",
+          "category": "RPA + Agentic",
+          "vertical": "banking",
+          "lob": ["capital-markets"],
+          "description": "Automated trade matching, settlement processing, and exception handling",
+          "businessValue": "Reduce settlement failures by 80% and processing time by 60%",
+          "complexity": "High",
+          "timeToValue": "10-14 weeks",
+          "processes": ["Trade matching", "Settlement processing", "Exception handling", "Reconciliation"],
+          "page": 30,
+          "tags": {
+            "primary": ["trade-settlement", "automated-matching", "exception-handling"],
+            "secondary": ["settlement-processing", "reconciliation", "risk-reduction"],
+            "outcomes": ["reduced-failures", "faster-processing", "lower-operational-risk"],
+            "pain_points": ["settlement-failures", "manual-exceptions", "processing-delays"]
+          },
+          "priority": "high",
+          "estimatedROI": "600%"
+        },
+        {
+          "id": "capital-regulatory-reporting",
+          "name": "Regulatory Reporting Automation",
+          "category": "RPA + IDP",
+          "vertical": "banking",
+          "lob": ["capital-markets"],
+          "description": "Automated data collection, validation, and regulatory report generation",
+          "businessValue": "Ensure 100% timely submissions while reducing manual effort by 90%",
+          "complexity": "High",
+          "timeToValue": "8-12 weeks",
+          "processes": ["Data aggregation", "Validation checks", "Report generation", "Submission tracking"],
+          "page": 35,
+          "tags": {
+            "primary": ["regulatory-reporting", "data-aggregation", "automated-validation"],
+            "secondary": ["compliance", "report-generation", "submission-tracking"],
+            "outcomes": ["timely-submissions", "reduced-manual-effort", "compliance-assurance"],
+            "pain_points": ["manual-data-collection", "reporting-delays", "validation-errors"]
+          },
+          "priority": "high",
+          "estimatedROI": "400%"
+        },
+        {
+          "id": "capital-client-onboarding",
+          "name": "Institutional Client Onboarding",
+          "category": "Maestro",
+          "vertical": "banking",
+          "lob": ["capital-markets"],
+          "description": "End-to-end client setup including KYC, documentation, and account activation",
+          "businessValue": "Reduce onboarding time from 4 weeks to 3 days while improving compliance",
+          "complexity": "High",
+          "timeToValue": "12-16 weeks",
+          "processes": ["KYC verification", "Documentation review", "Account setup", "Service activation"],
+          "page": 40,
+          "tags": {
+            "primary": ["institutional-onboarding", "kyc-verification", "end-to-end-automation"],
+            "secondary": ["documentation-review", "account-setup", "compliance"],
+            "outcomes": ["faster-onboarding", "improved-compliance", "better-client-experience"],
+            "pain_points": ["lengthy-onboarding", "manual-documentation", "compliance-complexity"]
+          },
+          "priority": "medium",
+          "estimatedROI": "350%"
+        }
+      ],
+      "commercial-banking": [
+        {
+          "id": "commercial-credit-analysis",
+          "name": "Commercial Credit Assessment",
+          "category": "Agentic + IDP",
+          "vertical": "banking",
+          "lob": ["commercial-banking"],
+          "description": "AI-powered financial analysis, risk assessment, and credit decision support",
+          "businessValue": "Improve decision speed by 50% while maintaining portfolio quality",
+          "complexity": "High",
+          "timeToValue": "10-14 weeks",
+          "processes": ["Financial analysis", "Risk scoring", "Decision support", "Documentation"],
+          "page": 25,
+          "tags": {
+            "primary": ["credit-assessment", "financial-analysis", "ai-risk-scoring"],
+            "secondary": ["decision-support", "portfolio-quality", "documentation"],
+            "outcomes": ["faster-decisions", "maintained-quality", "improved-risk-assessment"],
+            "pain_points": ["slow-analysis", "manual-risk-assessment", "inconsistent-decisions"]
+          },
+          "priority": "high",
+          "estimatedROI": "500%"
+        }
+      ],
+      "wealth-management": [
+        {
+          "id": "wealth-portfolio-rebalancing",
+          "name": "Portfolio Rebalancing Automation",
+          "category": "Agentic",
+          "vertical": "banking",
+          "lob": ["wealth-management"],
+          "description": "Automated portfolio analysis, rebalancing recommendations, and execution",
+          "businessValue": "Increase advisor productivity by 40% while improving client outcomes",
+          "complexity": "High",
+          "timeToValue": "8-12 weeks",
+          "processes": ["Portfolio analysis", "Rebalancing logic", "Client approval", "Trade execution"],
+          "page": 45,
+          "tags": {
+            "primary": ["portfolio-rebalancing", "advisor-productivity", "client-outcomes"],
+            "secondary": ["portfolio-analysis", "trade-execution", "client-approval"],
+            "outcomes": ["increased-productivity", "improved-outcomes", "automated-execution"],
+            "pain_points": ["manual-analysis", "time-intensive-rebalancing", "advisor-capacity"]
+          },
+          "priority": "medium",
+          "estimatedROI": "280%"
+        }
+      ]
+    },
+    "insurance": {
+      "property-casualty": [
+        {
+          "id": "pc-claims-processing",
+          "name": "Property & Casualty Claims Processing",
+          "category": "IDP + Agentic",
+          "vertical": "insurance",
+          "lob": ["property-casualty"],
+          "description": "Automated claims intake, damage assessment, and settlement processing",
+          "businessValue": "Reduce claim processing time by 65% while improving customer satisfaction",
+          "complexity": "High",
+          "timeToValue": "8-12 weeks",
+          "processes": ["Claims intake", "Damage assessment", "Coverage verification", "Settlement processing"],
+          "page": 50,
+          "tags": {
+            "primary": ["claims-processing", "damage-assessment", "automated-settlement"],
+            "secondary": ["claims-intake", "coverage-verification", "customer-satisfaction"],
+            "outcomes": ["faster-processing", "improved-satisfaction", "automated-assessments"],
+            "pain_points": ["slow-claims-processing", "manual-assessments", "customer-frustration"]
+          },
+          "priority": "high",
+          "estimatedROI": "420%"
+        },
+        {
+          "id": "pc-fraud-detection",
+          "name": "Fraud Detection Automation",
+          "category": "Agentic",
+          "vertical": "insurance",
+          "lob": ["property-casualty"],
+          "description": "AI-powered fraud pattern recognition and investigation workflow automation",
+          "businessValue": "Detect 95% of fraudulent claims while reducing false positives by 40%",
+          "complexity": "High",
+          "timeToValue": "10-14 weeks",
+          "processes": ["Pattern analysis", "Risk scoring", "Investigation triggers", "Escalation workflows"],
+          "page": 52,
+          "tags": {
+            "primary": ["fraud-detection", "pattern-recognition", "ai-investigation"],
+            "secondary": ["risk-scoring", "investigation-workflows", "escalation-management"],
+            "outcomes": ["improved-detection", "reduced-false-positives", "automated-investigations"],
+            "pain_points": ["undetected-fraud", "false-positives", "manual-investigations"]
+          },
+          "priority": "high",
+          "estimatedROI": "750%"
+        }
+      ],
+      "life-annuities": [
+        {
+          "id": "life-policy-administration",
+          "name": "Life Insurance Policy Administration",
+          "category": "RPA + IDP",
+          "vertical": "insurance",
+          "lob": ["life-annuities"],
+          "description": "Automated policy changes, beneficiary updates, and claims processing",
+          "businessValue": "Reduce administrative costs by 50% while improving policy holder experience",
+          "complexity": "Medium",
+          "timeToValue": "6-10 weeks",
+          "processes": ["Policy updates", "Beneficiary management", "Premium processing", "Claims handling"],
+          "page": 54,
+          "tags": {
+            "primary": ["policy-administration", "beneficiary-management", "claims-handling"],
+            "secondary": ["policy-updates", "premium-processing", "customer-experience"],
+            "outcomes": ["reduced-admin-costs", "improved-experience", "automated-processing"],
+            "pain_points": ["manual-administration", "slow-updates", "processing-delays"]
+          },
+          "priority": "medium",
+          "estimatedROI": "320%"
+        }
+      ],
+      "claims-processing": [
+        {
+          "id": "claims-intelligent-triage",
+          "name": "Intelligent Claims Triage",
+          "category": "Agentic",
+          "vertical": "insurance",
+          "lob": ["claims-processing"],
+          "description": "AI-powered claim complexity assessment and automated routing to appropriate handlers",
+          "businessValue": "Optimize resource allocation and reduce processing time by 45%",
+          "complexity": "Medium",
+          "timeToValue": "6-8 weeks",
+          "processes": ["Complexity assessment", "Handler matching", "Workload balancing", "Priority routing"],
+          "page": 56,
+          "tags": {
+            "primary": ["intelligent-triage", "complexity-assessment", "automated-routing"],
+            "secondary": ["resource-optimization", "workload-balancing", "priority-management"],
+            "outcomes": ["optimized-allocation", "reduced-processing-time", "improved-efficiency"],
+            "pain_points": ["poor-resource-allocation", "manual-routing", "processing-bottlenecks"]
+          },
+          "priority": "high",
+          "estimatedROI": "380%"
+        },
+        {
+          "id": "claims-investigation",
+          "name": "Claims Investigation Automation",
+          "category": "RPA + Agentic",
+          "vertical": "insurance",
+          "lob": ["claims-processing"],
+          "description": "Automated evidence gathering, verification workflows, and investigation documentation",
+          "businessValue": "Improve investigation thoroughness while reducing time by 60%",
+          "complexity": "High",
+          "timeToValue": "8-12 weeks",
+          "processes": ["Evidence collection", "Verification checks", "Documentation", "Decision support"],
+          "page": 58,
+          "tags": {
+            "primary": ["claims-investigation", "evidence-collection", "automated-verification"],
+            "secondary": ["investigation-documentation", "decision-support", "thoroughness"],
+            "outcomes": ["improved-thoroughness", "reduced-investigation-time", "better-documentation"],
+            "pain_points": ["manual-investigation", "incomplete-evidence", "slow-verification"]
+          },
+          "priority": "medium",
+          "estimatedROI": "460%"
+        }
+      ],
+      "underwriting": [
+        {
+          "id": "underwriting-automation",
+          "name": "Automated Underwriting Engine",
+          "category": "Agentic + IDP",
+          "vertical": "insurance",
+          "lob": ["underwriting"],
+          "description": "AI-driven risk assessment and automated underwriting decisions",
+          "businessValue": "Increase underwriting capacity by 70% while maintaining quality standards",
+          "complexity": "High",
+          "timeToValue": "10-14 weeks",
+          "processes": ["Risk assessment", "Decision automation", "Quality control", "Exception handling"],
+          "page": 60,
+          "tags": {
+            "primary": ["automated-underwriting", "ai-risk-assessment", "decision-automation"],
+            "secondary": ["quality-control", "exception-handling", "capacity-increase"],
+            "outcomes": ["increased-capacity", "maintained-quality", "faster-decisions"],
+            "pain_points": ["limited-capacity", "manual-underwriting", "inconsistent-decisions"]
+          },
+          "priority": "high",
+          "estimatedROI": "520%"
+        }
+      ]
+    },
+    "general": {
+      "finance": [
+        {
+          "id": "financial-close-automation",
+          "name": "Financial Close Automation",
+          "category": "RPA + IDP",
+          "vertical": "general",
+          "lob": ["finance"],
+          "description": "Automated month-end close processes including reconciliations and reporting",
+          "businessValue": "Reduce close time from 10 days to 3 days while improving accuracy",
+          "complexity": "High",
+          "timeToValue": "8-12 weeks",
+          "processes": ["Account reconciliation", "Journal entries", "Financial reporting", "Variance analysis"],
+          "page": 65,
+          "tags": {
+            "primary": ["financial-close", "reconciliation", "automated-reporting"],
+            "secondary": ["journal-entries", "variance-analysis", "month-end-processing"],
+            "outcomes": ["faster-close", "improved-accuracy", "reduced-manual-work"],
+            "pain_points": ["lengthy-close-process", "manual-reconciliations", "reporting-delays"]
+          },
+          "priority": "high",
+          "estimatedROI": "400%"
+        }
+      ],
+      "hr": [
+        {
+          "id": "hr-employee-onboarding",
+          "name": "Employee Onboarding Automation",
+          "category": "RPA",
+          "vertical": "general",
+          "lob": ["hr"],
+          "description": "Automated new hire processing, documentation, and system provisioning",
+          "businessValue": "Reduce onboarding time by 75% while improving new hire experience",
+          "complexity": "Low",
+          "timeToValue": "4-6 weeks",
+          "processes": ["Documentation processing", "System provisioning", "Welcome workflows", "Training scheduling"],
+          "page": 70,
+          "tags": {
+            "primary": ["employee-onboarding", "documentation-processing", "system-provisioning"],
+            "secondary": ["welcome-workflows", "training-scheduling", "new-hire-experience"],
+            "outcomes": ["faster-onboarding", "improved-experience", "automated-provisioning"],
+            "pain_points": ["manual-onboarding", "paperwork-delays", "system-setup-delays"]
+          },
+          "priority": "medium",
+          "estimatedROI": "200%"
+        }
+      ],
+      "it": [
+        {
+          "id": "it-service-desk-automation",
+          "name": "IT Service Desk Automation",
+          "category": "Agentic",
+          "vertical": "general",
+          "lob": ["it"],
+          "description": "Intelligent ticket routing, automated resolution, and user self-service",
+          "businessValue": "Handle 80% more tickets with same staff while improving resolution time",
+          "complexity": "Medium",
+          "timeToValue": "6-8 weeks",
+          "processes": ["Ticket classification", "Automated resolution", "User self-service", "Escalation management"],
+          "page": 75,
+          "tags": {
+            "primary": ["it-service-desk", "ticket-automation", "intelligent-routing"],
+            "secondary": ["automated-resolution", "user-self-service", "escalation-management"],
+            "outcomes": ["increased-capacity", "faster-resolution", "improved-user-experience"],
+            "pain_points": ["high-ticket-volume", "manual-routing", "slow-resolution"]
+          },
+          "priority": "medium",
+          "estimatedROI": "300%"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "categories": ["RPA", "IDP", "Agentic", "RPA + IDP", "IDP + Agentic", "RPA + Agentic", "Maestro", "Agentic + IDP"],
+    "verticals": ["banking", "insurance", "general"],
+    "complexity_levels": ["Low", "Medium", "High"],
+    "time_to_value": ["4-6 weeks", "6-8 weeks", "6-10 weeks", "8-12 weeks", "10-14 weeks", "12-16 weeks"],
+    "priority_levels": ["high", "medium", "low"],
+    "tags": {
+      "primary": ["account-opening", "loan-processing", "trade-settlement", "claims-processing", "underwriting-automation", "financial-close"],
+      "secondary": ["customer-onboarding", "document-processing", "risk-assessment", "compliance", "automation"],
+      "outcomes": ["faster-processing", "improved-accuracy", "reduced-costs", "better-experience", "increased-capacity"],
+      "pain_points": ["manual-processing", "slow-approvals", "processing-delays", "compliance-complexity", "resource-constraints"]
+    },
+    "lob_mapping": {
+      "banking": ["consumer-banking", "capital-markets", "commercial-banking", "wealth-management"],
+      "insurance": ["property-casualty", "life-annuities", "claims-processing", "underwriting"],
+      "general": ["finance", "hr", "it"]
+    }
+  }
+}
