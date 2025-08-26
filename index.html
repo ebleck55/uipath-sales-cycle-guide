@@ -188,15 +188,6 @@
   <div id="llm-prompt-bar" class="shadow-lg sticky top-16 z-30 transition-all duration-300" style="background-color: #182126;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
       <div class="flex items-center space-x-4">
-        <!-- AI Icon -->
-        <div class="flex-shrink-0">
-          <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-            </svg>
-          </div>
-        </div>
-        
         <!-- Prompt Input -->
         <div class="flex-1 relative">
           <input 
@@ -211,44 +202,29 @@
             id="llm-send-btn"
             class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
           >
-            <div class="flex items-center space-x-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-              </svg>
-              <span>Ask</span>
-            </div>
+            Ask
           </button>
         </div>
         
         <!-- Quick Actions -->
         <div class="hidden lg:flex items-center space-x-2">
           <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="How do I handle objections for this topic?">
-            🛡️ Objection Handling
+            Objection Handling
           </button>
           <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="What business processes are most relevant here?">
-            ⚙️ Business Process
+            Business Process
           </button>
           <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="Find relevant content and resources for this context">
-            🔍 Find Content
+            Find Content
           </button>
           <button class="llm-quick-btn company-research-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
-            🏢 Company Research
+            Company Research
           </button>
           <button class="llm-quick-btn competitive-analysis-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
-            ⚔️ Competitive
+            Competitive
           </button>
         </div>
         
-        <!-- Toggle Button -->
-        <button 
-          id="llm-toggle-btn"
-          class="flex-shrink-0 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-colors focus:outline-none"
-          title="Toggle AI Prompt Bar"
-        >
-          <svg class="w-4 h-4 text-white transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </button>
       </div>
     </div>
   </div>

@@ -5242,7 +5242,6 @@ document.head.appendChild(style);
 // ==================== LLM PROMPT BAR ====================
 class LLMPromptBar {
   constructor() {
-    this.isCollapsed = false;
     this.promptHistory = this.loadPromptHistory();
     this.currentContext = 'general';
     this.initializeEventListeners();
@@ -5252,7 +5251,6 @@ class LLMPromptBar {
   initializeEventListeners() {
     const promptInput = document.getElementById('llm-prompt-input');
     const sendBtn = document.getElementById('llm-send-btn');
-    const toggleBtn = document.getElementById('llm-toggle-btn');
     const quickBtns = document.querySelectorAll('.llm-quick-btn');
 
     // Send button click
@@ -5271,12 +5269,6 @@ class LLMPromptBar {
       });
     }
 
-    // Toggle button
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        this.togglePromptBar();
-      });
-    }
 
     // Quick action buttons
     quickBtns.forEach(btn => {
@@ -5342,35 +5334,6 @@ class LLMPromptBar {
     }
   }
 
-  togglePromptBar() {
-    const promptBar = document.getElementById('llm-prompt-bar');
-    const toggleBtn = document.getElementById('llm-toggle-btn');
-    const chevron = toggleBtn?.querySelector('svg');
-
-    if (promptBar) {
-      this.isCollapsed = !this.isCollapsed;
-      
-      if (this.isCollapsed) {
-        // Collapse the bar
-        promptBar.style.height = '0';
-        promptBar.style.overflow = 'hidden';
-        promptBar.style.paddingTop = '0';
-        promptBar.style.paddingBottom = '0';
-        if (chevron) {
-          chevron.style.transform = 'rotate(180deg)';
-        }
-      } else {
-        // Expand the bar
-        promptBar.style.height = '';
-        promptBar.style.overflow = '';
-        promptBar.style.paddingTop = '';
-        promptBar.style.paddingBottom = '';
-        if (chevron) {
-          chevron.style.transform = 'rotate(0deg)';
-        }
-      }
-    }
-  }
 
   showNotification(message, type = 'info') {
     // Reuse the existing notification system if available
