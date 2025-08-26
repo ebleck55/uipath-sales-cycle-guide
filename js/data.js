@@ -195,6 +195,30 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Extract FNOL, classify claims, route to adjuster.',
             why: 'Reduce cycle time and improve FNOL quality.'
+          },
+          {
+            name: 'Intelligent Underwriting Automation',
+            link: '#',
+            overview: 'Automated submission processing: extract data from broker emails and ACORD forms, triage against appetite, and route for review.',
+            why: 'Improve bind ratio and dramatically speed up quote turnaround time.'
+          },
+          {
+            name: 'Automated Premium Audit',
+            link: '#',
+            overview: 'AI-powered audit processes: analyze payroll records, classify employees, and identify premium adjustments automatically.',
+            why: 'Reduce audit cycle time by 60% and improve accuracy of premium calculations.'
+          },
+          {
+            name: 'Claims Investigation Automation',
+            link: '#',
+            overview: 'Intelligent claims processing: fraud detection, medical record analysis, and automated settlement recommendations.',
+            why: 'Lower loss adjustment expenses and improve claim settlement accuracy.'
+          },
+          {
+            name: 'Policy Administration Automation',
+            link: '#',
+            overview: 'Streamline policy changes, renewals, and endorsements with AI-powered document processing and validation.',
+            why: 'Reduce processing time by 70% and improve customer satisfaction scores.'
           }
         ]
       }
@@ -256,6 +280,18 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Cycle-time and leakage model.',
             why: 'Supports CCO decision.'
+          },
+          {
+            name: 'Underwriting Value Calculator',
+            link: '#',
+            overview: 'ROI model for automated underwriting processes.',
+            why: 'Quantifies bind ratio and turnaround improvements.'
+          },
+          {
+            name: 'Premium Audit Business Case',
+            link: '#',
+            overview: 'Cost savings model for audit automation.',
+            why: 'Shows CFO impact on audit expenses and accuracy.'
           }
         ]
       }
@@ -315,6 +351,12 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Patterns for claims/underwriting.',
             why: 'De-risks integration.'
+          },
+          {
+            name: 'Insurance Data Integration Guide',
+            link: '#',
+            overview: 'API patterns for policy admin, claims, and billing systems.',
+            why: 'Accelerates technical validation and POV setup.'
           }
         ]
       }
