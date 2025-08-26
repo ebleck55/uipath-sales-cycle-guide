@@ -24,8 +24,15 @@
   <header class="bg-white shadow-md sticky top-0 z-50">
     <div class="header-container flex justify-between items-center">
       <div class="flex items-center">
-        <svg class="h-8 w-auto mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20.35,2.92A10.84,10.84,0,0,0,12,0,10.84,10.84,0,0,0,3.65,2.92,10.7,10.7,0,0,0,0,10.5v8A2.5,2.5,0,0,0,2.5,21h19A2.5,2.5,0,0,0,24,18.5v-8A10.7,10.7,0,0,0,20.35,2.92ZM12,19.5a9,9,0,1,1,9-9A9,9,0,0,1,12,19.5Z" fill="#182126"/>
+        <svg class="h-8 w-auto mr-3" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+          <g fill="#FA4616">
+            <!-- UiPath logo elements -->
+            <path d="M20 10 L20 50 L30 50 L30 35 L45 35 C52 35 55 30 55 25 C55 20 52 15 45 15 L30 15 L30 10 Z M30 25 L30 30 L42 30 C45 30 45 25 42 25 Z"/>
+            <path d="M65 15 L65 50 L75 50 L75 15 Z"/>
+            <path d="M85 15 L85 50 L95 50 L95 35 L110 35 C117 35 120 30 120 25 C120 20 117 15 110 15 L95 15 L95 10 Z M95 25 L95 30 L107 30 C110 30 110 25 107 25 Z"/>
+            <path d="M130 15 C123 15 120 20 120 25 L120 40 C120 45 123 50 130 50 L145 50 C152 50 155 45 155 40 L155 25 C155 20 152 15 145 15 Z M130 25 L145 25 C145 30 145 35 145 40 L130 40 C130 35 130 30 130 25 Z"/>
+            <path d="M165 15 L165 25 L175 25 L175 50 L185 50 L185 25 L195 25 L195 15 Z"/>
+          </g>
         </svg>
         <h1 class="text-xl font-bold">UiPath Sales Cycle Guide</h1>
       </div>
@@ -33,12 +40,13 @@
       <div class="flex items-center">
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center space-x-6 mr-6" role="navigation" aria-label="Main navigation">
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#key-buyer-personas">Key Buyer Personas</a>
           <a class="nav-link text-gray-700 font-semibold pb-1" href="#discovery">Discovery</a>
           <a class="nav-link text-gray-700 font-semibold pb-1" href="#business-qualification">Business Qualification</a>
           <a class="nav-link text-gray-700 font-semibold pb-1" href="#technical-qualification">Technical Qualification</a>
           <a class="nav-link text-gray-700 font-semibold pb-1" href="#proposal">Proposal & Negotiation</a>
           <a class="nav-link text-gray-700 font-semibold pb-1" href="#implement">Implement & Expand</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#key-buyer-personas">Key Buyer Personas</a>
+          <a class="nav-link text-gray-700 font-semibold pb-1" href="#lob-use-cases">LOB Use Cases</a>
         </nav>
         
         <!-- AI Settings Button -->
@@ -50,14 +58,6 @@
           AI Settings
         </button>
 
-        <!-- Export Notes Button -->
-        <button id="export-notes-btn" class="hidden md:flex items-center mr-4 px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700" 
-                aria-label="Copy discovery notes to clipboard">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
-          </svg>
-          Copy Notes
-        </button>
         
         <!-- Industry Selector -->
         <div class="industry-selector hidden md:flex border border-gray-200 rounded-lg p-0.5" role="tablist" aria-label="Industry selector">
@@ -101,21 +101,15 @@
         AI Settings
       </button>
 
-      <!-- Export Notes Button (Mobile) -->
-      <button id="export-notes-btn-mobile" class="w-full mb-4 px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700 flex items-center justify-center">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
-        </svg>
-        Copy Notes
-      </button>
       
       <nav role="navigation" aria-label="Mobile navigation">
-        <a href="#key-buyer-personas" class="block py-2 text-gray-700 font-semibold">Key Buyer Personas</a>
         <a href="#discovery" class="block py-2 text-gray-700 font-semibold">Discovery</a>
         <a href="#business-qualification" class="block py-2 text-gray-700 font-semibold">Business Qualification</a>
         <a href="#technical-qualification" class="block py-2 text-gray-700 font-semibold">Technical Qualification</a>
         <a href="#proposal" class="block py-2 text-gray-700 font-semibold">Proposal & Negotiation</a>
         <a href="#implement" class="block py-2 text-gray-700 font-semibold">Implement & Expand</a>
+        <a href="#key-buyer-personas" class="block py-2 text-gray-700 font-semibold">Key Buyer Personas</a>
+        <a href="#lob-use-cases" class="block py-2 text-gray-700 font-semibold">LOB Use Cases</a>
       </nav>
       
       <div class="flex items-center mt-4">
@@ -133,27 +127,75 @@
 
   <!-- Main Content -->
   <main class="main-container" role="main">
-    <!-- Key Buyer Personas Section -->
-    <section id="key-buyer-personas" class="content-section mb-12">
-      <h2 class="section-toggle text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-2 flex justify-between items-center cursor-pointer">
-        <span>Key Buyer Personas</span>
-        <svg class="toggle-icon w-6 h-6 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </h2>
-      <div class="collapsible-content hidden pt-4">
-        <p class="mb-4 text-gray-600">Switch industry to tailor the view. Click the pencil in Admin Mode to edit any card.</p>
-        <div id="personas-banking" data-industry="banking" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        <div id="personas-insurance" data-industry="insurance" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
-      </div>
-    </section>
-
     <!-- Sales Cycle Stages -->
     <section id="discovery" class="content-section mb-12"></section>
     <section id="business-qualification" class="content-section mb-12"></section>
     <section id="technical-qualification" class="content-section mb-12"></section>
     <section id="proposal" class="content-section mb-12"></section>
     <section id="implement" class="content-section mb-12"></section>
+    
+    <!-- Bottom Section with Two Square Boxes -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+      <!-- Key Buyer Personas Box -->
+      <section id="key-buyer-personas" class="content-section bg-gray-50 p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-4">Key Buyer Personas</h2>
+        <p class="mb-4 text-gray-600">Switch industry to tailor the view. Click the pencil in Admin Mode to edit any card.</p>
+        <div id="personas-banking" data-industry="banking" class="grid grid-cols-1 gap-4"></div>
+        <div id="personas-insurance" data-industry="insurance" class="grid grid-cols-1 gap-4 hidden"></div>
+      </section>
+      
+      <!-- LOB Use Cases Box -->
+      <section id="lob-use-cases" class="content-section bg-gray-50 p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-4">LOB Use Cases</h2>
+        <p class="mb-4 text-gray-600">Agentic use cases by line of business.</p>
+        
+        <div class="space-y-6">
+          <!-- Finance -->
+          <div class="bg-white p-4 rounded-md border">
+            <h3 class="text-xl font-semibold mb-3 text-blue-700">Finance</h3>
+            <ul class="space-y-2 text-sm">
+              <li>• Automated invoice processing and approval workflows</li>
+              <li>• Intelligent expense report validation and reconciliation</li>
+              <li>• Real-time financial reporting and analytics</li>
+              <li>• Compliance monitoring and regulatory reporting</li>
+            </ul>
+          </div>
+          
+          <!-- Human Resources -->
+          <div class="bg-white p-4 rounded-md border">
+            <h3 class="text-xl font-semibold mb-3 text-green-700">Human Resources</h3>
+            <ul class="space-y-2 text-sm">
+              <li>• Automated employee onboarding and offboarding</li>
+              <li>• Resume screening and candidate matching</li>
+              <li>• Benefits enrollment and management</li>
+              <li>• Performance review workflows and notifications</li>
+            </ul>
+          </div>
+          
+          <!-- Operations -->
+          <div class="bg-white p-4 rounded-md border">
+            <h3 class="text-xl font-semibold mb-3 text-purple-700">Operations</h3>
+            <ul class="space-y-2 text-sm">
+              <li>• Supply chain optimization and inventory management</li>
+              <li>• Quality assurance testing and validation</li>
+              <li>• Customer service ticket routing and resolution</li>
+              <li>• Process monitoring and performance analytics</li>
+            </ul>
+          </div>
+          
+          <!-- IT -->
+          <div class="bg-white p-4 rounded-md border">
+            <h3 class="text-xl font-semibold mb-3 text-red-700">IT</h3>
+            <ul class="space-y-2 text-sm">
+              <li>• Automated system monitoring and incident response</li>
+              <li>• Software deployment and configuration management</li>
+              <li>• Data backup and disaster recovery processes</li>
+              <li>• Security compliance and vulnerability scanning</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <!-- Copy to Clipboard Success Message -->
@@ -170,10 +212,10 @@
         <!-- Provider Selection -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 gap-4">
             <div class="ai-provider-option">
-              <input type="radio" id="provider-claude" name="ai-provider" value="claude" class="sr-only">
-              <label for="provider-claude" class="flex flex-col items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <input type="radio" id="provider-claude" name="ai-provider" value="claude" class="sr-only" checked>
+              <label for="provider-claude" class="flex flex-col items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 border-purple-500 bg-purple-50">
                 <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
                   <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2L2 7v10c0 5.55 3.84 9.739 9 11 5.16-1.261 9-5.45 9-11V7l-10-5z"/>
@@ -181,30 +223,6 @@
                 </div>
                 <span class="text-sm font-medium">Claude</span>
                 <span class="text-xs text-gray-500">Anthropic</span>
-              </label>
-            </div>
-            <div class="ai-provider-option">
-              <input type="radio" id="provider-openai" name="ai-provider" value="openai" class="sr-only">
-              <label for="provider-openai" class="flex flex-col items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-2">
-                  <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 19.7a6.0462 6.0462 0 0 0 3.9977-2.9001 6.0651 6.0651 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944z"/>
-                  </svg>
-                </div>
-                <span class="text-sm font-medium">OpenAI</span>
-                <span class="text-xs text-gray-500">GPT-4/3.5</span>
-              </label>
-            </div>
-            <div class="ai-provider-option">
-              <input type="radio" id="provider-gemini" name="ai-provider" value="gemini" class="sr-only">
-              <label for="provider-gemini" class="flex flex-col items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
-                  <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                </div>
-                <span class="text-sm font-medium">Gemini</span>
-                <span class="text-xs text-gray-500">Google</span>
               </label>
             </div>
           </div>
@@ -219,18 +237,6 @@
               <input type="password" id="claude-api-key" placeholder="Enter your Anthropic API key" 
                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
               <p class="text-xs text-gray-500 mt-1">Get your key from <a href="https://console.anthropic.com" target="_blank" class="text-purple-600 hover:underline">console.anthropic.com</a></p>
-            </div>
-            <div>
-              <label for="openai-api-key" class="block text-sm font-medium text-gray-700 mb-1">OpenAI API Key</label>
-              <input type="password" id="openai-api-key" placeholder="Enter your OpenAI API key" 
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-              <p class="text-xs text-gray-500 mt-1">Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" class="text-green-600 hover:underline">platform.openai.com</a></p>
-            </div>
-            <div>
-              <label for="gemini-api-key" class="block text-sm font-medium text-gray-700 mb-1">Gemini API Key</label>
-              <input type="password" id="gemini-api-key" placeholder="Enter your Google AI API key" 
-                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <p class="text-xs text-gray-500 mt-1">Get your key from <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">aistudio.google.com</a></p>
             </div>
           </div>
         </div>

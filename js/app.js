@@ -65,7 +65,15 @@ function stageCard(stage){
       <div id="${stage.id}-questions" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
         <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Key Discovery Questions</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-questions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
         <div class="editable-content">${questionsHtml(stage.questions)}</div>
-        <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-generate-followups="${stage.id}">✨ AI: Generate Follow-up Questions</button>
+        <div class="flex gap-3 mt-4">
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-generate-followups="${stage.id}">✨ AI: Generate Follow-up Questions</button>
+          <button class="export-notes-btn px-4 py-2 text-white rounded-md font-semibold flex items-center" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
+            </svg>
+            Copy Notes
+          </button>
+        </div>
         <div class="mt-4" id="${stage.id}-generated"></div>
       </div>
       <div id="${stage.id}-objections" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
@@ -253,9 +261,6 @@ function initMobileMenu() {
 
 // NEW: Export Notes functionality
 function initExportNotes() {
-  const exportBtn = $('#export-notes-btn');
-  const exportBtnMobile = $('#export-notes-btn-mobile');
-  
   const handleExport = () => {
       let fullNotesText = "### Discovery Question Notes\n\n";
       let discoveryNotesFound = false;
@@ -285,8 +290,12 @@ function initExportNotes() {
       }
   };
   
-  if (exportBtn) exportBtn.addEventListener('click', handleExport);
-  if (exportBtnMobile) exportBtnMobile.addEventListener('click', handleExport);
+  // Add event listeners to all copy notes buttons
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.export-notes-btn') || e.target.closest('.export-notes-btn')) {
+      handleExport();
+    }
+  });
 }
 
 function fallbackCopyToClipboard(text) {
@@ -322,7 +331,7 @@ function textToHtml(text, structureType){
 }
 
 // ---------- AI INTEGRATION (Stub for now) ----------
-async function callGemini(prompt){
+async function callClaude(prompt){
   // AI integration placeholder
   return 'AI functionality not implemented yet.';
 }
@@ -437,7 +446,7 @@ function saveAISettings() {
   }
 
   // Save API keys (only if they've been modified)
-  ['claude', 'openai', 'gemini'].forEach(provider => {
+  ['claude'].forEach(provider => {
     const input = $(`#${provider}-api-key`);
     if (input && input.value && !input.value.startsWith('*')) {
       aiIntegration.setApiKey(provider, input.value);

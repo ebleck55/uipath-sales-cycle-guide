@@ -7,7 +7,7 @@ A comprehensive interactive web application that guides sales professionals thro
 - **Industry-Specific Content**: Toggle between Banking and Insurance industry views
 - **Interactive Sales Stages**: 5 comprehensive stages with collapsible sections
 - **Progress Tracking**: Checkbox-based progress tracking with visual progress bars
-- **AI-Powered Assistance**: Generate follow-up questions and objection responses using Claude, OpenAI, or Gemini
+- **AI-Powered Assistance**: Generate follow-up questions and objection responses using Claude (Anthropic)
 - **Smart Objection Handling**: AI-generated responses to customer objections with context awareness
 - **Contextual Follow-up Questions**: AI generates relevant questions based on customer notes and sales stage
 - **Admin Mode**: Edit content inline (when enabled)
@@ -54,7 +54,7 @@ uipath-sales-cycle-guide/
 ├── js/
 │   ├── data.js           # Sales cycle data configuration
 │   ├── app.js            # Main application logic
-│   ├── ai-integration.js # AI integration for Claude/OpenAI/Gemini
+│   ├── ai-integration.js # AI integration for Claude (Anthropic)
 │   └── performance.js    # Performance optimizations and utilities
 ├── sw.js                  # Service Worker for offline functionality
 ├── README.md             # Documentation
@@ -67,14 +67,12 @@ Configure any or all of these AI providers in the application:
 
 ### Supported Providers:
 - **Claude (Anthropic)**: Get your API key from [console.anthropic.com](https://console.anthropic.com)
-- **OpenAI**: Get your API key from [platform.openai.com](https://platform.openai.com/api-keys)
-- **Google Gemini**: Get your API key from [aistudio.google.com](https://aistudio.google.com/app/apikey)
 
 ### AI Features:
 - **Smart Follow-up Questions**: Generate contextual questions based on sales stage and customer notes
 - **Intelligent Objection Handling**: Get AI-powered responses to customer objections with industry context
 - **Contextual Awareness**: AI considers current sales stage, industry (Banking/Insurance), and customer notes
-- **Multi-Provider Support**: Switch between Claude, OpenAI, and Gemini seamlessly
+- **Single Provider**: Powered by Claude for consistent, high-quality AI assistance
 - **Customizable Settings**: Adjust temperature (creativity) and max tokens per response
 
 ### Usage:

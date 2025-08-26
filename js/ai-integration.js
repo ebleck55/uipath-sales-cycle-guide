@@ -1,13 +1,11 @@
 // AI Integration Module for UiPath Sales Cycle Guide
-// Supports Claude (Anthropic), OpenAI, and Google Gemini
+// Supports Claude (Anthropic)
 
 class AIIntegration {
   constructor() {
     this.config = this.loadConfig();
     this.providers = {
-      claude: new ClaudeProvider(),
-      openai: new OpenAIProvider(),
-      gemini: new GeminiProvider()
+      claude: new ClaudeProvider()
     };
     this.currentProvider = this.providers[this.config.selectedProvider] || this.providers.claude;
   }
@@ -19,9 +17,7 @@ class AIIntegration {
       selectedProvider: 'claude',
       apiKeys: {},
       models: {
-        claude: 'claude-3-haiku-20240307',
-        openai: 'gpt-3.5-turbo',
-        gemini: 'gemini-pro'
+        claude: 'claude-3-haiku-20240307'
       },
       temperature: 0.7,
       maxTokens: 1000
@@ -258,6 +254,7 @@ Format as clear, actionable bullet points.`;
   }
 }
 
+
 // Claude (Anthropic) Provider
 class ClaudeProvider {
   async generate({ prompt, context, model, temperature, maxTokens, apiKey }) {
@@ -291,76 +288,6 @@ class ClaudeProvider {
   }
 }
 
-// OpenAI Provider
-class OpenAIProvider {
-  async generate({ prompt, context, model, temperature, maxTokens, apiKey }) {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: model || 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert UiPath sales consultant helping with sales cycle guidance.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: temperature || 0.7,
-        max_tokens: maxTokens || 1000
-      })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenAI API Error: ${error.error?.message || response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-  }
-}
-
-// Google Gemini Provider
-class GeminiProvider {
-  async generate({ prompt, context, model, temperature, maxTokens, apiKey }) {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model || 'gemini-pro'}:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: temperature || 0.7,
-          maxOutputTokens: maxTokens || 1000
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Gemini API Error: ${error.error?.message || response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-  }
-}
 
 // Global AI integration instance
 let aiIntegration = null;
@@ -373,5 +300,5 @@ function initializeAI() {
 
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { AIIntegration, ClaudeProvider, OpenAIProvider, GeminiProvider };
+  module.exports = { AIIntegration, ClaudeProvider };
 }
