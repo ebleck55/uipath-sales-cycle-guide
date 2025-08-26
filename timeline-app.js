@@ -1527,32 +1527,70 @@ class ResourceManager {
   }
 
   getFilteredResources(context) {
-    // Determine the key for resources lookup
     let resources = [];
     
-    // If specific LOB is selected, get LOB-specific resources
+    // Start with exact matches first (highest priority)
     if (context.lob && context.vertical) {
       const verticalResources = RESOURCES_DATABASE[context.vertical];
       if (verticalResources && verticalResources[context.lob]) {
-        resources = verticalResources[context.lob];
+        resources.push(...verticalResources[context.lob]);
       }
     }
-    // If only vertical is selected, get all resources from that vertical
-    else if (context.vertical) {
+    
+    // Add all resources from the selected vertical (if any)
+    if (context.vertical && RESOURCES_DATABASE[context.vertical]) {
       const verticalResources = RESOURCES_DATABASE[context.vertical];
-      if (verticalResources) {
-        resources = Object.values(verticalResources).flat();
+      const allVerticalResources = Object.values(verticalResources).flat();
+      // Add resources that aren't already included
+      allVerticalResources.forEach(resource => {
+        if (!resources.some(r => r.id === resource.id)) {
+          resources.push(resource);
+        }
+      });
+    }
+    
+    // Add general resources based on LOB (if selected)
+    if (context.lob && RESOURCES_DATABASE.general && RESOURCES_DATABASE.general[context.lob]) {
+      const generalLOBResources = RESOURCES_DATABASE.general[context.lob];
+      generalLOBResources.forEach(resource => {
+        if (!resources.some(r => r.id === resource.id)) {
+          resources.push(resource);
+        }
+      });
+    }
+    
+    // If we still don't have many resources, add more general resources
+    if (resources.length < 3) {
+      // Add finance resources as they're generally applicable
+      if (RESOURCES_DATABASE.general.finance) {
+        RESOURCES_DATABASE.general.finance.forEach(resource => {
+          if (!resources.some(r => r.id === resource.id)) {
+            resources.push(resource);
+          }
+        });
+      }
+      
+      // Add IT resources as they're broadly relevant
+      if (RESOURCES_DATABASE.general.it) {
+        RESOURCES_DATABASE.general.it.forEach(resource => {
+          if (!resources.some(r => r.id === resource.id)) {
+            resources.push(resource);
+          }
+        });
+      }
+      
+      // Add HR resources for comprehensive coverage
+      if (RESOURCES_DATABASE.general.hr) {
+        RESOURCES_DATABASE.general.hr.forEach(resource => {
+          if (!resources.some(r => r.id === resource.id)) {
+            resources.push(resource);
+          }
+        });
       }
     }
-    // If no vertical is selected, get general resources based on LOB
-    else if (context.lob) {
-      const generalResources = RESOURCES_DATABASE.general;
-      if (generalResources && generalResources[context.lob]) {
-        resources = generalResources[context.lob];
-      }
-    }
-    // Default fallback - show general resources
-    else {
+    
+    // If still no resources, add default resources
+    if (resources.length === 0) {
       resources = [
         {
           id: 'generic-automation-guide',
@@ -1564,11 +1602,33 @@ class ResourceManager {
           relevance: ['process-identification', 'automation-strategy', 'best-practices'],
           vertical: 'general',
           lob: 'general'
+        },
+        {
+          id: 'roi-calculator-generic',
+          name: 'Automation ROI Calculator',
+          type: 'calculator',
+          overview: 'Calculate the return on investment for your automation initiatives across different business processes.',
+          why: 'Quantify the business value and build a compelling business case for automation.',
+          link: '#roi-calculator',
+          relevance: ['business-case', 'roi-analysis', 'value-measurement'],
+          vertical: 'general',
+          lob: 'general'
+        },
+        {
+          id: 'implementation-playbook',
+          name: 'Automation Implementation Playbook',
+          type: 'playbook',
+          overview: 'Step-by-step guidance for planning and executing successful automation projects.',
+          why: 'Ensure successful automation implementation with proven methodologies and best practices.',
+          link: '#implementation-playbook',
+          relevance: ['implementation-strategy', 'project-management', 'success-factors'],
+          vertical: 'general',
+          lob: 'general'
         }
       ];
     }
 
-    // Add context-specific filtering based on customer type and deployment
+    // Apply context-specific enrichment and return
     return this.applyAdditionalFilters(resources, context);
   }
 
