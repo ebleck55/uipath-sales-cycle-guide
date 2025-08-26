@@ -1762,7 +1762,7 @@ class TimelineUiPathApp {
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
-          <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-6">
             ${Object.entries(stage.questions || {}).map(([category, questions]) => `
               <div class="bg-gray-50 p-4 rounded-lg">
                 <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.renderSafeHTML(category)}</h4>
@@ -1836,7 +1836,7 @@ class TimelineUiPathApp {
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
-          <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-4">
             ${(stage.objections || []).map((objection, i) => {
               const objectionId = `stage-${stageIndex}-obj-${i}`;
               return `
@@ -1893,7 +1893,7 @@ class TimelineUiPathApp {
               `;
             }).join('')}
             <!-- Add New Objection Button -->
-            <div class="edit-btn hidden col-span-2 mt-4">
+            <div class="edit-btn hidden mt-4">
               <button class="w-full p-4 border-2 border-dashed border-red-300 rounded-lg text-red-600 hover:border-red-400 hover:bg-red-50 transition-colors" 
                       data-edit-type="new-objection" data-edit-id="${stageIndex}">
                 <div class="flex items-center justify-center">
