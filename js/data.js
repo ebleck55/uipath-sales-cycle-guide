@@ -43,6 +43,30 @@ const SALES_CYCLE_DATA = {
         world: 'Owns the P&L for a specific product like mortgages or credit cards. They are deeply focused on market share, customer acquisition, and profitability. Needs AI solutions that demonstrably impact their business metrics and competitive position.',
         cares: 'Hitting revenue and margin targets, reducing customer churn, launching new products faster than the competition, improving customer acquisition cost (CAC), and maximizing customer lifetime value (CLV). They see technology as a means to a business end.',
         help: 'Deploy targeted agentic solutions with measurable P&L impact: accelerate loan origination from 5 days to 1 day with AI underwriting assistance, automate collections workflows with intelligent customer communication sequencing, provide personalized product recommendations through customer journey analysis, and enable real-time fraud prevention to reduce losses.'
+      },
+      {
+        title: 'Head of Lending',
+        world: 'Manages the entire lending lifecycle from origination to servicing across consumer, commercial, and mortgage portfolios. Constantly balancing growth targets with credit risk management while ensuring regulatory compliance and operational efficiency.',
+        cares: 'Improving loan approval speed and accuracy, reducing credit losses and charge-offs, meeting regulatory requirements (CECL, CCAR), optimizing loan pricing, and enhancing borrower experience to drive volume growth.',
+        help: 'Implement intelligent lending automation: AI-powered credit decisioning with explainable models, automated document processing for loan applications, intelligent loan pricing optimization, automated compliance monitoring, and predictive analytics for early default identification.'
+      },
+      {
+        title: 'Head of AML',
+        world: 'Leads the bank\'s fight against money laundering and financial crimes. Operates under intense regulatory scrutiny with severe penalties for compliance failures. Must balance thorough monitoring with operational efficiency and customer experience.',
+        cares: 'Reducing false positive alert rates, ensuring comprehensive suspicious activity detection, maintaining audit-ready documentation, meeting regulatory examination requirements, and demonstrating effective AML program governance to regulators.',
+        help: 'Deploy advanced AML automation: AI-enhanced transaction monitoring with behavioral analytics, automated case management and investigation workflows, intelligent entity resolution and network analysis, regulatory reporting automation, and explainable AI for audit and examination support.'
+      },
+      {
+        title: 'Head of Wealth Operations',
+        world: 'Oversees the operational backbone of wealth management services, ensuring seamless client onboarding, account management, and portfolio operations. Manages complex workflows involving multiple systems, custodians, and regulatory requirements.',
+        cares: 'Streamlining client onboarding processes, reducing operational errors in trade settlement, ensuring accurate fee calculations and billing, maintaining client data integrity, and supporting advisor productivity through efficient operations.',
+        help: 'Automate wealth management operations: intelligent client onboarding with document processing, automated portfolio rebalancing and trade execution, AI-powered fee calculation and reconciliation, automated reporting generation for clients and regulators, and intelligent exception handling for operational issues.'
+      },
+      {
+        title: 'Head of Trading Operations',
+        world: 'Manages post-trade operations including trade settlement, clearing, and reconciliation across multiple asset classes and markets. Operates in a high-pressure, time-sensitive environment where errors can result in significant financial losses.',
+        cares: 'Minimizing trade settlement failures and breaks, ensuring accurate trade matching and confirmation, maintaining regulatory compliance for trade reporting, optimizing collateral management, and reducing operational risk exposure.',
+        help: 'Implement intelligent trade operations automation: automated trade matching and exception handling, AI-powered reconciliation across multiple systems, intelligent collateral optimization, automated regulatory trade reporting, and predictive analytics for settlement risk management.'
       }
     ],
     
@@ -187,6 +211,30 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Intelligent data collection, validation, and regulatory report generation with audit trails.',
             why: 'Reduce compliance risk and manual reporting effort by 60%.'
+          },
+          {
+            name: 'Intelligent Lending Automation',
+            link: '#',
+            overview: 'End-to-end loan processing with AI credit decisioning, document processing, and pricing optimization.',
+            why: 'Reduce loan approval time from days to hours with 95% automation rate.'
+          },
+          {
+            name: 'Advanced AML Transaction Monitoring',
+            link: '#',
+            overview: 'AI-enhanced suspicious activity detection with behavioral analytics and case management automation.',
+            why: 'Reduce false positives by 80% while improving detection accuracy.'
+          },
+          {
+            name: 'Wealth Operations Automation',
+            link: '#',
+            overview: 'Client onboarding, portfolio management, and fee calculation automation with exception handling.',
+            why: 'Streamline operations and reduce processing errors by 90%.'
+          },
+          {
+            name: 'Trading Operations Intelligence',
+            link: '#',
+            overview: 'Automated trade settlement, reconciliation, and regulatory reporting with risk analytics.',
+            why: 'Minimize settlement breaks and ensure real-time compliance monitoring.'
           }
         ],
         insurance: [
