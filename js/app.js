@@ -65,8 +65,7 @@ function stageCard(stage){
       <div id="${stage.id}-questions" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
         <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Key Discovery Questions</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-questions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
         <div class="editable-content">${questionsHtml(stage.questions)}</div>
-        <div class="flex gap-3 mt-4">
-          <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-generate-followups="${stage.id}">✨ AI: Generate Follow-up Questions</button>
+        <div class="flex justify-center mt-4">
           <button class="export-notes-btn px-4 py-2 text-white rounded-md font-semibold flex items-center" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
@@ -74,7 +73,6 @@ function stageCard(stage){
             Copy Notes
           </button>
         </div>
-        <div class="mt-4" id="${stage.id}-generated"></div>
       </div>
       <div id="${stage.id}-objections" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
         <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Common Objections & Responses</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-objections" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
@@ -103,7 +101,7 @@ const listHtml = (arr, checklist=false, stageId = '')=>{
   }).join('')}</ul>`
 }
 
-// MODIFIED: questionsHtml now adds a unique data-note-id to each textarea
+// MODIFIED: questionsHtml now adds AI response button for each question
 const questionsHtml = (map)=>{
   let questionIndex = 0;
   return Object.entries(map).map(([k,qs])=>{
@@ -113,25 +111,115 @@ const questionsHtml = (map)=>{
       return `
       <details class="mb-3 bg-white p-3 rounded-md border">
         <summary class="font-semibold text-gray-700">${q}</summary>
-        <textarea data-note-id="${noteId}" class="note-textarea w-full mt-2 p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="Capture notes here..."></textarea>
+        <div class="mt-3 space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Your Notes & Customer Response:</label>
+            <textarea data-note-id="${noteId}" class="note-textarea w-full p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="Capture customer responses and your notes here..."></textarea>
+          </div>
+          <div class="flex justify-end">
+            <button class="ai-question-response-btn px-3 py-1.5 text-white rounded-md font-medium text-sm flex items-center" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'" data-question="${encodeURIComponent(q)}" data-note-id="${noteId}">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+              AI Response
+            </button>
+          </div>
+          <div class="ai-question-response-content hidden bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+            <p class="text-blue-700 font-medium text-sm mb-2">🤖 AI-Generated Response:</p>
+            <div class="ai-response-text text-gray-700 text-sm"></div>
+          </div>
+        </div>
       </details>`
     }).join('');
     return `<div class="mb-4"><h4 class="text-lg font-bold text-gray-800 mb-2">${k}</h4>${categoryHtml}</div>`
-  }).join('')
+  }).join('') + `
+  <!-- Additional Question Section -->
+  <div class="mb-4 bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300">
+    <h4 class="text-lg font-bold text-gray-800 mb-3">💬 Additional Questions</h4>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Your Custom Question:</label>
+        <input type="text" class="additional-question-input w-full p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="Enter your own discovery question here...">
+      </div>
+      <div class="additional-question-notes hidden">
+        <label class="block text-sm font-medium text-gray-600 mb-1">Customer Response & Notes:</label>
+        <textarea class="additional-question-textarea w-full p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="Capture customer response and your notes..."></textarea>
+      </div>
+      <div class="flex justify-between">
+        <button class="add-question-btn px-3 py-1.5 bg-gray-600 text-white rounded-md font-medium text-sm hover:bg-gray-700">
+          ➕ Add Question
+        </button>
+        <button class="ai-additional-question-btn hidden px-3 py-1.5 text-white rounded-md font-medium text-sm" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
+          <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+          AI Response
+        </button>
+      </div>
+      <div class="ai-additional-question-response hidden bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+        <p class="text-blue-700 font-medium text-sm mb-2">🤖 AI-Generated Response:</p>
+        <div class="ai-additional-response-text text-gray-700 text-sm"></div>
+      </div>
+    </div>
+  </div>`
 }
 
 const objectionsHtml = (items)=>{
-  return items.map(it=>`
+  return items.map((it, index)=>`
     <details class="mb-3 bg-white p-3 rounded-md border">
-      <summary class="font-semibold text-gray-700 flex justify-between"><span>${it.q}</span><button class="ai-response-btn ml-4 px-2 py-1 text-xs bg-purple-200 text-purple-800 rounded-md hover:bg-purple-300" data-obj="${encodeURIComponent(it.q)}">✨ AI Response</button></summary>
-      <div class="mt-2">
-        <p class="text-gray-600"><strong>Standard Response:</strong> ${it.a}</p>
-        <div class="ai-custom-response mt-3 hidden">
-          <p class="text-purple-600 font-semibold">AI-Generated Response:</p>
-          <div class="ai-response-content bg-purple-50 p-3 rounded-md mt-2 text-gray-700"></div>
+      <summary class="font-semibold text-gray-700">${it.q}</summary>
+      <div class="mt-3 space-y-3">
+        <div class="bg-gray-50 p-3 rounded-md">
+          <p class="text-sm font-medium text-gray-600 mb-1">Standard Response:</p>
+          <p class="text-gray-700 text-sm">${it.a}</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Customer's Specific Response & Context:</label>
+          <textarea class="objection-notes-textarea w-full p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="What did the customer specifically say? Any additional context or concerns they raised?" data-objection-index="${index}"></textarea>
+        </div>
+        <div class="flex justify-end">
+          <button class="ai-objection-response-btn px-3 py-1.5 text-white rounded-md font-medium text-sm flex items-center" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'" data-objection="${encodeURIComponent(it.q)}" data-objection-index="${index}">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+            AI Response
+          </button>
+        </div>
+        <div class="ai-objection-response-content hidden bg-purple-50 p-3 rounded-md border-l-4 border-purple-400">
+          <p class="text-purple-700 font-medium text-sm mb-2">🤖 AI-Generated Tailored Response:</p>
+          <div class="ai-objection-response-text text-gray-700 text-sm"></div>
         </div>
       </div>
-    </details>`).join('')
+    </details>`).join('') + `
+  <!-- Additional Objection Section -->
+  <div class="mb-4 bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300">
+    <h4 class="text-lg font-bold text-gray-800 mb-3">🛡️ Additional Objections</h4>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Customer's Objection:</label>
+        <input type="text" class="additional-objection-input w-full p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="What objection did the customer raise?">
+      </div>
+      <div class="additional-objection-notes hidden">
+        <label class="block text-sm font-medium text-gray-600 mb-1">Full Context & Details:</label>
+        <textarea class="additional-objection-textarea w-full p-2 border rounded-md focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="Provide full context of the objection, customer's tone, specific concerns..."></textarea>
+      </div>
+      <div class="flex justify-between">
+        <button class="add-objection-btn px-3 py-1.5 bg-gray-600 text-white rounded-md font-medium text-sm hover:bg-gray-700">
+          ➕ Add Objection
+        </button>
+        <button class="ai-additional-objection-btn hidden px-3 py-1.5 text-white rounded-md font-medium text-sm" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
+          <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+          AI Response
+        </button>
+      </div>
+      <div class="ai-additional-objection-response hidden bg-purple-50 p-3 rounded-md border-l-4 border-purple-400">
+        <p class="text-purple-700 font-medium text-sm mb-2">🤖 AI-Generated Response:</p>
+        <div class="ai-additional-objection-response-text text-gray-700 text-sm"></div>
+      </div>
+    </div>
+  </div>`
 }
 
 const resourcesHtml = (res)=>{
@@ -348,20 +436,73 @@ function initAIIntegration() {
 
 
 function initAIButtons() {
-  // Follow-up questions generation
+  // AI question responses
   document.addEventListener('click', async (e) => {
-    if (e.target.matches('[data-generate-followups]')) {
+    if (e.target.matches('.ai-question-response-btn') || e.target.closest('.ai-question-response-btn')) {
       e.preventDefault();
-      await generateFollowUpQuestions(e.target.dataset.generateFollowups);
+      e.stopPropagation();
+      const button = e.target.closest('.ai-question-response-btn') || e.target;
+      await generateQuestionResponse(button);
     }
   });
 
   // AI objection responses
   document.addEventListener('click', async (e) => {
-    if (e.target.matches('.ai-response-btn')) {
+    if (e.target.matches('.ai-objection-response-btn') || e.target.closest('.ai-objection-response-btn')) {
       e.preventDefault();
       e.stopPropagation();
-      await generateObjectionResponse(e.target);
+      const button = e.target.closest('.ai-objection-response-btn') || e.target;
+      await generateObjectionResponse(button);
+    }
+  });
+
+  // Additional question functionality
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.add-question-btn')) {
+      e.preventDefault();
+      const container = e.target.closest('.mb-4');
+      const notesSection = container.querySelector('.additional-question-notes');
+      const aiButton = container.querySelector('.ai-additional-question-btn');
+      
+      notesSection.classList.remove('hidden');
+      aiButton.classList.remove('hidden');
+      e.target.textContent = '✅ Question Added';
+      e.target.disabled = true;
+    }
+  });
+
+  // Additional objection functionality
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.add-objection-btn')) {
+      e.preventDefault();
+      const container = e.target.closest('.mb-4');
+      const notesSection = container.querySelector('.additional-objection-notes');
+      const aiButton = container.querySelector('.ai-additional-objection-btn');
+      
+      notesSection.classList.remove('hidden');
+      aiButton.classList.remove('hidden');
+      e.target.textContent = '✅ Objection Added';
+      e.target.disabled = true;
+    }
+  });
+
+  // AI additional question response
+  document.addEventListener('click', async (e) => {
+    if (e.target.matches('.ai-additional-question-btn') || e.target.closest('.ai-additional-question-btn')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const button = e.target.closest('.ai-additional-question-btn') || e.target;
+      await generateAdditionalQuestionResponse(button);
+    }
+  });
+
+  // AI additional objection response
+  document.addEventListener('click', async (e) => {
+    if (e.target.matches('.ai-additional-objection-btn') || e.target.closest('.ai-additional-objection-btn')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const button = e.target.closest('.ai-additional-objection-btn') || e.target;
+      await generateAdditionalObjectionResponse(button);
     }
   });
 }
@@ -426,31 +567,125 @@ async function generateFollowUpQuestions(stageId) {
   }
 }
 
+// Generate AI response for individual questions
+async function generateQuestionResponse(button) {
+  if (!aiIntegration) {
+    showMessage('AI integration not available', 'error');
+    return;
+  }
+
+  const question = decodeURIComponent(button.dataset.question);
+  const noteId = button.dataset.noteId;
+  const notesTextarea = document.querySelector(`[data-note-id="${noteId}"]`);
+  const responseContainer = button.closest('details').querySelector('.ai-question-response-content');
+  const responseContent = responseContainer?.querySelector('.ai-response-text');
+
+  if (!responseContainer || !responseContent || !notesTextarea) return;
+
+  button.disabled = true;
+  button.innerHTML = '⏳ Generating...';
+
+  try {
+    const customerNotes = notesTextarea.value.trim();
+    const stageId = button.closest('.content-section')?.id;
+    const stageName = SALES_CYCLE_DATA.stages.find(s => s.id === stageId)?.title || 'Discovery';
+    
+    const prompt = `You are an expert enterprise software sales consultant specializing in UiPath automation solutions. You are currently in the ${stageName} stage of the sales cycle.
+
+CONTEXT:
+- This is an enterprise software sales call for UiPath (business process automation/RPA)
+- Industry: ${SALES_CYCLE_DATA.industry}
+- Sales Stage: ${stageName}
+- Discovery Question Asked: "${question}"
+- Customer Response/Notes: "${customerNotes || 'No specific response captured yet'}"
+
+Based on this context, provide a strategic response that:
+1. Acknowledges what the customer shared
+2. Provides helpful insights about UiPath's capabilities in this area
+3. Suggests 2-3 strategic follow-up questions to deepen the conversation
+4. Positions UiPath as the optimal solution for their ${SALES_CYCLE_DATA.industry} automation needs
+
+Keep the response conversational, consultative, and focused on their specific business outcomes. Maximum 3-4 sentences.`;
+
+    const response = await aiIntegration.generateResponse(prompt, {
+      type: 'question_response',
+      stage: stageId,
+      industry: SALES_CYCLE_DATA.industry,
+      question: question,
+      customerNotes: customerNotes
+    });
+
+    responseContent.innerHTML = response;
+    responseContainer.classList.remove('hidden');
+
+  } catch (error) {
+    console.error('Error generating question response:', error);
+    responseContent.innerHTML = `
+      <div class="text-red-600">
+        ❌ Failed to generate response: ${error.message}<br>
+        <span class="text-sm">Please check your AI configuration.</span>
+      </div>
+    `;
+    responseContainer.classList.remove('hidden');
+  }
+
+  button.disabled = false;
+  button.innerHTML = `
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+    </svg>
+    AI Response
+  `;
+}
+
+// Generate AI response for objections
 async function generateObjectionResponse(button) {
   if (!aiIntegration) {
     showMessage('AI integration not available', 'error');
     return;
   }
 
-  const objection = decodeURIComponent(button.dataset.obj);
-  const responseContainer = button.closest('details').querySelector('.ai-custom-response');
-  const responseContent = button.closest('details').querySelector('.ai-response-content');
+  const objection = decodeURIComponent(button.dataset.objection);
+  const objectionIndex = button.dataset.objectionIndex;
+  const notesTextarea = document.querySelector(`[data-objection-index="${objectionIndex}"]`);
+  const responseContainer = button.closest('details').querySelector('.ai-objection-response-content');
+  const responseContent = responseContainer?.querySelector('.ai-objection-response-text');
 
   if (!responseContainer || !responseContent) return;
 
   button.disabled = true;
-  button.textContent = '⏳ Generating...';
+  button.innerHTML = '⏳ Generating...';
 
   try {
-    // Get context from the current stage and customer notes
+    const customerResponse = notesTextarea?.value.trim() || '';
     const stageId = button.closest('.content-section')?.id;
-    const context = {
-      stage: stageId,
-      customerNotes: collectCustomerNotes(stageId),
-      industry: SALES_CYCLE_DATA.industry
-    };
+    const stageName = SALES_CYCLE_DATA.stages.find(s => s.id === stageId)?.title || 'Discovery';
+    
+    const prompt = `You are an expert enterprise software sales consultant specializing in UiPath automation solutions. You are handling a customer objection during the ${stageName} stage.
 
-    const response = await aiIntegration.generateObjectionResponse(objection, context);
+CONTEXT:
+- This is an enterprise software sales call for UiPath (business process automation/RPA)
+- Industry: ${SALES_CYCLE_DATA.industry}
+- Sales Stage: ${stageName}
+- Customer Objection: "${objection}"
+- Customer's Specific Response/Context: "${customerResponse || 'Standard objection, no additional context provided'}"
+
+Provide a compelling, tailored response that:
+1. Acknowledges and empathizes with their concern
+2. Addresses the specific objection with UiPath's unique value proposition
+3. Provides relevant ${SALES_CYCLE_DATA.industry} industry examples or case studies
+4. Suggests a logical next step to move the conversation forward
+5. Maintains a consultative, non-pushy tone
+
+Keep the response professional, confident, and solution-focused. Maximum 4-5 sentences.`;
+
+    const response = await aiIntegration.generateResponse(prompt, {
+      type: 'objection_response',
+      stage: stageId,
+      industry: SALES_CYCLE_DATA.industry,
+      objection: objection,
+      customerContext: customerResponse
+    });
 
     responseContent.innerHTML = response;
     responseContainer.classList.remove('hidden');
@@ -467,7 +702,169 @@ async function generateObjectionResponse(button) {
   }
 
   button.disabled = false;
-  button.textContent = '✨ AI Response';
+  button.innerHTML = `
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+    </svg>
+    AI Response
+  `;
+}
+
+// Generate AI response for additional questions
+async function generateAdditionalQuestionResponse(button) {
+  if (!aiIntegration) {
+    showMessage('AI integration not available', 'error');
+    return;
+  }
+
+  const container = button.closest('.mb-4');
+  const questionInput = container.querySelector('.additional-question-input');
+  const notesTextarea = container.querySelector('.additional-question-textarea');
+  const responseContainer = container.querySelector('.ai-additional-question-response');
+  const responseContent = responseContainer?.querySelector('.ai-additional-response-text');
+
+  if (!questionInput || !notesTextarea || !responseContainer || !responseContent) return;
+
+  const customQuestion = questionInput.value.trim();
+  const customerNotes = notesTextarea.value.trim();
+
+  if (!customQuestion) {
+    showMessage('Please enter a question first', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  button.innerHTML = '⏳ Generating...';
+
+  try {
+    const stageId = button.closest('.content-section')?.id;
+    const stageName = SALES_CYCLE_DATA.stages.find(s => s.id === stageId)?.title || 'Discovery';
+    
+    const prompt = `You are an expert enterprise software sales consultant specializing in UiPath automation solutions. You are in the ${stageName} stage of the sales cycle.
+
+CONTEXT:
+- This is an enterprise software sales call for UiPath (business process automation/RPA)
+- Industry: ${SALES_CYCLE_DATA.industry}
+- Sales Stage: ${stageName}
+- Your Custom Question: "${customQuestion}"
+- Customer Response/Notes: "${customerNotes || 'No response captured yet'}"
+
+Based on this custom question and the customer's response, provide strategic guidance that:
+1. Interprets what the customer's response reveals about their business needs
+2. Suggests how to position UiPath's capabilities to address their specific situation
+3. Recommends 2-3 strategic follow-up questions to advance the sales process
+4. Identifies potential opportunities or risks based on their response
+
+Keep the response actionable, insightful, and focused on advancing the ${SALES_CYCLE_DATA.industry} automation sale. Maximum 4 sentences.`;
+
+    const response = await aiIntegration.generateResponse(prompt, {
+      type: 'additional_question_response',
+      stage: stageId,
+      industry: SALES_CYCLE_DATA.industry,
+      question: customQuestion,
+      customerNotes: customerNotes
+    });
+
+    responseContent.innerHTML = response;
+    responseContainer.classList.remove('hidden');
+
+  } catch (error) {
+    console.error('Error generating additional question response:', error);
+    responseContent.innerHTML = `
+      <div class="text-red-600">
+        ❌ Failed to generate response: ${error.message}<br>
+        <span class="text-sm">Please check your AI configuration.</span>
+      </div>
+    `;
+    responseContainer.classList.remove('hidden');
+  }
+
+  button.disabled = false;
+  button.innerHTML = `
+    <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+    </svg>
+    AI Response
+  `;
+}
+
+// Generate AI response for additional objections
+async function generateAdditionalObjectionResponse(button) {
+  if (!aiIntegration) {
+    showMessage('AI integration not available', 'error');
+    return;
+  }
+
+  const container = button.closest('.mb-4');
+  const objectionInput = container.querySelector('.additional-objection-input');
+  const notesTextarea = container.querySelector('.additional-objection-textarea');
+  const responseContainer = container.querySelector('.ai-additional-objection-response');
+  const responseContent = responseContainer?.querySelector('.ai-additional-objection-response-text');
+
+  if (!objectionInput || !notesTextarea || !responseContainer || !responseContent) return;
+
+  const customObjection = objectionInput.value.trim();
+  const customerContext = notesTextarea.value.trim();
+
+  if (!customObjection) {
+    showMessage('Please enter an objection first', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  button.innerHTML = '⏳ Generating...';
+
+  try {
+    const stageId = button.closest('.content-section')?.id;
+    const stageName = SALES_CYCLE_DATA.stages.find(s => s.id === stageId)?.title || 'Discovery';
+    
+    const prompt = `You are an expert enterprise software sales consultant specializing in UiPath automation solutions. You are handling a customer objection during the ${stageName} stage.
+
+CONTEXT:
+- This is an enterprise software sales call for UiPath (business process automation/RPA)
+- Industry: ${SALES_CYCLE_DATA.industry}
+- Sales Stage: ${stageName}
+- Customer's Objection: "${customObjection}"
+- Full Context/Details: "${customerContext || 'Limited context provided'}"
+
+Craft a compelling response that:
+1. Acknowledges and validates their concern
+2. Reframes the objection as an opportunity to demonstrate UiPath's value
+3. Provides specific ${SALES_CYCLE_DATA.industry} examples or proof points
+4. Suggests concrete next steps to address their concern
+5. Maintains momentum in the sales process
+
+Be consultative, confident, and solution-oriented. Maximum 5 sentences.`;
+
+    const response = await aiIntegration.generateResponse(prompt, {
+      type: 'additional_objection_response',
+      stage: stageId,
+      industry: SALES_CYCLE_DATA.industry,
+      objection: customObjection,
+      customerContext: customerContext
+    });
+
+    responseContent.innerHTML = response;
+    responseContainer.classList.remove('hidden');
+
+  } catch (error) {
+    console.error('Error generating additional objection response:', error);
+    responseContent.innerHTML = `
+      <div class="text-red-600">
+        ❌ Failed to generate response: ${error.message}<br>
+        <span class="text-sm">Please check your AI configuration.</span>
+      </div>
+    `;
+    responseContainer.classList.remove('hidden');
+  }
+
+  button.disabled = false;
+  button.innerHTML = `
+    <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+    </svg>
+    AI Response
+  `;
 }
 
 function collectCustomerNotes(stageId) {
@@ -520,4 +917,294 @@ document.addEventListener('DOMContentLoaded',()=>{
   initMobileMenu();
   initExportNotes();
   initAIIntegration(); // Initialize AI functionality
+  initBulkAdmin(); // Initialize bulk admin interface
 });
+
+// ---------- BULK ADMIN INTERFACE ----------
+function initBulkAdmin() {
+  const bulkAdminBtn = $('#bulk-admin-btn');
+  const bulkAdminBtnMobile = $('#bulk-admin-btn-mobile');
+  const bulkAdminModal = $('#bulk-admin-modal');
+  const bulkAdminCancel = $('#bulk-admin-cancel');
+  const bulkAdminSave = $('#bulk-admin-save');
+  const bulkAdminExport = $('#bulk-admin-export');
+  const bulkAdminImport = $('#bulk-admin-import');
+  const bulkImportFile = $('#bulk-import-file');
+
+  // Show bulk admin modal
+  const showBulkAdmin = () => {
+    if (bulkAdminModal) {
+      loadAllContentToBulkEditor();
+      bulkAdminModal.classList.remove('hidden');
+    }
+  };
+
+  // Event listeners
+  if (bulkAdminBtn) bulkAdminBtn.addEventListener('click', showBulkAdmin);
+  if (bulkAdminBtnMobile) bulkAdminBtnMobile.addEventListener('click', showBulkAdmin);
+  
+  if (bulkAdminCancel) {
+    bulkAdminCancel.addEventListener('click', () => {
+      if (bulkAdminModal) bulkAdminModal.classList.add('hidden');
+    });
+  }
+
+  if (bulkAdminSave) {
+    bulkAdminSave.addEventListener('click', saveBulkChanges);
+  }
+
+  if (bulkAdminExport) {
+    bulkAdminExport.addEventListener('click', exportAllContent);
+  }
+
+  if (bulkAdminImport) {
+    bulkAdminImport.addEventListener('click', () => {
+      if (bulkImportFile) bulkImportFile.click();
+    });
+  }
+
+  if (bulkImportFile) {
+    bulkImportFile.addEventListener('change', importAllContent);
+  }
+}
+
+// Load all current content into the bulk editor
+function loadAllContentToBulkEditor() {
+  // Load personas
+  loadPersonasToBulkEditor();
+  
+  // Load stage data
+  SALES_CYCLE_DATA.stages.forEach(stage => {
+    const stagePrefix = stage.id.replace('-', '');
+    
+    // Load outcomes
+    const outcomesTextarea = $(`#${stagePrefix}-outcomes`);
+    if (outcomesTextarea && stage.outcomes) {
+      outcomesTextarea.value = stage.outcomes.join('\\n');
+    }
+    
+    // Load personas
+    const personasTextarea = $(`#${stagePrefix}-personas`);
+    if (personasTextarea && stage.initialPersonas) {
+      personasTextarea.value = stage.initialPersonas.join('\\n');
+    }
+    
+    // Load questions as JSON
+    const questionsTextarea = $(`#${stagePrefix}-questions`);
+    if (questionsTextarea && stage.questions) {
+      questionsTextarea.value = JSON.stringify(stage.questions, null, 2);
+    }
+  });
+}
+
+// Load personas into bulk editor
+function loadPersonasToBulkEditor() {
+  // Clear existing persona editors
+  const bankingEditor = $('#banking-personas-editor');
+  const insuranceEditor = $('#insurance-personas-editor');
+  
+  if (bankingEditor) {
+    bankingEditor.innerHTML = '';
+    SALES_CYCLE_DATA.personas.banking.forEach((persona, index) => {
+      addPersonaEditor('banking', persona, index);
+    });
+  }
+  
+  if (insuranceEditor) {
+    insuranceEditor.innerHTML = '';
+    SALES_CYCLE_DATA.personas.insurance.forEach((persona, index) => {
+      addPersonaEditor('insurance', persona, index);
+    });
+  }
+}
+
+// Add persona editor
+function addPersonaEditor(industry, persona = null, index = null) {
+  const container = $(`#${industry}-personas-editor`);
+  if (!container) return;
+  
+  const personaIndex = index !== null ? index : container.children.length;
+  const personaData = persona || { title: '', world: '', cares: '', help: '' };
+  
+  const editorHtml = `
+    <div class="persona-editor bg-white p-3 rounded-md border" data-industry="${industry}" data-index="${personaIndex}">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-gray-700">Persona ${personaIndex + 1}</span>
+        <button type="button" onclick="removePersonaEditor(this)" class="text-red-600 hover:text-red-800 text-sm">🗑️ Remove</button>
+      </div>
+      <div class="space-y-2">
+        <input type="text" placeholder="Persona Title" value="${personaData.title}" class="persona-title w-full p-2 border rounded text-sm">
+        <textarea placeholder="Their world..." class="persona-world w-full p-2 border rounded text-sm h-16">${personaData.world}</textarea>
+        <textarea placeholder="What they care about..." class="persona-cares w-full p-2 border rounded text-sm h-16">${personaData.cares}</textarea>
+        <textarea placeholder="How UiPath helps..." class="persona-help w-full p-2 border rounded text-sm h-16">${personaData.help}</textarea>
+      </div>
+    </div>
+  `;
+  
+  container.insertAdjacentHTML('beforeend', editorHtml);
+}
+
+// Add persona function (called by onclick)
+function addPersona(industry) {
+  addPersonaEditor(industry);
+}
+
+// Remove persona editor
+function removePersonaEditor(button) {
+  const personaEditor = button.closest('.persona-editor');
+  if (personaEditor) {
+    personaEditor.remove();
+  }
+}
+
+// Save all bulk changes
+function saveBulkChanges() {
+  try {
+    // Save personas
+    savePersonasFromBulkEditor();
+    
+    // Save stage data
+    SALES_CYCLE_DATA.stages.forEach(stage => {
+      const stagePrefix = stage.id.replace('-', '');
+      
+      // Save outcomes
+      const outcomesTextarea = $(`#${stagePrefix}-outcomes`);
+      if (outcomesTextarea && outcomesTextarea.value.trim()) {
+        stage.outcomes = outcomesTextarea.value.split('\\n').filter(line => line.trim());
+      }
+      
+      // Save personas
+      const personasTextarea = $(`#${stagePrefix}-personas`);
+      if (personasTextarea && personasTextarea.value.trim()) {
+        stage.initialPersonas = personasTextarea.value.split('\\n').filter(line => line.trim());
+      }
+      
+      // Save questions
+      const questionsTextarea = $(`#${stagePrefix}-questions`);
+      if (questionsTextarea && questionsTextarea.value.trim()) {
+        try {
+          stage.questions = JSON.parse(questionsTextarea.value);
+        } catch (e) {
+          console.error(`Invalid JSON for ${stage.id} questions:`, e);
+          showMessage(`Invalid JSON format for ${stage.title} questions`, 'error');
+          return;
+        }
+      }
+    });
+    
+    // Re-render the entire application with new data
+    renderPersonas();
+    renderStages();
+    
+    // Re-initialize functionality that depends on the content
+    initChecklists();
+    initNotes();
+    
+    // Close modal
+    const bulkAdminModal = $('#bulk-admin-modal');
+    if (bulkAdminModal) bulkAdminModal.classList.add('hidden');
+    
+    showMessage('All changes saved successfully! 🎉', 'success');
+    
+  } catch (error) {
+    console.error('Error saving bulk changes:', error);
+    showMessage('Error saving changes: ' + error.message, 'error');
+  }
+}
+
+// Save personas from bulk editor
+function savePersonasFromBulkEditor() {
+  ['banking', 'insurance'].forEach(industry => {
+    const personaEditors = $$(`#${industry}-personas-editor .persona-editor`);
+    const personas = [];
+    
+    personaEditors.forEach(editor => {
+      const title = editor.querySelector('.persona-title').value.trim();
+      const world = editor.querySelector('.persona-world').value.trim();
+      const cares = editor.querySelector('.persona-cares').value.trim();
+      const help = editor.querySelector('.persona-help').value.trim();
+      
+      if (title || world || cares || help) {
+        personas.push({ title, world, cares, help });
+      }
+    });
+    
+    SALES_CYCLE_DATA.personas[industry] = personas;
+  });
+}
+
+// Export all content
+function exportAllContent() {
+  const exportData = {
+    personas: SALES_CYCLE_DATA.personas,
+    stages: SALES_CYCLE_DATA.stages.map(stage => ({
+      id: stage.id,
+      title: stage.title,
+      outcomes: stage.outcomes,
+      initialPersonas: stage.initialPersonas,
+      questions: stage.questions,
+      objections: stage.objections,
+      resources: stage.resources
+    })),
+    exportDate: new Date().toISOString(),
+    version: '1.0'
+  };
+  
+  const dataStr = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `uipath-sales-guide-export-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  showMessage('Content exported successfully! 📁', 'success');
+}
+
+// Import all content
+function importAllContent(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importData = JSON.parse(e.target.result);
+      
+      // Validate import data
+      if (!importData.personas || !importData.stages) {
+        throw new Error('Invalid import file format');
+      }
+      
+      // Update data
+      if (importData.personas) {
+        SALES_CYCLE_DATA.personas = importData.personas;
+      }
+      
+      if (importData.stages) {
+        importData.stages.forEach(importStage => {
+          const existingStage = SALES_CYCLE_DATA.stages.find(s => s.id === importStage.id);
+          if (existingStage) {
+            Object.assign(existingStage, importStage);
+          }
+        });
+      }
+      
+      // Reload the bulk editor with new data
+      loadAllContentToBulkEditor();
+      
+      showMessage('Content imported successfully! 📥', 'success');
+      
+    } catch (error) {
+      console.error('Import error:', error);
+      showMessage('Error importing file: ' + error.message, 'error');
+    }
+  };
+  
+  reader.readAsText(file);
+  event.target.value = ''; // Reset file input
+}
