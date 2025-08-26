@@ -1,0 +1,238 @@
+{
+  "version": "1.0",
+  "lastModified": "2025-08-26",
+  "personas": {
+    "banking": [
+      {
+        "id": "banking-coo",
+        "title": "Chief Operating Officer",
+        "level": "c-suite",
+        "vertical": "banking",
+        "lob": ["all"],
+        "world": "Manages the bank's core engine. Oversees thousands of employees in operations, payments, and servicing, all while fighting fires and trying to drive digital transformation. Increasingly pressured to deliver AI-driven efficiency while maintaining operational risk controls.",
+        "cares": "Reducing cost-to-serve, improving straight-through processing (STP) rates, ensuring business resilience, and meeting aggressive efficiency targets set by the board. Seeks measurable AI ROI while avoiding operational disruption.",
+        "help": "Deploy agentic automation for complex, end-to-end processes like loan origination (reducing 5-day manual process to 1-day with AI decisioning), payment investigations with intelligent case routing, and KYC refreshes with automated adverse media screening and risk scoring.",
+        "tags": {
+          "primary": ["operations", "efficiency", "ai-transformation"],
+          "secondary": ["risk-management", "cost-reduction", "process-automation"],
+          "pain_points": ["operational-resilience", "stp-rates", "cost-to-serve"],
+          "interests": ["measurable-roi", "ai-decisioning", "end-to-end-automation"]
+        },
+        "priority": "high",
+        "influence": "decision-maker"
+      },
+      {
+        "id": "banking-cco",
+        "title": "Chief Compliance Officer", 
+        "level": "c-suite",
+        "vertical": "banking",
+        "lob": ["all"],
+        "world": "Lives in a world of complex, ever-changing regulations (AML, KYC, etc.). Their primary role is to protect the bank from massive fines and reputational damage. Must balance AI innovation with regulatory explainability and model risk management.",
+        "cares": "Minimizing false positives in transaction monitoring, clearing alert backlogs to avoid regulatory breaches, proving the bank has auditable, explainable controls, and ensuring AI models meet regulatory scrutiny (SR 11-7, OCC guidance).",
+        "help": "Deploy governed agentic workflows for KYC/AML processes with full audit trails, automated adverse media screening with confidence scoring, intelligent transaction monitoring with explainable AI decisioning, and regulatory reporting automation with human oversight controls.",
+        "tags": {
+          "primary": ["compliance", "aml-kyc", "regulatory"],
+          "secondary": ["risk-management", "audit-trails", "explainable-ai"],
+          "pain_points": ["false-positives", "alert-backlogs", "regulatory-scrutiny"],
+          "interests": ["governed-workflows", "audit-trails", "explainable-ai"]
+        },
+        "priority": "high",
+        "influence": "decision-maker"
+      },
+      {
+        "id": "banking-contact-center-head",
+        "title": "Head of Contact Center",
+        "level": "director",
+        "vertical": "banking",
+        "lob": ["customer-service", "operations"],
+        "world": "Runs a high-pressure environment focused on customer experience (CX). They constantly battle agent attrition, high training costs, and pressure to reduce call times. Exploring AI agents to handle routine inquiries while keeping complex cases human-assisted.",
+        "cares": "Improving Net Promoter Score (NPS) and Customer Satisfaction (CSAT), reducing Average Handle Time (AHT), ensuring agents are compliant with scripts and procedures, and maximizing agent productivity through AI assistance.",
+        "help": "Deploy intelligent agent assistants that provide real-time account insights, automate desktop workflows during calls, generate post-call summaries, suggest next-best actions, and escalate complex cases to human agents with full context and recommended solutions.",
+        "tags": {
+          "primary": ["customer-experience", "contact-center", "ai-assistance"],
+          "secondary": ["agent-productivity", "call-automation", "customer-satisfaction"],
+          "pain_points": ["agent-attrition", "training-costs", "call-times"],
+          "interests": ["ai-agents", "desktop-automation", "intelligent-escalation"]
+        },
+        "priority": "medium",
+        "influence": "influencer"
+      },
+      {
+        "id": "banking-cio-cto",
+        "title": "CIO / CTO",
+        "level": "c-suite",
+        "vertical": "banking",
+        "lob": ["all"],
+        "world": "Balances the need for innovation with the reality of maintaining complex, legacy core banking systems. They are under pressure to deliver value faster and more securely while establishing enterprise AI governance and ensuring regulatory compliance.",
+        "cares": "Reducing total cost of ownership (TCO) for technology, standardizing on scalable enterprise platforms, mitigating vendor and security risks, avoiding integration debt, and building reusable AI/automation capabilities with proper model risk management.",
+        "help": "Implement an enterprise-grade agentic automation platform with centralized governance, role-based access controls (RBAC), API-first integration, private AI deployment options, comprehensive audit logging, and pre-built connectors for core banking systems.",
+        "tags": {
+          "primary": ["technology", "ai-governance", "enterprise-platform"],
+          "secondary": ["legacy-systems", "security", "integration"],
+          "pain_points": ["tco-reduction", "integration-debt", "vendor-risk"],
+          "interests": ["enterprise-grade", "centralized-governance", "api-first"]
+        },
+        "priority": "high",
+        "influence": "decision-maker"
+      },
+      {
+        "id": "banking-payments-ops-head",
+        "title": "Head of Payments Ops",
+        "level": "director",
+        "vertical": "banking",
+        "lob": ["payments", "operations"],
+        "world": "Manages the high-stakes, time-sensitive flow of money. Their world is dictated by payment cutoffs, SWIFT messages, and the constant risk of failed transactions. Must achieve near-perfect STP rates while managing complex exception handling and regulatory reporting.",
+        "cares": "Maximizing the Straight-Through Processing (STP) rate, minimizing financial write-offs from errors, meeting strict Service Level Agreements (SLAs) for payment execution, and reducing manual investigation time for payment exceptions.",
+        "help": "Deploy agentic automation for the complete payment lifecycle: intelligent exception triage with AI-powered document parsing, automated investigation workflows with decision trees, real-time SWIFT message analysis, predictive failure detection, and auto-resolution for 80% of common payment issues with human escalation for complex cases.",
+        "tags": {
+          "primary": ["payments", "stp-processing", "exception-handling"],
+          "secondary": ["swift-messaging", "investigation-workflows", "predictive-analytics"],
+          "pain_points": ["stp-rates", "payment-failures", "manual-investigation"],
+          "interests": ["intelligent-triage", "automated-investigation", "predictive-failure-detection"]
+        },
+        "priority": "high",
+        "influence": "influencer"
+      },
+      {
+        "id": "banking-lob-gm",
+        "title": "Line of Business GM",
+        "level": "executive",
+        "vertical": "banking",
+        "lob": ["consumer-banking", "commercial-banking", "mortgage"],
+        "world": "Owns the P&L for a specific product like mortgages or credit cards. They are deeply focused on market share, customer acquisition, and profitability. Needs AI solutions that demonstrably impact their business metrics and competitive position.",
+        "cares": "Hitting revenue and margin targets, reducing customer churn, launching new products faster than the competition, improving customer acquisition cost (CAC), and maximizing customer lifetime value (CLV). They see technology as a means to a business end.",
+        "help": "Deploy targeted agentic solutions with measurable P&L impact: accelerate loan origination from 5 days to 1 day with AI underwriting assistance, automate collections workflows with intelligent customer communication sequencing, provide personalized product recommendations through customer journey analysis, and enable real-time fraud prevention to reduce losses.",
+        "tags": {
+          "primary": ["p-and-l", "revenue-growth", "customer-acquisition"],
+          "secondary": ["product-launch", "competitive-advantage", "business-metrics"],
+          "pain_points": ["customer-churn", "cac-optimization", "time-to-market"],
+          "interests": ["measurable-impact", "loan-acceleration", "intelligent-collections"]
+        },
+        "priority": "high",
+        "influence": "decision-maker"
+      },
+      {
+        "id": "banking-lending-head",
+        "title": "Head of Lending",
+        "level": "director",
+        "vertical": "banking", 
+        "lob": ["consumer-banking", "commercial-banking", "mortgage"],
+        "world": "Manages the entire lending lifecycle from origination to servicing across consumer, commercial, and mortgage portfolios. Constantly balancing growth targets with credit risk management while ensuring regulatory compliance and operational efficiency.",
+        "cares": "Improving loan approval speed and accuracy, reducing credit losses and charge-offs, meeting regulatory requirements (CECL, CCAR), optimizing loan pricing, and enhancing borrower experience to drive volume growth.",
+        "help": "Implement intelligent lending automation: AI-powered credit decisioning with explainable models, automated document processing for loan applications, intelligent loan pricing optimization, automated compliance monitoring, and predictive analytics for early default identification.",
+        "tags": {
+          "primary": ["lending", "credit-risk", "loan-origination"],
+          "secondary": ["regulatory-compliance", "borrower-experience", "portfolio-management"],
+          "pain_points": ["approval-speed", "credit-losses", "regulatory-requirements"],
+          "interests": ["ai-decisioning", "document-automation", "predictive-analytics"]
+        },
+        "priority": "high",
+        "influence": "influencer"
+      },
+      {
+        "id": "banking-aml-head",
+        "title": "Head of AML",
+        "level": "director",
+        "vertical": "banking",
+        "lob": ["compliance", "risk"],
+        "world": "Leads the bank's fight against money laundering and financial crimes. Operates under intense regulatory scrutiny with severe penalties for compliance failures. Must balance thorough monitoring with operational efficiency and customer experience.",
+        "cares": "Reducing false positive alert rates, ensuring comprehensive suspicious activity detection, maintaining audit-ready documentation, meeting regulatory examination requirements, and demonstrating effective AML program governance to regulators.",
+        "help": "Deploy advanced AML automation: AI-enhanced transaction monitoring with behavioral analytics, automated case management and investigation workflows, intelligent entity resolution and network analysis, regulatory reporting automation, and explainable AI for audit and examination support.",
+        "tags": {
+          "primary": ["aml", "financial-crimes", "regulatory"],
+          "secondary": ["behavioral-analytics", "case-management", "audit-compliance"],
+          "pain_points": ["false-positives", "regulatory-scrutiny", "investigation-workflows"],
+          "interests": ["behavioral-analytics", "entity-resolution", "explainable-ai"]
+        },
+        "priority": "high",
+        "influence": "influencer"
+      },
+      {
+        "id": "banking-wealth-ops-head",
+        "title": "Head of Wealth Operations",
+        "level": "director",
+        "vertical": "banking",
+        "lob": ["wealth-management"],
+        "world": "Oversees the operational backbone of wealth management services, ensuring seamless client onboarding, account management, and portfolio operations. Manages complex workflows involving multiple systems, custodians, and regulatory requirements.",
+        "cares": "Streamlining client onboarding processes, reducing operational errors in trade settlement, ensuring accurate fee calculations and billing, maintaining client data integrity, and supporting advisor productivity through efficient operations.",
+        "help": "Automate wealth management operations: intelligent client onboarding with document processing, automated portfolio rebalancing and trade execution, AI-powered fee calculation and reconciliation, automated reporting generation for clients and regulators, and intelligent exception handling for operational issues.",
+        "tags": {
+          "primary": ["wealth-management", "client-onboarding", "portfolio-operations"],
+          "secondary": ["trade-settlement", "fee-calculation", "advisor-productivity"],
+          "pain_points": ["operational-errors", "client-data-integrity", "complex-workflows"],
+          "interests": ["document-processing", "portfolio-automation", "intelligent-exception-handling"]
+        },
+        "priority": "medium",
+        "influence": "influencer"
+      },
+      {
+        "id": "banking-trading-ops-head",
+        "title": "Head of Trading Operations",
+        "level": "director",
+        "vertical": "banking",
+        "lob": ["capital-markets", "trading"],
+        "world": "Manages post-trade operations including trade settlement, clearing, and reconciliation across multiple asset classes and markets. Operates in a high-pressure, time-sensitive environment where errors can result in significant financial losses.",
+        "cares": "Minimizing trade settlement failures and breaks, ensuring accurate trade matching and confirmation, maintaining regulatory compliance for trade reporting, optimizing collateral management, and reducing operational risk exposure.",
+        "help": "Implement intelligent trade operations automation: automated trade matching and exception handling, AI-powered reconciliation across multiple systems, intelligent collateral optimization, automated regulatory trade reporting, and predictive analytics for settlement risk management.",
+        "tags": {
+          "primary": ["trading-operations", "trade-settlement", "reconciliation"],
+          "secondary": ["collateral-management", "regulatory-reporting", "risk-management"],
+          "pain_points": ["settlement-failures", "operational-risk", "manual-reconciliation"],
+          "interests": ["automated-matching", "intelligent-reconciliation", "predictive-analytics"]
+        },
+        "priority": "medium",
+        "influence": "influencer"
+      }
+    ],
+    "insurance": [
+      {
+        "id": "insurance-chief-claims-officer",
+        "title": "Chief Claims Officer",
+        "level": "c-suite",
+        "vertical": "insurance",
+        "lob": ["claims-processing", "all"],
+        "world": "Balances the critical dual mandate of claims: provide an amazing, empathetic customer experience while rigorously controlling costs and preventing fraud.",
+        "cares": "Lowering the loss ratio, reducing the cycle time from First Notice of Loss (FNOL) to settlement, and controlling Loss Adjustment Expenses (LAE).",
+        "help": "Use AI to automate FNOL intake from any channel, extract policy and coverage details, intelligently route claims to the right adjuster, and detect potential subrogation opportunities.",
+        "tags": {
+          "primary": ["claims", "customer-experience", "fraud-prevention"],
+          "secondary": ["fnol-automation", "loss-adjustment", "subrogation"],
+          "pain_points": ["loss-ratio", "cycle-time", "cost-control"],
+          "interests": ["ai-intake", "intelligent-routing", "fraud-detection"]
+        },
+        "priority": "high",
+        "influence": "decision-maker"
+      },
+      {
+        "id": "insurance-underwriting-head",
+        "title": "Head of Underwriting",
+        "level": "director", 
+        "vertical": "insurance",
+        "lob": ["underwriting", "all"],
+        "world": "Leads the team that decides which risks the company will take on. They are shifting from manual, experience-based decisions to a more data-driven, automated process.",
+        "cares": "Improving the bind ratio (quotes to bound policies), increasing the hit ratio (submissions to quotes), and dramatically speeding up quote turnaround time to win more business.",
+        "help": "Automate the entire submission process, from extracting data from broker emails and ACORD forms to triaging against underwriting appetite and flagging cases for review.",
+        "tags": {
+          "primary": ["underwriting", "risk-assessment", "quote-automation"],
+          "secondary": ["bind-ratio", "submission-processing", "competitive-advantage"],
+          "pain_points": ["turnaround-time", "manual-decisions", "submission-volume"],
+          "interests": ["data-extraction", "automated-triage", "acord-processing"]
+        },
+        "priority": "high",
+        "influence": "decision-maker"
+      }
+    ]
+  },
+  "metadata": {
+    "tags": {
+      "primary": ["operations", "compliance", "technology", "customer-experience", "claims", "underwriting"],
+      "secondary": ["ai-transformation", "risk-management", "cost-reduction", "process-automation"],
+      "pain_points": ["operational-resilience", "false-positives", "agent-attrition", "tco-reduction"],
+      "interests": ["measurable-roi", "ai-decisioning", "end-to-end-automation", "governed-workflows"]
+    },
+    "levels": ["c-suite", "executive", "director", "manager"],
+    "verticals": ["banking", "insurance"],
+    "influence_types": ["decision-maker", "influencer", "user"],
+    "priority_levels": ["high", "medium", "low"]
+  }
+}
