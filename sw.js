@@ -1,13 +1,15 @@
 // Service Worker for UiPath Sales Cycle Guide
 // Provides offline functionality and caching
 
-const CACHE_NAME = 'uipath-sales-guide-v1';
+const CACHE_NAME = 'uipath-sales-guide-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/styles.css',
   '/js/app.js',
   '/js/data.js',
+  '/js/ai-integration.js',
+  '/js/performance.js',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap',
   'https://cdn.tailwindcss.com'
 ];
