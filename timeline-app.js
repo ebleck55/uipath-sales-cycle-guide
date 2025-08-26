@@ -496,11 +496,25 @@ class TimelineUiPathApp {
     const industryUseCases = useCasesData[currentIndustry] || [];
     const allUseCases = [...industryUseCases, ...horizontalFunctions];
 
+    const getColorClasses = (color) => {
+      const colorMap = {
+        blue: { bg: 'bg-blue-50', text: 'text-blue-900', link: 'text-blue-700', linkHover: 'hover:text-blue-900' },
+        indigo: { bg: 'bg-indigo-50', text: 'text-indigo-900', link: 'text-indigo-700', linkHover: 'hover:text-indigo-900' },
+        green: { bg: 'bg-green-50', text: 'text-green-900', link: 'text-green-700', linkHover: 'hover:text-green-900' },
+        teal: { bg: 'bg-teal-50', text: 'text-teal-900', link: 'text-teal-700', linkHover: 'hover:text-teal-900' },
+        purple: { bg: 'bg-purple-50', text: 'text-purple-900', link: 'text-purple-700', linkHover: 'hover:text-purple-900' },
+        orange: { bg: 'bg-orange-50', text: 'text-orange-900', link: 'text-orange-700', linkHover: 'hover:text-orange-900' }
+      };
+      return colorMap[color] || colorMap.blue;
+    };
+
     const useCasesHTML = `
       <div class="grid md:grid-cols-2 gap-6">
-        ${allUseCases.map(category => `
-          <div class="bg-${category.color}-50 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-${category.color}-900 mb-4 flex items-center">
+        ${allUseCases.map(category => {
+          const colors = getColorClasses(category.color);
+          return `
+          <div class="${colors.bg} rounded-lg p-6">
+            <h3 class="text-lg font-semibold ${colors.text} mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${category.icon}"/>
               </svg>
@@ -508,11 +522,12 @@ class TimelineUiPathApp {
             </h3>
             <ul class="space-y-2">
               ${category.cases.map(useCase => `
-                <li><button class="use-case-link text-sm text-${category.color}-700 hover:text-${category.color}-900 text-left" data-page="${useCase.page}">• ${sanitizer.escapeHtml(useCase.name)}</button></li>
+                <li><button class="use-case-link text-sm ${colors.link} ${colors.linkHover} text-left transition-colors" data-page="${useCase.page}" data-name="${sanitizer.escapeHtml(useCase.name)}">• ${sanitizer.escapeHtml(useCase.name)}</button></li>
               `).join('')}
             </ul>
           </div>
-        `).join('')}
+        `;
+        }).join('')}
       </div>
     `;
 
@@ -1249,7 +1264,7 @@ class UseCasePDFHandler {
 
   async handleUseCaseClick(button) {
     const pageNumber = button.dataset.page;
-    const useCaseName = button.textContent.trim();
+    const useCaseName = button.dataset.name || button.textContent.trim().replace('• ', '');
     
     if (!pageNumber) {
       this.showNotification('Page number not found for this use case', 'error');
@@ -1261,119 +1276,26 @@ class UseCasePDFHandler {
       button.style.opacity = '0.6';
       button.disabled = true;
       
-      // Try to open the PDF at the specific page
-      await this.openPDFAtPage(pageNumber, useCaseName);
+      // Navigate to the PDF viewer page
+      this.openPDFViewer(pageNumber, useCaseName);
       
     } catch (error) {
-      console.error('Error opening PDF:', error);
-      this.showNotification(`Unable to open PDF at page ${pageNumber}`, 'error');
+      console.error('Error opening PDF viewer:', error);
+      this.showNotification(`Unable to open PDF viewer`, 'error');
     } finally {
-      // Reset button state
+      // Reset button state  
       button.style.opacity = '1';
       button.disabled = false;
     }
   }
 
-  async openPDFAtPage(pageNumber, useCaseName) {
-    // Try to open PDF in new window first
-    try {
-      await this.openPDFInNewWindow(pageNumber, useCaseName);
-      this.showNotification(`Opening ${useCaseName} (Page ${pageNumber})`, 'success');
-      return;
-    } catch (error) {
-      console.warn('PDF window open failed:', error);
-      // Fallback to modal
-      this.showPDFModal(pageNumber, useCaseName);
-      this.showNotification(`Showing ${useCaseName} reference (Page ${pageNumber})`, 'info');
-    }
+  openPDFViewer(pageNumber, useCaseName) {
+    // Navigate to the dedicated PDF viewer page
+    const viewerUrl = `pdf-viewer.html?page=${encodeURIComponent(pageNumber)}&name=${encodeURIComponent(useCaseName)}`;
+    window.open(viewerUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    this.showNotification(`Opening ${useCaseName} (Page ${pageNumber})`, 'success');
   }
 
-  async openPDFInNewWindow(pageNumber, useCaseName) {
-    // Create a URL-safe path for the PDF
-    const pdfName = encodeURIComponent('FINS - MAESTRO - Use Case Deck- Aug 2025.pdf');
-    
-    // Try different approaches to open PDF
-    const attempts = [
-      // Try local file path (works in some browsers with file access)
-      `file:///Users/eric.bouchard/Downloads/${pdfName}#page=${pageNumber}`,
-      // Try relative path (if PDF is served with the app)
-      `./downloads/${pdfName}#page=${pageNumber}`,
-      // Fallback: open system file browser to downloads
-      `file:///Users/eric.bouchard/Downloads/`
-    ];
-
-    let lastError;
-    for (const url of attempts) {
-      try {
-        const newWindow = window.open(url, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
-        if (newWindow) {
-          // PDF opened successfully
-          return;
-        }
-      } catch (error) {
-        lastError = error;
-        continue;
-      }
-    }
-    
-    throw lastError || new Error('Unable to open PDF in new window');
-  }
-
-  async openWithPreview(pageNumber) {
-    // macOS Preview can open PDFs at specific pages
-    const command = `open -a "Preview" "${this.pdfPath}" --args -p ${pageNumber}`;
-    
-    // This would work in a native macOS environment
-    // For web context, we'll fall back to the modal approach
-    throw new Error('Preview not available in web context');
-  }
-
-  async openWithSystemDefault(pageNumber) {
-    // Try to open with system default PDF viewer
-    // This would work with file:// protocol in some browsers
-    const pdfUrl = `file://${encodeURIComponent(this.pdfPath)}#page=${pageNumber}`;
-    window.open(pdfUrl, '_blank');
-  }
-
-  showPDFModal(pageNumber, useCaseName) {
-    // Create a modal to show PDF information and link
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
-    modal.innerHTML = `
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <div class="mt-3 text-center">
-          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">${useCaseName}</h3>
-          <div class="mt-2 px-7 py-3">
-            <p class="text-sm text-gray-500">
-              Please refer to <strong>page ${pageNumber}</strong> in the FINS Maestro Use Case document for detailed information about this use case.
-            </p>
-            <p class="text-xs text-gray-400 mt-2">
-              Document: FINS - MAESTRO - Use Case Deck- Aug 2025.pdf
-            </p>
-          </div>
-          <div class="items-center px-4 py-3">
-            <button class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300" onclick="this.closest('.fixed').remove()">
-              Got it
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Auto-close after 5 seconds
-    setTimeout(() => {
-      if (modal.parentElement) {
-        modal.remove();
-      }
-    }, 5000);
-  }
 
   showNotification(message, type = 'info') {
     // Reuse the existing notification system
