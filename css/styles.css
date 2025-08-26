@@ -572,6 +572,58 @@ details > summary:hover {
   margin-bottom: 0.5rem;
 }
 
+/* Collapsible sections */
+.collapsible-section {
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  transition: background-color 0.2s ease;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.collapsible-section:not(.expanded) .collapsible-header {
+  border-radius: 0.5rem;
+}
+
+.collapsible-content {
+  transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.collapsible-content:not(.hidden) {
+  max-height: none;
+  opacity: 1;
+  overflow: visible;
+}
+
+.chevron-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Tighter spacing for collapsed sections */
+.collapsible-section:not(.expanded) {
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.collapsible-section.expanded {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Override the default mt-3 and mt-6 from JS */
+.collapsible-section.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.collapsible-section.expanded.mt-3 {
+  margin-top: 1rem;
+}
+
 .question-category-header input {
   font-weight: 600;
   font-size: var(--font-size-base);

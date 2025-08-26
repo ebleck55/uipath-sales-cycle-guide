@@ -90,21 +90,41 @@ function stageCard(stage){
           <div class="editable-content">${listHtml(stage.uipathTeam)}</div>
         </div>` : ''}
       </div>
-      <div id="${stage.id}-questions" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
-        <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Key Discovery Questions</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-questions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
-        <div class="editable-content">${questionsHtml(stage.questions)}</div>
-        <div class="flex justify-center mt-4">
-          <button class="export-notes-btn px-4 py-2 text-white rounded-md font-semibold flex items-center" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
+      <div id="${stage.id}-questions" class="editable-card bg-gray-50 rounded-lg shadow mt-3 collapsible-section">
+        <div class="collapsible-header p-4 cursor-pointer flex justify-between items-center hover:bg-gray-100 transition-colors" onclick="toggleCollapsibleSection('${stage.id}-questions')">
+          <div class="flex items-center space-x-3">
+            <svg class="chevron-icon w-4 h-4 text-gray-600 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
-            Copy Notes
-          </button>
+            <h3 class="text-lg font-semibold text-gray-800">Key Discovery Questions</h3>
+          </div>
+          <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-questions" onclick="event.stopPropagation()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+        </div>
+        <div class="collapsible-content hidden p-6 pt-0">
+          <div class="editable-content">${questionsHtml(stage.questions)}</div>
+          <div class="flex justify-center mt-4">
+            <button class="export-notes-btn px-4 py-2 text-white rounded-md font-semibold flex items-center" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
+              </svg>
+              Copy Notes
+            </button>
+          </div>
         </div>
       </div>
-      <div id="${stage.id}-objections" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
-        <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center"><span>Common Objections & Responses</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-objections" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
-        <div class="editable-content">${objectionsHtml(stage.objections)}</div>
+      <div id="${stage.id}-objections" class="editable-card bg-gray-50 rounded-lg shadow mt-3 collapsible-section">
+        <div class="collapsible-header p-4 cursor-pointer flex justify-between items-center hover:bg-gray-100 transition-colors" onclick="toggleCollapsibleSection('${stage.id}-objections')">
+          <div class="flex items-center space-x-3">
+            <svg class="chevron-icon w-4 h-4 text-gray-600 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-800">Common Objections & Responses</h3>
+          </div>
+          <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-objections" onclick="event.stopPropagation()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+        </div>
+        <div class="collapsible-content hidden p-6 pt-0">
+          <div class="editable-content">${objectionsHtml(stage.objections)}</div>
+        </div>
       </div>
       <div id="${stage.id}-resources" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
         <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center">
@@ -261,6 +281,8 @@ function renderStages(){
     const host = document.getElementById(s.id);
     host.innerHTML = stageCard(s);
   })
+  // Reinitialize collapsible sections after rendering
+  reinitializeCollapsibleSections();
 }
 
 // ---------- INITIALIZATION FUNCTIONS ----------
@@ -2092,4 +2114,70 @@ function getStoredApiKey() {
     }
   }
   return null;
+}
+
+// Collapsible sections functionality
+function toggleCollapsibleSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  
+  const content = section.querySelector('.collapsible-content');
+  const chevron = section.querySelector('.chevron-icon');
+  const header = section.querySelector('.collapsible-header');
+  
+  if (!content || !chevron) return;
+  
+  const isHidden = content.classList.contains('hidden');
+  
+  if (isHidden) {
+    // Expand
+    content.classList.remove('hidden');
+    chevron.style.transform = 'rotate(90deg)';
+    section.classList.add('expanded');
+  } else {
+    // Collapse
+    content.classList.add('hidden');
+    chevron.style.transform = 'rotate(0deg)';
+    section.classList.remove('expanded');
+  }
+  
+  // Save state to localStorage
+  const stateKey = `collapsed_${sectionId}`;
+  localStorage.setItem(stateKey, isHidden ? 'false' : 'true');
+}
+
+// Initialize collapsible sections state from localStorage
+function initializeCollapsibleSections() {
+  const sections = document.querySelectorAll('.collapsible-section');
+  sections.forEach(section => {
+    const sectionId = section.id;
+    const stateKey = `collapsed_${sectionId}`;
+    const isCollapsed = localStorage.getItem(stateKey) === 'true';
+    
+    const content = section.querySelector('.collapsible-content');
+    const chevron = section.querySelector('.chevron-icon');
+    
+    if (content && chevron) {
+      if (isCollapsed) {
+        content.classList.add('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+        section.classList.remove('expanded');
+      } else {
+        content.classList.remove('hidden');
+        chevron.style.transform = 'rotate(90deg)';
+        section.classList.add('expanded');
+      }
+    }
+  });
+}
+
+// Initialize collapsible sections when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize after a short delay to ensure content is rendered
+  setTimeout(initializeCollapsibleSections, 500);
+});
+
+// Re-initialize when stage content changes
+function reinitializeCollapsibleSections() {
+  setTimeout(initializeCollapsibleSections, 100);
 }
