@@ -276,6 +276,50 @@ const PERSONAS_DATABASE = {
         vertical: 'general',
         lob: 'it',
         level: 'executive'
+      },
+      {
+        id: 'cto-general',
+        title: 'Chief Technology Officer',
+        description: 'Driving technology strategy and innovation while managing technical architecture',
+        priorities: ['Technology innovation', 'Platform scalability', 'Development efficiency', 'Technical excellence'],
+        painPoints: ['Technical debt', 'Development bottlenecks', 'Innovation speed', 'System integration'],
+        interests: ['Automation platforms', 'AI/ML integration', 'Development tools', 'Cloud architecture'],
+        vertical: 'general',
+        lob: 'it',
+        level: 'executive'
+      },
+      {
+        id: 'it-director-general',
+        title: 'IT Director',
+        description: 'Managing IT operations and overseeing technology implementation initiatives',
+        priorities: ['System uptime', 'Process efficiency', 'Team productivity', 'Cost management'],
+        painPoints: ['Manual IT processes', 'System maintenance', 'Resource allocation', 'Service requests'],
+        interests: ['IT process automation', 'System monitoring', 'Workflow optimization', 'Service management'],
+        vertical: 'general',
+        lob: 'it',
+        level: 'director'
+      },
+      {
+        id: 'ai-director-general',
+        title: 'Director of AI/Data Science',
+        description: 'Leading artificial intelligence and data science initiatives across the organization',
+        priorities: ['AI implementation', 'Data strategy', 'Model deployment', 'Business impact'],
+        painPoints: ['Data quality', 'Model deployment', 'AI adoption', 'Technical complexity'],
+        interests: ['AI platforms', 'Intelligent automation', 'ML pipelines', 'Data integration'],
+        vertical: 'general',
+        lob: 'it',
+        level: 'director'
+      },
+      {
+        id: 'digital-transformation-director',
+        title: 'Director of Digital Transformation',
+        description: 'Orchestrating digital transformation initiatives and process modernization',
+        priorities: ['Digital initiatives', 'Process transformation', 'Technology adoption', 'Change management'],
+        painPoints: ['Legacy processes', 'Digital adoption', 'Change resistance', 'ROI measurement'],
+        interests: ['Process automation', 'Digital tools', 'Workflow transformation', 'Innovation platforms'],
+        vertical: 'general',
+        lob: 'it',
+        level: 'director'
       }
     ]
   }
@@ -1081,6 +1125,26 @@ class PersonaManager {
         }
       ];
     }
+
+    // Always include IT and AI leadership personas since we sell software
+    const itPersonas = PERSONAS_DATABASE.general.it || [];
+    const relevantITPersonas = itPersonas.filter(persona => 
+      // Include all IT/AI leadership personas as they're always relevant for software sales
+      persona.level === 'executive' || 
+      persona.level === 'director' ||
+      persona.title.includes('AI') || 
+      persona.title.includes('Digital Transformation') ||
+      persona.title.includes('Technology') ||
+      persona.title.includes('Information')
+    );
+
+    // Add IT personas to the main list, avoiding duplicates
+    const existingIds = new Set(personas.map(p => p.id));
+    relevantITPersonas.forEach(itPersona => {
+      if (!existingIds.has(itPersona.id)) {
+        personas.push(itPersona);
+      }
+    });
 
     // Add context-specific filtering based on customer type and deployment
     return this.applyAdditionalFilters(personas, context);
