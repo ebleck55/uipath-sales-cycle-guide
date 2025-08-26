@@ -1106,8 +1106,8 @@ function initEditModal() {
       </div>
     `;
     
-    const modal = $('#editModal');
-    const modalContent = $('#modal-content');
+    const modal = $('#edit-modal');
+    const modalContent = $('#modal-content-area');
     
     if (modal && modalContent) {
       modalContent.innerHTML = content;
@@ -1143,7 +1143,7 @@ function initEditModal() {
   }
 
   function saveModalChanges() {
-    const modal = $('#editModal');
+    const modal = $('#edit-modal');
     if (!modal) return;
     
     const editTarget = modal.getAttribute('data-edit-target');
@@ -1235,8 +1235,8 @@ function openSimpleEditModal(targetId, title) {
   const items = Array.from(contentDiv.querySelectorAll('li')).map(li => li.innerHTML.replace(/<[^>]*>/g, ''));
   const currentContent = items.join('\n');
   
-  const modal = $('#editModal');
-  const modalContent = $('#modal-content');
+  const modal = $('#edit-modal');
+  const modalContent = $('#modal-content-area');
   if (!modal || !modalContent) return;
   
   modalContent.innerHTML = `
