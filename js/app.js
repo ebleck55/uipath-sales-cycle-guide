@@ -70,7 +70,7 @@ function togglePersonaDetails(personaId) {
 
 function stageCard(stage){
   return `
-    <h2 class="section-toggle text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-2 flex justify-between items-center cursor-pointer">
+    <h2 class="section-toggle text-2xl font-bold border-b-2 border-gray-200 pb-1 mb-1 flex justify-between items-center cursor-pointer">
       <span>${stage.title}</span>
       <svg class="toggle-icon w-6 h-6 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
     </h2>
@@ -89,6 +89,16 @@ function stageCard(stage){
           <h3 class="text-xl font-semibold mb-3 text-blue-800 flex justify-between items-center"><span>UiPath Team</span><svg class="edit-icon w-5 h-5 text-gray-500 hover:text-blue-600" data-target="${stage.id}-uipath-team" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg></h3>
           <div class="editable-content">${listHtml(stage.uipathTeam)}</div>
         </div>` : ''}
+        <div id="${stage.id}-resources" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-3">
+          <h3 class="text-xl font-semibold mb-3 uipath-robotic-orange flex justify-between items-center">
+            <span data-industry="banking">Key Content & Resources (Banking)</span>
+            <span data-industry="insurance" class="hidden">Key Content & Resources (Insurance)</span>
+            <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-resources" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+          </h3>
+          <div class="editable-content">
+            ${resourcesHtml(stage.resources)}
+          </div>
+        </div>
       </div>
       <div id="${stage.id}-questions" class="editable-card bg-gray-50 rounded-lg shadow mt-3 collapsible-section">
         <div class="collapsible-header p-4 cursor-pointer flex justify-between items-center hover:bg-gray-100 transition-colors" onclick="toggleCollapsibleSection('${stage.id}-questions')">
@@ -124,16 +134,6 @@ function stageCard(stage){
         </div>
         <div class="collapsible-content hidden p-6 pt-0">
           <div class="editable-content">${objectionsHtml(stage.objections)}</div>
-        </div>
-      </div>
-      <div id="${stage.id}-resources" class="editable-card bg-gray-50 p-6 rounded-lg shadow mt-6">
-        <h3 class="text-2xl font-semibold mb-4 uipath-robotic-orange flex justify-between items-center">
-          <span data-industry="banking">Key Content & Resources (Banking)</span>
-          <span data-industry="insurance" class="hidden">Key Content & Resources (Insurance)</span>
-          <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="${stage.id}-resources" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
-        </h3>
-        <div class="editable-content">
-          ${resourcesHtml(stage.resources)}
         </div>
       </div>
     </div>`;
@@ -271,8 +271,8 @@ const objectionsHtml = (items)=>{
 }
 
 const resourcesHtml = (res)=>{
-  const b = (res.banking||[]).map(r=>`<li><a href="${r.link}" class="text-blue-600 font-semibold hover:underline">${r.name}</a><p class="text-sm text-gray-600 mt-1"><strong>Overview:</strong> ${r.overview} <br><strong>Why it Matters:</strong> ${r.why}</p></li>`).join('')
-  const i = (res.insurance||[]).map(r=>`<li><a href="${r.link}" class="text-blue-600 font-semibold hover:underline">${r.name}</a><p class="text-sm text-gray-600 mt-1"><strong>Overview:</strong> ${r.overview} <br><strong>Why it Matters:</strong> ${r.why}</p></li>`).join('')
+  const b = (res.banking||[]).map(r=>`<li><a href="${r.link}" class="text-blue-600 font-semibold hover:underline">${r.name}</a></li>`).join('')
+  const i = (res.insurance||[]).map(r=>`<li><a href="${r.link}" class="text-blue-600 font-semibold hover:underline">${r.name}</a></li>`).join('')
   return `<div data-industry="banking"><ul class="space-y-4">${b}</ul></div><div data-industry="insurance" class="hidden"><ul class="space-y-4">${i}</ul></div>`
 }
 
@@ -2158,7 +2158,9 @@ function initializeCollapsibleSections() {
   sections.forEach(section => {
     const sectionId = section.id;
     const stateKey = `collapsed_${sectionId}`;
-    const isCollapsed = localStorage.getItem(stateKey) === 'true';
+    const storedState = localStorage.getItem(stateKey);
+    // Default to collapsed (true) if no stored state exists, otherwise use stored state
+    const isCollapsed = storedState === null ? true : storedState === 'true';
     
     const content = section.querySelector('.collapsible-content');
     const chevron = section.querySelector('.chevron-icon');
