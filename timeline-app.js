@@ -397,20 +397,32 @@ class TimelineUiPathApp {
     const personas = SALES_CYCLE_DATA.personas[currentIndustry] || [];
     
     const personasHTML = personas.map(persona => `
-      <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-        <h3 class="text-lg font-semibold mb-3 text-blue-700">${sanitizer.escapeHtml(persona.title)}</h3>
-        <div class="space-y-3">
-          <div>
-            <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.world || '')}</p>
+      <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="persona-card">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-blue-700 flex items-center">
+              <svg class="chevron-icon w-4 h-4 mr-2 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+              ${sanitizer.escapeHtml(persona.title)}
+            </h3>
+            <span class="text-xs text-gray-500">Click to expand</span>
           </div>
-          <div>
-            <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.cares || '')}</p>
-          </div>
-          <div>
-            <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.help || '')}</p>
+        </div>
+        <div class="collapsible-content hidden px-6 pb-6">
+          <div class="space-y-3 pt-2 border-t border-gray-100">
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.world || '')}</p>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.cares || '')}</p>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.help || '')}</p>
+            </div>
           </div>
         </div>
       </div>
