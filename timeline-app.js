@@ -965,68 +965,71 @@ class UseCaseManager {
       return;
     }
 
-    const useCaseCards = this.filteredUseCases.map(useCase => `
-      <div class="use-case-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-        <div class="collapsible-header p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-section="use-case-card">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center flex-1">
-              <svg class="chevron-icon w-4 h-4 mr-2 text-orange-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-              <h3 class="text-lg font-semibold text-orange-700">${useCase.name}</h3>
+    const useCaseCards = this.filteredUseCases.map(useCase => {
+      const isSelected = this.selectedUseCases.has(useCase.id);
+      
+      return `
+        <div class="use-case-card bg-white p-6 rounded-lg border hover:border-orange-300 transition-colors ${isSelected ? 'ring-2 ring-orange-500 border-orange-500' : 'border-gray-200'}">
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">${useCase.name}</h3>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
+                  ${useCase.category}
+                </span>
+                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                  ${useCase.complexity}
+                </span>
+                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                  ${useCase.timeToValue}
+                </span>
+              </div>
             </div>
-            <span class="text-sm text-gray-600">${useCase.category}</span>
-          </div>
-        </div>
-        <div class="collapsible-content hidden px-4 pb-4">
-          <div class="space-y-2 pt-2 border-t border-gray-100">
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Description:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${useCase.description}</p>
-            </div>
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Business Value:</h4>
-              <p class="text-xs text-green-700 leading-relaxed">${useCase.businessValue}</p>
-            </div>
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Key Processes:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${useCase.processes.join(', ')}</p>
-            </div>
-            ${useCase.page ? `
-            <div class="pt-2">
-              <button class="lob-use-case-link w-full px-3 py-1 bg-orange-600 text-white text-xs rounded hover:bg-orange-700 transition-colors" 
-                      data-page="${useCase.page}">
-                View Detailed Slide (Page ${useCase.page})
+            <div class="flex items-center gap-2">
+              <button 
+                class="use-case-select-btn px-3 py-1 text-xs font-medium rounded transition-colors ${isSelected ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
+                data-use-case-id="${useCase.id}">
+                ${isSelected ? '✓ Selected' : 'Select'}
               </button>
             </div>
-            ` : ''}
           </div>
+          
+          <p class="text-gray-600 text-sm mb-4">${useCase.description}</p>
+          
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Business Value:</h4>
+            <p class="text-green-700 text-sm font-medium">${useCase.businessValue}</p>
+          </div>
+
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Key Processes:</h4>
+            <div class="flex flex-wrap gap-1">
+              ${useCase.processes.map(process => 
+                `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${process}</span>`
+              ).join('')}
+            </div>
+          </div>
+
+          ${useCase.page ? `
+          <div class="border-t pt-4">
+            <button class="lob-use-case-link w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium rounded hover:from-orange-600 hover:to-red-600 transition-all" 
+                    data-page="${useCase.page}">
+              📊 View Detailed Slide (Page ${useCase.page})
+            </button>
+          </div>
+          ` : ''}
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     container.innerHTML = useCaseCards;
 
-    // Add event listeners for collapsible functionality
-    this.attachCollapsibleEventListeners(container);
-  }
-
-  attachCollapsibleEventListeners(container) {
-    // Handle collapsible functionality
-    const headers = container.querySelectorAll('.collapsible-header');
-    headers.forEach(header => {
-      header.addEventListener('click', () => {
-        const content = header.nextElementSibling;
-        const chevron = header.querySelector('.chevron-icon');
-        
-        if (content.classList.contains('hidden')) {
-          content.classList.remove('hidden');
-          chevron.style.transform = 'rotate(90deg)';
-        } else {
-          content.classList.add('hidden');
-          chevron.style.transform = 'rotate(0deg)';
-        }
-      });
+    // Add event listeners for selection buttons
+    container.addEventListener('click', (e) => {
+      if (e.target.matches('.use-case-select-btn')) {
+        const useCaseId = e.target.dataset.useCaseId;
+        this.toggleUseCaseSelection(useCaseId);
+      }
     });
   }
 
