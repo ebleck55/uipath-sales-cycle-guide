@@ -10,39 +10,39 @@ const SALES_CYCLE_DATA = {
     banking: [
       {
         title: 'Chief Operating Officer',
-        world: 'Manages the bank\'s core engine. Oversees thousands of employees in operations, payments, and servicing, all while fighting fires and trying to drive digital transformation.',
-        cares: 'Reducing cost-to-serve, improving straight-through processing (STP) rates, ensuring business resilience, and meeting aggressive efficiency targets set by the board.',
-        help: 'Automate high-volume, repetitive back-office processes like payment investigations, KYC refreshes, and dispute resolution using a governed combination of AI and RPA.'
+        world: 'Manages the bank\'s core engine. Oversees thousands of employees in operations, payments, and servicing, all while fighting fires and trying to drive digital transformation. Increasingly pressured to deliver AI-driven efficiency while maintaining operational risk controls.',
+        cares: 'Reducing cost-to-serve, improving straight-through processing (STP) rates, ensuring business resilience, and meeting aggressive efficiency targets set by the board. Seeks measurable AI ROI while avoiding operational disruption.',
+        help: 'Deploy agentic automation for complex, end-to-end processes like loan origination (reducing 5-day manual process to 1-day with AI decisioning), payment investigations with intelligent case routing, and KYC refreshes with automated adverse media screening and risk scoring.'
       },
       {
         title: 'Chief Compliance Officer',
-        world: 'Lives in a world of complex, ever-changing regulations (AML, KYC, etc.). Their primary role is to protect the bank from massive fines and reputational damage.',
-        cares: 'Minimizing false positives in transaction monitoring, clearing alert backlogs to avoid regulatory breaches, and proving the bank has auditable, explainable controls.',
-        help: 'Use Document Understanding and AI to automate KYC/AML checks, screen for adverse media, and provide clear, auditable decision trails for regulators.'
+        world: 'Lives in a world of complex, ever-changing regulations (AML, KYC, etc.). Their primary role is to protect the bank from massive fines and reputational damage. Must balance AI innovation with regulatory explainability and model risk management.',
+        cares: 'Minimizing false positives in transaction monitoring, clearing alert backlogs to avoid regulatory breaches, proving the bank has auditable, explainable controls, and ensuring AI models meet regulatory scrutiny (SR 11-7, OCC guidance).',
+        help: 'Deploy governed agentic workflows for KYC/AML processes with full audit trails, automated adverse media screening with confidence scoring, intelligent transaction monitoring with explainable AI decisioning, and regulatory reporting automation with human oversight controls.'
       },
       {
         title: 'Head of Contact Center',
-        world: 'Runs a high-pressure environment focused on customer experience (CX). They constantly battle agent attrition, high training costs, and pressure to reduce call times.',
-        cares: 'Improving Net Promoter Score (NPS) and Customer Satisfaction (CSAT), reducing Average Handle Time (AHT), and ensuring agents are compliant with scripts and procedures.',
-        help: 'Provide agents with a "copilot" that automates desktop tasks, finds answers in knowledge bases, and handles post-call summary and wrap-up work automatically.'
+        world: 'Runs a high-pressure environment focused on customer experience (CX). They constantly battle agent attrition, high training costs, and pressure to reduce call times. Exploring AI agents to handle routine inquiries while keeping complex cases human-assisted.',
+        cares: 'Improving Net Promoter Score (NPS) and Customer Satisfaction (CSAT), reducing Average Handle Time (AHT), ensuring agents are compliant with scripts and procedures, and maximizing agent productivity through AI assistance.',
+        help: 'Deploy intelligent agent assistants that provide real-time account insights, automate desktop workflows during calls, generate post-call summaries, suggest next-best actions, and escalate complex cases to human agents with full context and recommended solutions.'
       },
       {
         title: 'CIO / CTO',
-        world: 'Balances the need for innovation with the reality of maintaining complex, legacy core banking systems. They are under pressure to deliver value faster and more securely.',
-        cares: 'Reducing total cost of ownership (TCO) for technology, standardizing on scalable enterprise platforms, mitigating vendor and security risks, and avoiding integration debt.',
-        help: 'Deploy an enterprise-grade automation fabric with robust governance, role-based access controls (RBAC), API-first integration, and options for private AI.'
+        world: 'Balances the need for innovation with the reality of maintaining complex, legacy core banking systems. They are under pressure to deliver value faster and more securely while establishing enterprise AI governance and ensuring regulatory compliance.',
+        cares: 'Reducing total cost of ownership (TCO) for technology, standardizing on scalable enterprise platforms, mitigating vendor and security risks, avoiding integration debt, and building reusable AI/automation capabilities with proper model risk management.',
+        help: 'Implement an enterprise-grade agentic automation platform with centralized governance, role-based access controls (RBAC), API-first integration, private AI deployment options, comprehensive audit logging, and pre-built connectors for core banking systems.'
       },
       {
         title: 'Head of Payments Ops',
-        world: 'Manages the high-stakes, time-sensitive flow of money. Their world is dictated by payment cutoffs, SWIFT messages, and the constant risk of failed transactions.',
-        cares: 'Maximizing the Straight-Through Processing (STP) rate, minimizing financial write-offs from errors, and meeting strict Service Level Agreements (SLAs) for payment execution.',
-        help: 'Automate the entire payment exceptions workflow: triage incoming cases, parse documents, use rules and LLMs for routing, and enable auto-resolution for common issues.'
+        world: 'Manages the high-stakes, time-sensitive flow of money. Their world is dictated by payment cutoffs, SWIFT messages, and the constant risk of failed transactions. Must achieve near-perfect STP rates while managing complex exception handling and regulatory reporting.',
+        cares: 'Maximizing the Straight-Through Processing (STP) rate, minimizing financial write-offs from errors, meeting strict Service Level Agreements (SLAs) for payment execution, and reducing manual investigation time for payment exceptions.',
+        help: 'Deploy agentic automation for the complete payment lifecycle: intelligent exception triage with AI-powered document parsing, automated investigation workflows with decision trees, real-time SWIFT message analysis, predictive failure detection, and auto-resolution for 80% of common payment issues with human escalation for complex cases.'
       },
       {
         title: 'Line of Business GM',
-        world: 'Owns the P&L for a specific product like mortgages or credit cards. They are deeply focused on market share, customer acquisition, and profitability.',
-        cares: 'Hitting revenue and margin targets, reducing customer churn, and launching new products faster than the competition. They see technology as a means to a business end.',
-        help: 'Deliver automation for specific, high-impact use cases that are directly tied to their P&L, such as accelerating loan onboarding or improving the collections process.'
+        world: 'Owns the P&L for a specific product like mortgages or credit cards. They are deeply focused on market share, customer acquisition, and profitability. Needs AI solutions that demonstrably impact their business metrics and competitive position.',
+        cares: 'Hitting revenue and margin targets, reducing customer churn, launching new products faster than the competition, improving customer acquisition cost (CAC), and maximizing customer lifetime value (CLV). They see technology as a means to a business end.',
+        help: 'Deploy targeted agentic solutions with measurable P&L impact: accelerate loan origination from 5 days to 1 day with AI underwriting assistance, automate collections workflows with intelligent customer communication sequencing, provide personalized product recommendations through customer journey analysis, and enable real-time fraud prevention to reduce losses.'
       }
     ],
     
@@ -92,33 +92,58 @@ const SALES_CYCLE_DATA = {
       id: 'discovery',
       title: '1. Discovery: Find Impact, Build Trust',
       outcomes: [
-        'Aligned on pains automation can solve',
-        'Confirmed interest in UiPath solution',
-        'Customer commitment to invest time',
-        'Executive sponsor identified',
-        'NDA signed (if necessary)'
+        'Customer pain identified and business imperatives agreed',
+        'Champions & coaches confirmed',
+        'Competition understood',
+        'Timeline & budget identified',
+        '"Before scenarios" identified with value drivers',
+        'NDA executed (if needed)'
       ],
       initialPersonas: [
         '<strong>Automation COE / IT Manager:</strong> First-line evaluator and technical guide.',
         '<strong>Line of Business Director:</strong> Feels the pain and can champion change.'
       ],
+      uipathTeam: [
+        '<strong>Sales:</strong> Lead discovery and qualification',
+        '<strong>BDR:</strong> Initial prospecting and lead qualification',
+        '<strong>Sales Engineer:</strong> Technical discovery and demos',
+        '<strong>Partner Team:</strong> Channel engagement and enablement'
+      ],
       questions: {
         'Pain & Impact': [
           'Walk me through how <em>X</em> happens today. Where are the delays or re-work?',
           'If nothing changes in 6–12 months, what breaks or who is impacted most?',
-          'Can we quantify the impact in cost, revenue, risk, or CX terms?'
+          'Can we quantify the impact in cost, revenue, risk, or CX terms?',
+          'What percentage of this work requires human judgment vs. following rules?'
         ],
         'Strategic Alignment': [
           'Which executive initiative does improving this process support (e.g., efficiency, CX, risk)?',
-          'What would a successful quarter look like if we fixed this?'
+          'What would a successful quarter look like if we fixed this?',
+          'How does this align with your digital transformation or AI strategy?'
+        ],
+        'AI & Automation Maturity': [
+          'Agent, Bot, do you know what lang is? Where are you in your AI maturity journey?',
+          'Are you using any AI tools today? Copilots? How does the company approach AI?',
+          'What governance or risk controls do you have around AI and automation?',
+          'Have you tried RPA, workflow tools, or other automation before? What worked or didn\'t?'
         ],
         'People & Roles': [
           'Who owns the process? Who needs to sign off?',
-          'Who benefits day-to-day and who could block it?'
+          'Who benefits day-to-day and who could block it?',
+          'How comfortable are your teams with AI-assisted work?',
+          'What change management support would be needed?'
         ],
         'Tech & Data': [
           'Which systems are in the flow (core, CRM, email, spreadsheets)?',
-          'What documents or data inputs are involved and how are they validated today?'
+          'What documents or data inputs are involved and how are they validated today?',
+          'What\'s your appetite for cloud vs. on-premise AI models?',
+          'How do you handle sensitive data in automated processes today?'
+        ],
+        'Process Deep-Dive': [
+          'What triggers this process? How often does it run?',
+          'Where do exceptions or edge cases get handled?',
+          'What would "straight-through processing" look like for this?',
+          'If an AI agent could handle 80% automatically, what would the 20% escalation look like?'
         ]
       },
       objections: [
@@ -138,6 +163,30 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Automate KYC refresh and adverse media screening.',
             why: 'Show CCO risk mitigation and OPEX reduction.'
+          },
+          {
+            name: 'Agentic Loan Origination',
+            link: '#',
+            overview: 'End-to-end loan processing with AI decisioning: application intake, document extraction, credit analysis, compliance checks, and approval routing.',
+            why: 'Reduce 5-day manual process to 1-day automated with 80% straight-through processing.'
+          },
+          {
+            name: 'Intelligent Payment Operations',
+            link: '#',
+            overview: 'Automated payment exception handling: SWIFT message parsing, investigation workflows, and resolution routing.',
+            why: 'Increase STP rates and reduce manual investigation time by 70%.'
+          },
+          {
+            name: 'AI-Powered Contact Center',
+            link: '#',
+            overview: 'Agent copilot with real-time account insights, desktop automation, and post-call summarization.',
+            why: 'Improve AHT, CSAT, and agent productivity while ensuring compliance.'
+          },
+          {
+            name: 'Automated Regulatory Reporting',
+            link: '#',
+            overview: 'Intelligent data collection, validation, and regulatory report generation with audit trails.',
+            why: 'Reduce compliance risk and manual reporting effort by 60%.'
           }
         ],
         insurance: [
@@ -154,14 +203,23 @@ const SALES_CYCLE_DATA = {
       id: 'business-qualification',
       title: '2. Business Qualification: Value, Sponsor, Compelling Event',
       outcomes: [
-        'Economic buyer identified',
-        'Business case agreed in principle',
-        'Compelling event/date documented',
-        'Decision process mapped'
+        'Economic buyer confirmed with budget',
+        'Decision process understood and validated',
+        'Customer success metrics defined',
+        'Positive business outcomes defined',
+        'Required capabilities defined',
+        'ROI and financials modeled via assisted Outside-in'
       ],
       initialPersonas: [
         '<strong>EVP/VP Operations:</strong> Owns savings targets.',
         '<strong>Finance Partner:</strong> Validates benefits & ROI.'
+      ],
+      uipathTeam: [
+        '<strong>Sales:</strong> Business case development and stakeholder alignment',
+        '<strong>Sales Engineer:</strong> Solution validation and technical demos',
+        '<strong>Global Value Engineering:</strong> ROI modeling and business case support',
+        '<strong>Professional Services:</strong> Implementation planning and scoping',
+        '<strong>Executives:</strong> Executive sponsor alignment'
       ],
       questions: {
         'Value & Outcomes': [
@@ -206,14 +264,21 @@ const SALES_CYCLE_DATA = {
       id: 'technical-qualification',
       title: '3. Technical Qualification: Feasibility, Risk, Architecture',
       outcomes: [
-        'Target architecture agreed',
-        'Security & compliance posture accepted',
-        'Data availability confirmed',
-        'Pilot plan defined'
+        'Technical requirements understood',
+        'Required capabilities proven (e.g.: POV)',
+        'Products, solutions, configuration validated',
+        'Technical win confirmed',
+        'Rollout plan created'
       ],
       initialPersonas: [
         '<strong>Enterprise Architect:</strong> Integrations & standards.',
         '<strong>Security / Model Risk:</strong> Controls, audit.'
+      ],
+      uipathTeam: [
+        '<strong>Sales:</strong> Technical qualification coordination',
+        '<strong>Sales Engineer:</strong> Technical validation and POV execution',
+        '<strong>Professional Services:</strong> Implementation architecture and rollout planning',
+        '<strong>Partner Team:</strong> Partner technical resources and integration'
       ],
       questions: {
         'Architecture & Integrations': [
@@ -258,14 +323,22 @@ const SALES_CYCLE_DATA = {
       id: 'proposal',
       title: '4. Proposal & Negotiation: Commercials, Scope, Success Plan',
       outcomes: [
-        'Mutually agreed success plan',
-        'SOW/Order form drafted',
-        'Pricing approved',
-        'Redlines resolved'
+        'Economic buyer & UiPath executive sponsor aligned',
+        'Compelling proposal w/ROI presented (with Global Value Engineering)',
+        'Primary quote accepted',
+        'Partner involvement correct (where applicable)',
+        'Close plan defined with customer to support close date'
       ],
       initialPersonas: [
         '<strong>Procurement:</strong> Commercials & terms.',
         '<strong>Legal:</strong> Data & liability.'
+      ],
+      uipathTeam: [
+        '<strong>Sales:</strong> Proposal presentation and negotiation leadership',
+        '<strong>Commercial Desk/Deal Hub:</strong> Pricing and commercial terms',
+        '<strong>Global Value Engineering:</strong> ROI validation and value presentation',
+        '<strong>Executives:</strong> Executive alignment and sponsorship',
+        '<strong>Professional Services:</strong> SOW development and scoping'
       ],
       questions: {
         'Commercials': [
@@ -310,14 +383,21 @@ const SALES_CYCLE_DATA = {
       id: 'implement',
       title: '5. Implement & Expand: Deliver Value, Land & Expand',
       outcomes: [
-        'Pilot completed on time',
-        'KPIs achieved/validated',
-        'Runbook & ownership in place',
-        'Next use-cases prioritized'
+        'Order documents verified and received',
+        'SOW signed (if PS included)',
+        'Implementation plan confirmed',
+        'Initial internal handover meeting completed (AE/SE/CSD/CSM)',
+        'Close plan defined and validated with customer'
       ],
       initialPersonas: [
         '<strong>Program Lead:</strong> Drives cadence & unblockers.',
         '<strong>Ops Manager:</strong> Adopts new way of working.'
+      ],
+      uipathTeam: [
+        '<strong>Sales:</strong> Account management and expansion planning',
+        '<strong>Deal Hub:</strong> Order processing and documentation',
+        '<strong>Finance Operations:</strong> Invoice processing and licensing',
+        '<strong>Customer Success:</strong> Implementation support and onboarding'
       ],
       questions: {
         'Delivery & Change': [
