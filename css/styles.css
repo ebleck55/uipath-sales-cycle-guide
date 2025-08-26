@@ -1,0 +1,366 @@
+/* UiPath Sales Cycle Guide Styles */
+
+/* CSS Variables for consistent theming */
+:root {
+  --uipath-orange: #FA4616;
+  --uipath-blue: #182126;
+  --uipath-teal: #0BA2B3;
+  --transition-default: all 0.3s ease;
+  --border-radius: 0.5rem;
+  --shadow-default: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Typography */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Utility Classes */
+.uipath-deep-blue {
+  background-color: var(--uipath-blue);
+}
+
+.uipath-robotic-orange {
+  color: var(--uipath-orange);
+}
+
+/* Navigation */
+.nav-link {
+  transition: var(--transition-default);
+  position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--uipath-orange);
+  border-bottom: 2px solid var(--uipath-orange);
+}
+
+/* Content Sections */
+.content-section {
+  scroll-margin-top: 90px;
+}
+
+/* Form Elements */
+.form-checkbox:checked {
+  background-color: var(--uipath-orange);
+  border-color: var(--uipath-orange);
+}
+
+.form-checkbox {
+  border-radius: 4px;
+  transition: var(--transition-default);
+}
+
+.form-checkbox:focus {
+  ring-color: var(--uipath-orange);
+  border-color: var(--uipath-orange);
+}
+
+/* Progress Bar */
+.progress-bar-bg {
+  background: #e5e7eb;
+  border-radius: var(--border-radius);
+}
+
+.progress-bar {
+  background: var(--uipath-blue);
+  transition: width 0.35s ease;
+  border-radius: var(--border-radius);
+  min-width: 2%;
+}
+
+/* Checked Items */
+.checked-item span {
+  text-decoration: line-through;
+  color: #9ca3af;
+  transition: var(--transition-default);
+}
+
+/* Details/Summary Elements */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details > summary::before {
+  content: '+';
+  margin-right: 0.5rem;
+  font-weight: 700;
+  color: var(--uipath-orange);
+  transition: var(--transition-default);
+}
+
+details[open] > summary::before {
+  content: '-';
+  transform: rotate(0deg);
+}
+
+details > summary:hover {
+  color: var(--uipath-orange);
+}
+
+/* Admin Mode */
+.edit-icon {
+  display: none;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.admin-mode .edit-icon {
+  display: inline-block;
+}
+
+.edit-icon:hover {
+  color: var(--uipath-orange);
+  transform: scale(1.1);
+}
+
+/* Industry Selector */
+.industry-selector {
+  background: #f9fafb;
+  border-radius: var(--border-radius);
+  padding: 2px;
+}
+
+.industry-selector button {
+  transition: var(--transition-default);
+  border-radius: calc(var(--border-radius) - 2px);
+}
+
+.industry-selector button.active {
+  background: var(--uipath-blue);
+  color: #fff;
+  box-shadow: var(--shadow-default);
+}
+
+.industry-selector button:hover:not(.active) {
+  background: #e5e7eb;
+}
+
+/* Toggle Icons */
+.toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.section-toggle.open .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Cards and Content Areas */
+.content-card {
+  background: #f9fafb;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-default);
+  transition: var(--transition-default);
+}
+
+.content-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--uipath-blue);
+  color: white;
+  border-radius: var(--border-radius);
+  transition: var(--transition-default);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0f1419;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-default);
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+  border-radius: var(--border-radius);
+  transition: var(--transition-default);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* Modal */
+#edit-modal {
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Admin Toggle */
+#admin-toggle:checked + div {
+  background-color: var(--uipath-orange);
+}
+
+#admin-toggle:checked + div .dot {
+  transform: translateX(1rem);
+}
+
+#admin-toggle-mobile:checked + div {
+  background-color: var(--uipath-orange);
+}
+
+#admin-toggle-mobile:checked + div .dot {
+  transform: translateX(1rem);
+}
+
+.dot {
+  transition: var(--transition-default);
+}
+
+/* Typography Improvements */
+.kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 0.125rem 0.25rem;
+  font-size: 0.875rem;
+}
+
+/* Responsive Design Improvements */
+@media (max-width: 768px) {
+  .content-section {
+    scroll-margin-top: 60px;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    padding-left: 1rem;
+  }
+  
+  .nav-link:hover,
+  .nav-link.active {
+    border-bottom: none;
+    border-left: 3px solid var(--uipath-orange);
+  }
+  
+  .industry-selector {
+    width: 100%;
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Focus States for Accessibility */
+.nav-link:focus,
+button:focus,
+input:focus,
+textarea:focus,
+details summary:focus {
+  outline: 2px solid var(--uipath-orange);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .sticky,
+  .fixed,
+  button,
+  .edit-icon {
+    display: none;
+  }
+  
+  .content-section {
+    page-break-inside: avoid;
+  }
+  
+  details {
+    page-break-inside: avoid;
+  }
+  
+  details summary::before {
+    content: '';
+  }
+  
+  details .collapsible-content {
+    display: block !important;
+  }
+}
+
+/* Performance Optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-scroll {
+  will-change: scroll-position;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Copy-to-clipboard message */
+#copy-message {
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  z-index: 1000;
+}
+
+/* Export button styling */
+#export-notes-btn {
+  transition: var(--transition-default);
+}
+
+#export-notes-btn:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-default);
+}

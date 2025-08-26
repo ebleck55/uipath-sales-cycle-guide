@@ -44,11 +44,28 @@ This application is designed to work seamlessly with GitHub Pages:
 ## File Structure
 
 ```
-my-first-claude-project/
-├── index.html          # Main application file
-├── README.md          # This file
-└── .gitignore         # Git ignore file
+uipath-sales-cycle-guide/
+├── index.html              # Optimized HTML structure
+├── css/
+│   └── styles.css         # Separated CSS with performance optimizations
+├── js/
+│   ├── data.js           # Sales cycle data configuration
+│   ├── app.js            # Main application logic
+│   └── performance.js    # Performance optimizations and utilities
+├── sw.js                  # Service Worker for offline functionality
+├── README.md             # Documentation
+└── .gitignore            # Git ignore file
 ```
+
+## Performance Optimizations
+
+- **Separated concerns**: CSS, JavaScript, and data are in separate files
+- **Service Worker**: Enables offline functionality and caching
+- **Resource hints**: Preconnect to external domains for faster loading
+- **Lazy loading**: Ready for images and heavy content
+- **Modern clipboard API**: With fallback for older browsers
+- **Memory management**: Built-in monitoring and cleanup utilities
+- **Accessibility**: ARIA labels, semantic HTML, keyboard navigation
 
 ## Browser Compatibility
 
