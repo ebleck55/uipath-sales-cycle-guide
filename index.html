@@ -185,7 +185,7 @@
   </div>
 
   <!-- LLM Prompt Bar -->
-  <div id="llm-prompt-bar" class="bg-gradient-to-r from-orange-500 to-blue-600 shadow-lg sticky top-16 z-30 transition-all duration-300">
+  <div id="llm-prompt-bar" class="shadow-lg sticky top-16 z-30 transition-all duration-300" style="background-color: #182126;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
       <div class="flex items-center space-x-4">
         <!-- AI Icon -->
@@ -203,13 +203,13 @@
             type="text" 
             id="llm-prompt-input"
             placeholder="Ask AI about sales strategies, objections, personas, or anything else..."
-            class="w-full px-4 py-2 pl-4 pr-24 bg-white bg-opacity-90 backdrop-blur-sm rounded-lg border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:bg-white placeholder-gray-500 text-gray-900"
+            class="w-full px-4 py-2 pl-4 pr-24 bg-white bg-opacity-90 backdrop-blur-sm rounded-full border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:bg-white placeholder-gray-500 text-gray-900"
           />
           
           <!-- Send Button -->
           <button 
             id="llm-send-btn"
-            class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
           >
             <div class="flex items-center space-x-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,16 +222,19 @@
         
         <!-- Quick Actions -->
         <div class="hidden lg:flex items-center space-x-2">
-          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-md transition-colors" data-prompt="How do I handle objections for this topic?">
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="How do I handle objections for this topic?">
             🛡️ Objection Handling
           </button>
-          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-md transition-colors" data-prompt="What business processes are most relevant here?">
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="What business processes are most relevant here?">
             ⚙️ Business Process
           </button>
-          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-md transition-colors" data-prompt="Find relevant content and resources for this context">
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="Find relevant content and resources for this context">
             🔍 Find Content
           </button>
-          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-md transition-colors" data-prompt="How do we compare to competitors in this area?">
+          <button class="llm-quick-btn company-research-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
+            🏢 Company Research
+          </button>
+          <button class="llm-quick-btn competitive-analysis-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
             ⚔️ Competitive
           </button>
         </div>
@@ -239,13 +242,121 @@
         <!-- Toggle Button -->
         <button 
           id="llm-toggle-btn"
-          class="flex-shrink-0 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors focus:outline-none"
+          class="flex-shrink-0 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-colors focus:outline-none"
           title="Toggle AI Prompt Bar"
         >
           <svg class="w-4 h-4 text-white transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Research Modal -->
+  <div id="company-research-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">🏢 Company Research</h3>
+          <button id="company-research-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="company-url-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Company Website URL
+          </label>
+          <input 
+            type="url" 
+            id="company-url-input"
+            placeholder="https://example.com"
+            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Enter the company's main website URL for comprehensive research
+          </p>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            id="company-research-cancel"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="company-research-start"
+            class="flex-1 px-4 py-2 text-white rounded-full transition-colors"
+            style="background-color: #182126;"
+          >
+            <span class="research-btn-text">Start Research</span>
+            <span class="research-btn-loading hidden">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Researching...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Competitive Analysis Modal -->
+  <div id="competitive-analysis-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">⚔️ Competitive Analysis</h3>
+          <button id="competitive-analysis-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="competitor-name-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Competitor Name
+          </label>
+          <input 
+            type="text" 
+            id="competitor-name-input"
+            placeholder="e.g., Blue Prism, Automation Anywhere, Microsoft Power Platform"
+            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Enter competitor name for contextual competitive analysis based on your customer info
+          </p>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            id="competitive-analysis-cancel"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="competitive-analysis-start"
+            class="flex-1 px-4 py-2 text-white rounded-full transition-colors"
+            style="background-color: #182126;"
+          >
+            <span class="competitive-btn-text">Analyze</span>
+            <span class="competitive-btn-loading hidden">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Analyzing...
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </div>

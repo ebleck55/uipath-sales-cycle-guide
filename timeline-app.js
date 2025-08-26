@@ -5272,13 +5272,25 @@ class LLMPromptBar {
     // Quick action buttons
     quickBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        const prompt = btn.dataset.prompt;
-        if (promptInput) {
-          promptInput.value = prompt;
-          this.handlePromptSubmit();
+        if (btn.classList.contains('company-research-btn')) {
+          this.showCompanyResearchModal();
+        } else if (btn.classList.contains('competitive-analysis-btn')) {
+          this.showCompetitiveAnalysisModal();
+        } else {
+          const prompt = btn.dataset.prompt;
+          if (promptInput) {
+            promptInput.value = prompt;
+            this.handlePromptSubmit();
+          }
         }
       });
     });
+
+    // Company Research Modal Event Listeners
+    this.initializeCompanyResearchModal();
+    
+    // Competitive Analysis Modal Event Listeners
+    this.initializeCompetitiveAnalysisModal();
   }
 
   handlePromptSubmit() {
@@ -5518,6 +5530,1141 @@ class LLMPromptBar {
       "How do I create urgency in the sales process?",
       "What evidence do I need to build a business case?"
     ];
+  }
+
+  // ==================== COMPANY RESEARCH FUNCTIONALITY ====================
+  initializeCompanyResearchModal() {
+    const modal = document.getElementById('company-research-modal');
+    const closeBtn = document.getElementById('company-research-close');
+    const cancelBtn = document.getElementById('company-research-cancel');
+    const startBtn = document.getElementById('company-research-start');
+    const urlInput = document.getElementById('company-url-input');
+
+    // Close modal event listeners
+    [closeBtn, cancelBtn].forEach(btn => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          this.hideCompanyResearchModal();
+        });
+      }
+    });
+
+    // Click outside modal to close
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.hideCompanyResearchModal();
+        }
+      });
+    }
+
+    // Start research button
+    if (startBtn) {
+      startBtn.addEventListener('click', () => {
+        this.handleCompanyResearch();
+      });
+    }
+
+    // Enter key in URL input
+    if (urlInput) {
+      urlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.handleCompanyResearch();
+        }
+      });
+    }
+  }
+
+  showCompanyResearchModal() {
+    const modal = document.getElementById('company-research-modal');
+    const urlInput = document.getElementById('company-url-input');
+    
+    if (modal) {
+      modal.classList.remove('hidden');
+      // Focus the input field
+      if (urlInput) {
+        setTimeout(() => urlInput.focus(), 100);
+      }
+    }
+  }
+
+  hideCompanyResearchModal() {
+    const modal = document.getElementById('company-research-modal');
+    const urlInput = document.getElementById('company-url-input');
+    
+    if (modal) {
+      modal.classList.add('hidden');
+      // Clear the input
+      if (urlInput) {
+        urlInput.value = '';
+      }
+      // Reset button state
+      this.resetResearchButton();
+    }
+  }
+
+  async handleCompanyResearch() {
+    const urlInput = document.getElementById('company-url-input');
+    const url = urlInput?.value.trim();
+
+    if (!url) {
+      this.showNotification('Please enter a valid company URL', 'warning');
+      return;
+    }
+
+    if (!this.isValidUrl(url)) {
+      this.showNotification('Please enter a valid URL format', 'warning');
+      return;
+    }
+
+    try {
+      // Show loading state
+      this.setResearchButtonLoading(true);
+
+      // Perform company research
+      const researchData = await this.performCompanyResearch(url);
+      
+      // Hide modal
+      this.hideCompanyResearchModal();
+      
+      // Format and display results
+      await this.displayCompanyResearchResults(researchData);
+
+    } catch (error) {
+      console.error('Company research error:', error);
+      this.showNotification('Failed to research company. Please try again.', 'error');
+    } finally {
+      this.setResearchButtonLoading(false);
+    }
+  }
+
+  async performCompanyResearch(url) {
+    console.log('Starting comprehensive company research for:', url);
+    
+    try {
+      // Extract company domain/name from URL
+      const domain = new URL(url).hostname.replace('www.', '');
+      const companyName = domain.split('.')[0];
+      
+      // Gather multiple data sources
+      const researchPromises = [
+        this.fetchCompanyOverview(url, domain, companyName),
+        this.searchEarningsReports(companyName),
+        this.searchRecentNews(companyName),
+        this.searchLeadershipInfo(companyName)
+      ];
+
+      const [overview, earnings, news, leadership] = await Promise.allSettled(researchPromises);
+      
+      return {
+        url,
+        domain,
+        companyName,
+        overview: overview.status === 'fulfilled' ? overview.value : null,
+        earnings: earnings.status === 'fulfilled' ? earnings.value : null,
+        news: news.status === 'fulfilled' ? news.value : null,
+        leadership: leadership.status === 'fulfilled' ? leadership.value : null,
+        timestamp: new Date().toISOString()
+      };
+      
+    } catch (error) {
+      console.error('Research compilation error:', error);
+      throw new Error('Failed to compile research data');
+    }
+  }
+
+  async fetchCompanyOverview(url, domain, companyName) {
+    try {
+      const response = await fetch('/api/web-fetch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: url,
+          prompt: `Extract key information about this company including: what they do, their main business lines, size, and industry focus. Provide a concise 1-2 sentence overview.`
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          source: 'company_website',
+          content: data.content || data.response || 'No overview available',
+          url: url
+        };
+      }
+    } catch (error) {
+      console.log('Website fetch failed, using web search fallback');
+    }
+
+    // Fallback to web search
+    return await this.webSearchFallback(`${companyName} company overview business description`);
+  }
+
+  async searchEarningsReports(companyName) {
+    const searchQueries = [
+      `${companyName} quarterly earnings 2024`,
+      `${companyName} annual report 2024`,
+      `${companyName} earnings transcript Q4 2024`
+    ];
+
+    const results = [];
+    for (const query of searchQueries) {
+      try {
+        const result = await this.webSearchFallback(query);
+        if (result && result.content) {
+          results.push(result);
+        }
+      } catch (error) {
+        console.log(`Search failed for: ${query}`);
+      }
+    }
+
+    return results;
+  }
+
+  async searchRecentNews(companyName) {
+    const query = `${companyName} company news 2024 -stock -price`;
+    return await this.webSearchFallback(query);
+  }
+
+  async searchLeadershipInfo(companyName) {
+    const query = `${companyName} CEO leadership team executives`;
+    return await this.webSearchFallback(query);
+  }
+
+  async webSearchFallback(query) {
+    try {
+      const response = await fetch('/api/web-search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: query,
+          max_results: 3
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          source: 'web_search',
+          query: query,
+          content: data.results || data.content || 'No results found',
+          timestamp: new Date().toISOString()
+        };
+      }
+    } catch (error) {
+      console.log(`Web search failed for: ${query}`);
+    }
+
+    return null;
+  }
+
+  async displayCompanyResearchResults(researchData) {
+    // Format the comprehensive research report
+    const report = await this.formatCompanyResearchReport(researchData);
+    
+    // Display in the AI response area
+    const promptInput = document.getElementById('llm-prompt-input');
+    if (promptInput) {
+      promptInput.value = `Company Research: ${researchData.companyName}`;
+    }
+    
+    // Show the formatted report
+    this.showCompanyResearchReport(report);
+  }
+
+  async formatCompanyResearchReport(data) {
+    const sections = {
+      overview: this.extractCompanyOverview(data),
+      leadership: this.extractLeadershipInfo(data), 
+      automation: this.identifyAutomationOpportunities(data),
+      citations: this.compileCitations(data)
+    };
+
+    return sections;
+  }
+
+  extractCompanyOverview(data) {
+    let overview = "Company information not available.";
+    
+    if (data.overview && data.overview.content) {
+      overview = data.overview.content;
+    } else if (data.news && data.news.content) {
+      // Try to extract company description from news
+      overview = `Based on recent news: ${data.news.content.substring(0, 300)}...`;
+    }
+    
+    return overview;
+  }
+
+  extractLeadershipInfo(data) {
+    const leaders = [];
+    
+    if (data.leadership && data.leadership.content) {
+      // Simple extraction - in a real implementation you'd use more sophisticated parsing
+      const content = data.leadership.content;
+      
+      // Look for common leadership patterns
+      const ceoMatch = content.match(/CEO[:\s]+([^,.\n]+)/i);
+      const presMatch = content.match(/President[:\s]+([^,.\n]+)/i);
+      const ctoMatch = content.match(/CTO[:\s]+([^,.\n]+)/i);
+      
+      if (ceoMatch) leaders.push({ title: 'CEO', name: ceoMatch[1].trim() });
+      if (presMatch) leaders.push({ title: 'President', name: presMatch[1].trim() });
+      if (ctoMatch) leaders.push({ title: 'CTO', name: ctoMatch[1].trim() });
+    }
+    
+    return leaders.length > 0 ? leaders : [{ title: 'Leadership', name: 'Information not available' }];
+  }
+
+  identifyAutomationOpportunities(data) {
+    const opportunities = [];
+    
+    // Analyze content for automation keywords and opportunities
+    const allContent = [
+      data.overview?.content || '',
+      data.earnings?.map(e => e.content).join(' ') || '',
+      data.news?.content || ''
+    ].join(' ').toLowerCase();
+
+    // Common automation opportunity patterns
+    const patterns = {
+      'Financial Process Automation': ['invoice', 'payment', 'reconciliation', 'financial reporting', 'accounts payable'],
+      'Customer Service Automation': ['customer service', 'support', 'call center', 'helpdesk', 'customer experience'],
+      'HR Process Automation': ['employee onboarding', 'hr processes', 'payroll', 'benefits', 'recruitment'],
+      'Supply Chain Automation': ['supply chain', 'inventory', 'logistics', 'procurement', 'vendor management'],
+      'Compliance & Risk Automation': ['compliance', 'regulatory', 'risk management', 'audit', 'governance']
+    };
+
+    for (const [category, keywords] of Object.entries(patterns)) {
+      const matchingKeywords = keywords.filter(keyword => allContent.includes(keyword));
+      if (matchingKeywords.length > 0) {
+        opportunities.push({
+          category,
+          relevance: matchingKeywords.length,
+          keywords: matchingKeywords,
+          description: this.getAutomationDescription(category)
+        });
+      }
+    }
+
+    return opportunities.sort((a, b) => b.relevance - a.relevance);
+  }
+
+  getAutomationDescription(category) {
+    const descriptions = {
+      'Financial Process Automation': 'UiPath can automate invoice processing, financial reconciliation, and reporting workflows to reduce manual effort and improve accuracy.',
+      'Customer Service Automation': 'Implement intelligent virtual assistants and automated ticket routing to enhance customer experience and reduce response times.',
+      'HR Process Automation': 'Streamline employee onboarding, benefits administration, and HR analytics with automated workflows.',
+      'Supply Chain Automation': 'Optimize inventory management, purchase order processing, and vendor communications through intelligent automation.',
+      'Compliance & Risk Automation': 'Automate regulatory reporting, compliance monitoring, and risk assessment processes for better governance.'
+    };
+    
+    return descriptions[category] || 'Automation opportunities available in this area.';
+  }
+
+  compileCitations(data) {
+    const citations = [];
+    let citationIndex = 1;
+
+    if (data.overview && data.overview.url) {
+      citations.push({
+        index: citationIndex++,
+        title: 'Company Website',
+        url: data.overview.url,
+        type: 'Primary Source'
+      });
+    }
+
+    if (data.earnings && Array.isArray(data.earnings)) {
+      data.earnings.forEach(earning => {
+        if (earning.query) {
+          citations.push({
+            index: citationIndex++,
+            title: earning.query,
+            url: `Search: ${earning.query}`,
+            type: 'Financial Information'
+          });
+        }
+      });
+    }
+
+    if (data.news && data.news.query) {
+      citations.push({
+        index: citationIndex++,
+        title: 'Recent Company News',
+        url: `Search: ${data.news.query}`,
+        type: 'News & Updates'
+      });
+    }
+
+    if (data.leadership && data.leadership.query) {
+      citations.push({
+        index: citationIndex++,
+        title: 'Leadership Information',
+        url: `Search: ${data.leadership.query}`,
+        type: 'Leadership'
+      });
+    }
+
+    return citations;
+  }
+
+  showCompanyResearchReport(report) {
+    // Create a formatted HTML report
+    let reportHTML = `
+      <div class="company-research-report bg-white rounded-lg border border-gray-200 p-6 mb-4">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">🏢 Company Research Report</h2>
+          <p class="text-sm text-gray-500">Generated on ${new Date().toLocaleString()}</p>
+        </div>
+
+        <!-- Company Overview -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">1. Company Overview</h3>
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <p class="text-gray-800">${report.overview}</p>
+          </div>
+        </div>
+
+        <!-- Key Leaders -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">2. Key Leaders</h3>
+          <div class="space-y-2">
+            ${report.leadership.map(leader => `
+              <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium mr-3">
+                  ${leader.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div class="font-medium text-gray-900">${leader.name}</div>
+                  <div class="text-sm text-gray-600">${leader.title}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Automation Opportunities -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">3. Primary Automation Focus Areas</h3>
+          <div class="space-y-4">
+            ${report.automation.length > 0 ? report.automation.map(opp => `
+              <div class="border border-orange-200 rounded-lg p-4">
+                <div class="flex justify-between items-start mb-2">
+                  <h4 class="font-semibold text-orange-900">${opp.category}</h4>
+                  <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                    ${opp.relevance} match${opp.relevance !== 1 ? 'es' : ''}
+                  </span>
+                </div>
+                <p class="text-gray-700 text-sm mb-2">${opp.description}</p>
+                <div class="flex flex-wrap gap-1">
+                  ${opp.keywords.map(keyword => `
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${keyword}</span>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('') : '<p class="text-gray-500 italic">No specific automation opportunities identified from available data.</p>'}
+          </div>
+        </div>
+
+        <!-- Citations -->
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">4. Citations & Sources</h3>
+          <div class="space-y-2">
+            ${report.citations.map(citation => `
+              <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                <span class="bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                  ${citation.index}
+                </span>
+                <div>
+                  <div class="font-medium text-gray-900">${citation.title}</div>
+                  <div class="text-sm text-gray-600">${citation.type}</div>
+                  ${citation.url.startsWith('http') ? 
+                    `<a href="${citation.url}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm">View Source →</a>` :
+                    `<div class="text-sm text-gray-500">${citation.url}</div>`
+                  }
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Display the report in a way that integrates with the existing UI
+    this.displayAIResponse(reportHTML);
+  }
+
+  displayAIResponse(content) {
+    // Check if chatbot exists and use its display method
+    if (window.chatbot && typeof window.chatbot.addMessage === 'function') {
+      window.chatbot.addMessage('assistant', content);
+    } else {
+      // Fallback: Show notification or create custom display
+      this.showCustomAIResponse(content);
+    }
+  }
+
+  showCustomAIResponse(content) {
+    // Create or update a custom response area
+    let responseArea = document.getElementById('ai-response-area');
+    if (!responseArea) {
+      responseArea = document.createElement('div');
+      responseArea.id = 'ai-response-area';
+      responseArea.className = 'fixed bottom-4 right-4 max-w-md max-h-96 overflow-y-auto z-50';
+      document.body.appendChild(responseArea);
+    }
+
+    responseArea.innerHTML = `
+      <div class="bg-white rounded-lg shadow-xl border border-gray-200">
+        <div class="flex justify-between items-center p-4 border-b border-gray-200">
+          <h3 class="font-semibold text-gray-900">AI Research Results</h3>
+          <button onclick="this.parentElement.parentElement.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="p-4 max-h-80 overflow-y-auto">
+          ${content}
+        </div>
+      </div>
+    `;
+  }
+
+  setResearchButtonLoading(loading) {
+    const startBtn = document.getElementById('company-research-start');
+    const textSpan = document.querySelector('.research-btn-text');
+    const loadingSpan = document.querySelector('.research-btn-loading');
+
+    if (startBtn && textSpan && loadingSpan) {
+      startBtn.disabled = loading;
+      if (loading) {
+        textSpan.classList.add('hidden');
+        loadingSpan.classList.remove('hidden');
+      } else {
+        textSpan.classList.remove('hidden');
+        loadingSpan.classList.add('hidden');
+      }
+    }
+  }
+
+  resetResearchButton() {
+    this.setResearchButtonLoading(false);
+  }
+
+  isValidUrl(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // ==================== COMPETITIVE ANALYSIS FUNCTIONALITY ====================
+  initializeCompetitiveAnalysisModal() {
+    const modal = document.getElementById('competitive-analysis-modal');
+    const closeBtn = document.getElementById('competitive-analysis-close');
+    const cancelBtn = document.getElementById('competitive-analysis-cancel');
+    const startBtn = document.getElementById('competitive-analysis-start');
+    const competitorInput = document.getElementById('competitor-name-input');
+
+    // Close modal event listeners
+    [closeBtn, cancelBtn].forEach(btn => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          this.hideCompetitiveAnalysisModal();
+        });
+      }
+    });
+
+    // Click outside modal to close
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.hideCompetitiveAnalysisModal();
+        }
+      });
+    }
+
+    // Start analysis button
+    if (startBtn) {
+      startBtn.addEventListener('click', () => {
+        this.handleCompetitiveAnalysis();
+      });
+    }
+
+    // Enter key in competitor input
+    if (competitorInput) {
+      competitorInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.handleCompetitiveAnalysis();
+        }
+      });
+    }
+  }
+
+  showCompetitiveAnalysisModal() {
+    const modal = document.getElementById('competitive-analysis-modal');
+    const competitorInput = document.getElementById('competitor-name-input');
+    
+    if (modal) {
+      modal.classList.remove('hidden');
+      // Focus the input field
+      if (competitorInput) {
+        setTimeout(() => competitorInput.focus(), 100);
+      }
+    }
+  }
+
+  hideCompetitiveAnalysisModal() {
+    const modal = document.getElementById('competitive-analysis-modal');
+    const competitorInput = document.getElementById('competitor-name-input');
+    
+    if (modal) {
+      modal.classList.add('hidden');
+      // Clear the input
+      if (competitorInput) {
+        competitorInput.value = '';
+      }
+      // Reset button state
+      this.resetCompetitiveButton();
+    }
+  }
+
+  async handleCompetitiveAnalysis() {
+    const competitorInput = document.getElementById('competitor-name-input');
+    const competitorName = competitorInput?.value.trim();
+
+    if (!competitorName) {
+      this.showNotification('Please enter a competitor name', 'warning');
+      return;
+    }
+
+    try {
+      // Show loading state
+      this.setCompetitiveButtonLoading(true);
+
+      // Get current customer context
+      const customerContext = this.getCurrentCustomerContext();
+      
+      // Perform competitive analysis
+      const analysisData = await this.performCompetitiveAnalysis(competitorName, customerContext);
+      
+      // Hide modal
+      this.hideCompetitiveAnalysisModal();
+      
+      // Display results
+      await this.displayCompetitiveAnalysisResults(analysisData, competitorName);
+
+    } catch (error) {
+      console.error('Competitive analysis error:', error);
+      this.showNotification('Failed to analyze competitor. Please try again.', 'error');
+    } finally {
+      this.setCompetitiveButtonLoading(false);
+    }
+  }
+
+  getCurrentCustomerContext() {
+    // Get current customer information from the CustomerInfoManager
+    const context = {
+      vertical: '',
+      lob: '',
+      customerType: '',
+      deployment: '',
+      selectedPersonas: [],
+      selectedResources: [],
+      selectedUseCases: []
+    };
+
+    // Try to get context from CustomerInfoManager if available
+    if (window.customerInfoManager) {
+      const selectionContext = window.customerInfoManager.getSelectionContext();
+      context.vertical = selectionContext.vertical || '';
+      context.lob = selectionContext.lob || '';
+      context.customerType = selectionContext.customerType || '';
+      context.deployment = selectionContext.deployment || '';
+      
+      // Get selected personas, resources, and use cases
+      if (window.customerInfoManager.personaManager) {
+        context.selectedPersonas = window.customerInfoManager.personaManager.getSelectedPersonas();
+      }
+      if (window.customerInfoManager.resourceManager) {
+        context.selectedResources = window.customerInfoManager.resourceManager.getSelectedResources();
+      }
+      if (window.customerInfoManager.useCaseManager) {
+        context.selectedUseCases = window.customerInfoManager.useCaseManager.getSelectedUseCases();
+      }
+    }
+
+    return context;
+  }
+
+  async performCompetitiveAnalysis(competitorName, customerContext) {
+    console.log('Starting competitive analysis for:', competitorName, 'with context:', customerContext);
+    
+    try {
+      // Create comprehensive competitive analysis prompt
+      const analysisPrompt = this.buildCompetitiveAnalysisPrompt(competitorName, customerContext);
+      
+      // Gather competitive intelligence
+      const competitiveData = await this.gatherCompetitiveIntelligence(competitorName, customerContext);
+      
+      // Generate contextual competitive positioning
+      const positioningAnalysis = await this.generateCompetitivePositioning(analysisPrompt, competitiveData);
+      
+      return {
+        competitor: competitorName,
+        customerContext,
+        competitiveData,
+        positioningAnalysis,
+        timestamp: new Date().toISOString()
+      };
+      
+    } catch (error) {
+      console.error('Competitive analysis compilation error:', error);
+      throw new Error('Failed to compile competitive analysis');
+    }
+  }
+
+  buildCompetitiveAnalysisPrompt(competitorName, context) {
+    let prompt = `Provide a comprehensive competitive analysis comparing UiPath against ${competitorName}`;
+    
+    // Add customer context to make it relevant
+    const contextParts = [];
+    if (context.vertical) {
+      contextParts.push(`in the ${context.vertical} industry`);
+    }
+    if (context.lob) {
+      contextParts.push(`specifically for ${context.lob.replace('-', ' ')} use cases`);
+    }
+    if (context.customerType) {
+      contextParts.push(`for a ${context.customerType} customer`);
+    }
+    if (context.deployment) {
+      contextParts.push(`considering ${context.deployment.replace('-', ' ')} deployment`);
+    }
+    
+    if (contextParts.length > 0) {
+      prompt += ` ${contextParts.join(', ')}`;
+    }
+
+    // Add specific focus areas based on selected use cases/personas
+    if (context.selectedUseCases.length > 0) {
+      const useCaseNames = context.selectedUseCases.map(uc => uc.name).join(', ');
+      prompt += `. Focus on these specific use cases: ${useCaseNames}`;
+    }
+
+    if (context.selectedPersonas.length > 0) {
+      const personaRoles = context.selectedPersonas.map(p => p.role).join(', ');
+      prompt += `. Consider the perspective of these decision makers: ${personaRoles}`;
+    }
+
+    prompt += `. Please provide:
+    1. Key competitive strengths where UiPath has advantages
+    2. Potential competitive threats or areas where ${competitorName} might have advantages
+    3. Specific talking points and positioning messages
+    4. ROI and business value differentiation
+    5. Technical capabilities comparison
+    6. Implementation and deployment advantages`;
+
+    return prompt;
+  }
+
+  async gatherCompetitiveIntelligence(competitorName, context) {
+    const searchPromises = [
+      this.searchCompetitorInfo(competitorName),
+      this.searchUiPathVsCompetitor(competitorName),
+      this.searchIndustryComparisons(competitorName, context.vertical),
+      this.searchCustomerReviews(competitorName)
+    ];
+
+    const results = await Promise.allSettled(searchPromises);
+    
+    return {
+      competitorInfo: results[0].status === 'fulfilled' ? results[0].value : null,
+      directComparison: results[1].status === 'fulfilled' ? results[1].value : null,
+      industryComparison: results[2].status === 'fulfilled' ? results[2].value : null,
+      customerReviews: results[3].status === 'fulfilled' ? results[3].value : null
+    };
+  }
+
+  async searchCompetitorInfo(competitorName) {
+    const query = `${competitorName} automation platform features capabilities 2024`;
+    return await this.webSearchFallback(query);
+  }
+
+  async searchUiPathVsCompetitor(competitorName) {
+    const query = `UiPath vs ${competitorName} comparison automation platform`;
+    return await this.webSearchFallback(query);
+  }
+
+  async searchIndustryComparisons(competitorName, vertical) {
+    if (!vertical) return null;
+    const query = `${competitorName} UiPath ${vertical} automation comparison`;
+    return await this.webSearchFallback(query);
+  }
+
+  async searchCustomerReviews(competitorName) {
+    const query = `${competitorName} customer reviews Gartner G2 automation platform`;
+    return await this.webSearchFallback(query);
+  }
+
+  async generateCompetitivePositioning(prompt, competitiveData) {
+    try {
+      // Use AI to analyze competitive data and generate positioning
+      const response = await this.callAIForAnalysis(prompt, competitiveData);
+      return response;
+    } catch (error) {
+      console.log('AI analysis failed, using template-based analysis');
+      return this.generateTemplateBasedPositioning(competitiveData);
+    }
+  }
+
+  async callAIForAnalysis(prompt, competitiveData) {
+    // Check if we have an AI endpoint available
+    if (window.chatbot && typeof window.chatbot.generateResponse === 'function') {
+      const dataContext = this.summarizeCompetitiveData(competitiveData);
+      const fullPrompt = `${prompt}\n\nBased on this competitive intelligence:\n${dataContext}`;
+      return await window.chatbot.generateResponse(fullPrompt);
+    }
+    
+    // Fallback to simpler analysis
+    return this.generateTemplateBasedPositioning(competitiveData);
+  }
+
+  summarizeCompetitiveData(competitiveData) {
+    let summary = '';
+    
+    if (competitiveData.competitorInfo?.content) {
+      summary += `Competitor Information: ${competitiveData.competitorInfo.content.substring(0, 500)}...\n\n`;
+    }
+    
+    if (competitiveData.directComparison?.content) {
+      summary += `Direct Comparison Data: ${competitiveData.directComparison.content.substring(0, 500)}...\n\n`;
+    }
+    
+    if (competitiveData.industryComparison?.content) {
+      summary += `Industry-Specific Comparison: ${competitiveData.industryComparison.content.substring(0, 300)}...\n\n`;
+    }
+    
+    return summary || 'Limited competitive data available.';
+  }
+
+  generateTemplateBasedPositioning(competitiveData) {
+    // Generate analysis based on known UiPath strengths and common competitive scenarios
+    return {
+      strengths: this.getUiPathCompetitiveStrengths(),
+      threats: this.getCommonCompetitiveChallenges(),
+      positioning: this.getStandardPositioningMessages(),
+      roi: this.getROIComparisonPoints(),
+      technical: this.getTechnicalDifferentiators(),
+      implementation: this.getImplementationAdvantages()
+    };
+  }
+
+  getUiPathCompetitiveStrengths() {
+    return [
+      {
+        area: 'Platform Completeness',
+        strength: 'End-to-end automation platform with RPA, AI, and process mining in a single solution',
+        impact: 'Reduces vendor complexity and integration overhead'
+      },
+      {
+        area: 'AI Integration',
+        strength: 'Native AI capabilities with Document Understanding and AI Center',
+        impact: 'Enables intelligent document processing and machine learning integration'
+      },
+      {
+        area: 'Community & Ecosystem',
+        strength: 'Largest automation community with UiPath Marketplace',
+        impact: 'Access to pre-built automations and extensive support resources'
+      },
+      {
+        area: 'Deployment Flexibility',
+        strength: 'Multi-cloud, on-premises, and hybrid deployment options',
+        impact: 'Fits any enterprise architecture and compliance requirements'
+      }
+    ];
+  }
+
+  getCommonCompetitiveChallenges() {
+    return [
+      {
+        area: 'Pricing Perception',
+        challenge: 'May be perceived as premium-priced solution',
+        response: 'Focus on total cost of ownership and faster time-to-value'
+      },
+      {
+        area: 'Complexity',
+        challenge: 'Platform richness might seem complex for simple use cases',
+        response: 'Emphasize starting simple with Studio X and growing into advanced capabilities'
+      }
+    ];
+  }
+
+  getStandardPositioningMessages() {
+    return [
+      'UiPath provides the most comprehensive automation platform, reducing the need for multiple vendors',
+      'Our AI-first approach ensures automations are intelligent and adaptive, not just rule-based',
+      'The largest automation community provides unmatched support and pre-built solutions',
+      'Flexible deployment options ensure compliance and integration with existing systems'
+    ];
+  }
+
+  getROIComparisonPoints() {
+    return [
+      'Faster implementation due to low-code/no-code approach',
+      'Higher automation success rate with built-in analytics and monitoring',
+      'Reduced maintenance overhead with centralized management',
+      'Scalability that grows with business needs without architectural changes'
+    ];
+  }
+
+  getTechnicalDifferentiators() {
+    return [
+      'Superior computer vision and OCR capabilities',
+      'Advanced workflow orchestration and exception handling',
+      'Built-in process mining for optimization opportunities',
+      'Enterprise-grade security and governance features'
+    ];
+  }
+
+  getImplementationAdvantages() {
+    return [
+      'Comprehensive training and certification programs',
+      'Professional services and partner ecosystem',
+      'Change management tools and adoption frameworks',
+      'Continuous innovation with quarterly platform updates'
+    ];
+  }
+
+  async displayCompetitiveAnalysisResults(analysisData, competitorName) {
+    // Format the competitive analysis report
+    const report = await this.formatCompetitiveAnalysisReport(analysisData, competitorName);
+    
+    // Display in the AI response area
+    const promptInput = document.getElementById('llm-prompt-input');
+    if (promptInput) {
+      promptInput.value = `Competitive Analysis: UiPath vs ${competitorName}`;
+    }
+    
+    // Show the formatted report
+    this.showCompetitiveAnalysisReport(report);
+  }
+
+  async formatCompetitiveAnalysisReport(data, competitorName) {
+    const positioning = data.positioningAnalysis;
+    
+    return {
+      competitor: competitorName,
+      context: data.customerContext,
+      strengths: positioning.strengths || [],
+      threats: positioning.threats || [],
+      positioning: positioning.positioning || [],
+      roi: positioning.roi || [],
+      technical: positioning.technical || [],
+      implementation: positioning.implementation || [],
+      sources: this.compileCompetitiveSources(data.competitiveData)
+    };
+  }
+
+  compileCompetitiveSources(competitiveData) {
+    const sources = [];
+    let index = 1;
+
+    if (competitiveData.competitorInfo?.query) {
+      sources.push({
+        index: index++,
+        title: 'Competitor Information',
+        search: competitiveData.competitorInfo.query,
+        type: 'Market Research'
+      });
+    }
+
+    if (competitiveData.directComparison?.query) {
+      sources.push({
+        index: index++,
+        title: 'Direct Comparison',
+        search: competitiveData.directComparison.query,
+        type: 'Competitive Analysis'
+      });
+    }
+
+    if (competitiveData.industryComparison?.query) {
+      sources.push({
+        index: index++,
+        title: 'Industry Comparison',
+        search: competitiveData.industryComparison.query,
+        type: 'Industry Analysis'
+      });
+    }
+
+    return sources;
+  }
+
+  showCompetitiveAnalysisReport(report) {
+    const contextSummary = this.buildContextSummary(report.context);
+    
+    const reportHTML = `
+      <div class="competitive-analysis-report bg-white rounded-lg border border-gray-200 p-6 mb-4">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">⚔️ Competitive Analysis: UiPath vs ${report.competitor}</h2>
+          <div class="bg-blue-50 p-3 rounded-lg">
+            <p class="text-sm text-gray-700"><strong>Customer Context:</strong> ${contextSummary}</p>
+          </div>
+          <p class="text-sm text-gray-500 mt-2">Generated on ${new Date().toLocaleString()}</p>
+        </div>
+
+        <!-- Competitive Strengths -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">🚀 UiPath Competitive Strengths</h3>
+          <div class="space-y-3">
+            ${report.strengths.map(strength => `
+              <div class="bg-green-50 border-l-4 border-green-400 p-4">
+                <div class="font-semibold text-green-900">${strength.area}</div>
+                <div class="text-green-800 mt-1">${strength.strength}</div>
+                <div class="text-green-700 text-sm mt-2"><strong>Impact:</strong> ${strength.impact}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Potential Challenges -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">⚠️ Potential Competitive Challenges</h3>
+          <div class="space-y-3">
+            ${report.threats.map(threat => `
+              <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <div class="font-semibold text-yellow-900">${threat.area}</div>
+                <div class="text-yellow-800 mt-1">${threat.challenge}</div>
+                <div class="text-yellow-700 text-sm mt-2"><strong>Response Strategy:</strong> ${threat.response}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Key Positioning Messages -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">💬 Key Positioning Messages</h3>
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <ul class="space-y-2">
+              ${report.positioning.map(message => `
+                <li class="flex items-start">
+                  <div class="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <span class="text-blue-900">${message}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        </div>
+
+        <!-- ROI Differentiation -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">💰 ROI & Business Value Differentiation</h3>
+          <div class="grid md:grid-cols-2 gap-3">
+            ${report.roi.map(point => `
+              <div class="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                <div class="text-orange-900 text-sm">${point}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Technical Differentiators -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">⚙️ Technical Differentiators</h3>
+          <div class="grid md:grid-cols-2 gap-3">
+            ${report.technical.map(tech => `
+              <div class="bg-purple-50 p-3 rounded-lg border border-purple-200">
+                <div class="text-purple-900 text-sm">${tech}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Implementation Advantages -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">🔧 Implementation & Support Advantages</h3>
+          <div class="space-y-2">
+            ${report.implementation.map(impl => `
+              <div class="flex items-center p-2 bg-gray-50 rounded">
+                <div class="w-2 h-2 bg-gray-600 rounded-full mr-3"></div>
+                <span class="text-gray-800 text-sm">${impl}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Sources -->
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">📚 Research Sources</h3>
+          <div class="space-y-2">
+            ${report.sources.map(source => `
+              <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                <span class="bg-gray-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                  ${source.index}
+                </span>
+                <div>
+                  <div class="font-medium text-gray-900">${source.title}</div>
+                  <div class="text-sm text-gray-600">${source.type}</div>
+                  <div class="text-sm text-gray-500">Search: ${source.search}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Display the report
+    this.displayAIResponse(reportHTML);
+  }
+
+  buildContextSummary(context) {
+    const parts = [];
+    
+    if (context.vertical) {
+      parts.push(`${context.vertical} industry`);
+    }
+    if (context.lob) {
+      parts.push(`${context.lob.replace('-', ' ')} use cases`);
+    }
+    if (context.customerType) {
+      parts.push(`${context.customerType} customer`);
+    }
+    if (context.deployment) {
+      parts.push(`${context.deployment.replace('-', ' ')} deployment`);
+    }
+
+    return parts.length > 0 ? parts.join(', ') : 'General competitive analysis';
+  }
+
+  setCompetitiveButtonLoading(loading) {
+    const startBtn = document.getElementById('competitive-analysis-start');
+    const textSpan = document.querySelector('.competitive-btn-text');
+    const loadingSpan = document.querySelector('.competitive-btn-loading');
+
+    if (startBtn && textSpan && loadingSpan) {
+      startBtn.disabled = loading;
+      if (loading) {
+        textSpan.classList.add('hidden');
+        loadingSpan.classList.remove('hidden');
+      } else {
+        textSpan.classList.remove('hidden');
+        loadingSpan.classList.add('hidden');
+      }
+    }
+  }
+
+  resetCompetitiveButton() {
+    this.setCompetitiveButtonLoading(false);
   }
 }
 
