@@ -153,6 +153,493 @@ async function copyToClipboard(text) {
   }
 }
 
+// ==================== AI CHATBOT ====================
+class AIChatbot {
+  constructor() {
+    this.isOpen = false;
+    this.conversationHistory = [];
+    this.knowledgeBase = null;
+    this.initializeKnowledgeBase();
+    this.initializeEventListeners();
+  }
+
+  initializeKnowledgeBase() {
+    // Build searchable knowledge base from SALES_CYCLE_DATA
+    this.knowledgeBase = {
+      personas: {},
+      questions: {},
+      objections: {},
+      outcomes: {},
+      resources: {},
+      stages: []
+    };
+
+    // Index all personas
+    Object.keys(SALES_CYCLE_DATA.personas).forEach(industry => {
+      this.knowledgeBase.personas[industry] = SALES_CYCLE_DATA.personas[industry].map(persona => ({
+        title: persona.title,
+        world: persona.world,
+        cares: persona.cares,
+        help: persona.help,
+        industry: industry
+      }));
+    });
+
+    // Index all stages and their content
+    SALES_CYCLE_DATA.stages.forEach((stage, stageIndex) => {
+      this.knowledgeBase.stages.push({
+        title: stage.title,
+        index: stageIndex,
+        outcomes: stage.outcomes || [],
+        questions: stage.questions || {},
+        objections: stage.objections || [],
+        resources: stage.resources || {}
+      });
+
+      // Index questions
+      Object.entries(stage.questions || {}).forEach(([category, questions]) => {
+        this.knowledgeBase.questions[category] = questions.map(q => ({
+          question: q,
+          category: category,
+          stage: stage.title,
+          stageIndex: stageIndex
+        }));
+      });
+
+      // Index objections
+      (stage.objections || []).forEach(objection => {
+        if (!this.knowledgeBase.objections[stage.title]) {
+          this.knowledgeBase.objections[stage.title] = [];
+        }
+        this.knowledgeBase.objections[stage.title].push({
+          question: objection.q,
+          answer: objection.a,
+          stage: stage.title,
+          stageIndex: stageIndex
+        });
+      });
+
+      // Index outcomes
+      (stage.outcomes || []).forEach(outcome => {
+        if (!this.knowledgeBase.outcomes[stage.title]) {
+          this.knowledgeBase.outcomes[stage.title] = [];
+        }
+        this.knowledgeBase.outcomes[stage.title].push({
+          outcome: outcome,
+          stage: stage.title,
+          stageIndex: stageIndex
+        });
+      });
+    });
+  }
+
+  initializeEventListeners() {
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatClose = document.getElementById('chat-close');
+    const chatSend = document.getElementById('chat-send');
+    const chatInput = document.getElementById('chat-input');
+    const clearChat = document.getElementById('clear-chat');
+
+    chatToggle?.addEventListener('click', () => this.toggleChat());
+    chatClose?.addEventListener('click', () => this.closeChat());
+    chatSend?.addEventListener('click', () => this.sendMessage());
+    clearChat?.addEventListener('click', () => this.clearChat());
+
+    // Handle input events
+    chatInput?.addEventListener('input', (e) => {
+      const charCount = e.target.value.length;
+      document.getElementById('char-count').textContent = charCount;
+      chatSend.disabled = charCount === 0;
+    });
+
+    chatInput?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !chatSend.disabled) {
+        this.sendMessage();
+      }
+    });
+
+    // Handle quick actions
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.quick-action-btn')) {
+        const action = e.target.closest('.quick-action-btn').dataset.action;
+        this.handleQuickAction(action);
+      }
+    });
+  }
+
+  toggleChat() {
+    this.isOpen = !this.isOpen;
+    const chatWindow = document.getElementById('chat-window');
+    const quickActions = document.getElementById('quick-actions');
+    const chatIcon = document.getElementById('chat-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (this.isOpen) {
+      chatWindow.classList.remove('hidden');
+      quickActions.classList.add('hidden');
+      chatIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+      document.getElementById('chat-input')?.focus();
+    } else {
+      chatWindow.classList.add('hidden');
+      quickActions.classList.remove('hidden');
+      chatIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
+  }
+
+  closeChat() {
+    this.isOpen = false;
+    this.toggleChat();
+  }
+
+  async sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Clear input
+    input.value = '';
+    document.getElementById('char-count').textContent = '0';
+    document.getElementById('chat-send').disabled = true;
+
+    // Add user message
+    this.addMessage(message, 'user');
+
+    // Show typing indicator
+    this.showTypingIndicator();
+
+    try {
+      // Process the message
+      const response = await this.processMessage(message);
+      
+      // Hide typing indicator
+      this.hideTypingIndicator();
+
+      // Add bot response
+      this.addMessage(response.text, 'bot', response.actions);
+    } catch (error) {
+      console.error('Chat error:', error);
+      this.hideTypingIndicator();
+      this.addMessage('I apologize, but I encountered an error. Please try asking your question again.', 'bot');
+    }
+  }
+
+  addMessage(text, sender, actions = null) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    
+    if (sender === 'user') {
+      messageDiv.className = 'flex justify-end';
+      messageDiv.innerHTML = `
+        <div class="bg-blue-600 text-white rounded-lg p-3 max-w-xs">
+          <p class="text-sm">${this.escapeHtml(text)}</p>
+        </div>
+      `;
+    } else {
+      messageDiv.className = 'flex items-start space-x-3';
+      messageDiv.innerHTML = `
+        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+          <p class="text-sm text-gray-800">${text}</p>
+          ${actions ? this.renderActions(actions) : ''}
+        </div>
+      `;
+    }
+
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // Store in conversation history
+    this.conversationHistory.push({ text, sender, timestamp: new Date() });
+  }
+
+  renderActions(actions) {
+    return `
+      <div class="mt-3 space-y-2">
+        ${actions.map(action => `
+          <button onclick="window.chatbot.handleAction('${action.type}', '${action.data}')" class="w-full text-left px-3 py-2 bg-blue-50 text-blue-700 rounded text-xs hover:bg-blue-100 transition-colors">
+            ${action.label}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  async processMessage(message) {
+    // First, search local knowledge base
+    const localResults = this.searchKnowledgeBase(message);
+    
+    if (localResults.length > 0) {
+      return this.formatLocalResponse(localResults, message);
+    }
+
+    // If no local results, try AI response (if API key available)
+    if (this.hasAICredentials()) {
+      return await this.generateAIResponse(message);
+    }
+
+    // Fallback to general guidance
+    return this.generateFallbackResponse(message);
+  }
+
+  searchKnowledgeBase(query) {
+    const results = [];
+    const queryLower = query.toLowerCase();
+
+    // Search personas
+    Object.values(this.knowledgeBase.personas).flat().forEach(persona => {
+      if (this.matchesQuery(persona.title + ' ' + persona.world + ' ' + persona.cares, queryLower)) {
+        results.push({ type: 'persona', data: persona, relevance: this.calculateRelevance(persona, queryLower) });
+      }
+    });
+
+    // Search questions
+    Object.values(this.knowledgeBase.questions).flat().forEach(q => {
+      if (this.matchesQuery(q.question + ' ' + q.category, queryLower)) {
+        results.push({ type: 'question', data: q, relevance: this.calculateRelevance(q, queryLower) });
+      }
+    });
+
+    // Search objections
+    Object.values(this.knowledgeBase.objections).flat().forEach(obj => {
+      if (this.matchesQuery(obj.question + ' ' + obj.answer, queryLower)) {
+        results.push({ type: 'objection', data: obj, relevance: this.calculateRelevance(obj, queryLower) });
+      }
+    });
+
+    return results.sort((a, b) => b.relevance - a.relevance).slice(0, 5);
+  }
+
+  matchesQuery(text, query) {
+    const words = query.split(' ');
+    const textLower = text.toLowerCase();
+    return words.some(word => word.length > 2 && textLower.includes(word));
+  }
+
+  calculateRelevance(item, query) {
+    const text = JSON.stringify(item).toLowerCase();
+    const words = query.split(' ');
+    let score = 0;
+    words.forEach(word => {
+      if (word.length > 2 && text.includes(word)) {
+        score += word.length;
+      }
+    });
+    return score;
+  }
+
+  formatLocalResponse(results, originalQuery) {
+    const primaryResult = results[0];
+    let response = '';
+    let actions = [];
+
+    switch (primaryResult.type) {
+      case 'persona':
+        const persona = primaryResult.data;
+        response = `I found information about the **${persona.title}** persona in ${persona.industry}:\n\n**Their World:** ${persona.world}\n\n**What They Care About:** ${persona.cares}`;
+        actions = [
+          { type: 'navigate', data: `personas-${persona.industry}`, label: '📋 View All Personas' },
+          { type: 'search', data: `${persona.title} objections`, label: '❓ Common Objections' }
+        ];
+        break;
+        
+      case 'question':
+        const question = primaryResult.data;
+        response = `Here's a key discovery question from the **${question.stage}** stage:\n\n"${question.question}"\n\n**Category:** ${question.category}`;
+        actions = [
+          { type: 'navigate', data: `stage-${question.stageIndex}`, label: '📊 View Full Stage' },
+          { type: 'search', data: `${question.category} questions`, label: '❓ More Questions' }
+        ];
+        break;
+        
+      case 'objection':
+        const objection = primaryResult.data;
+        response = `Here's how to handle this objection from **${objection.stage}**:\n\n**Objection:** "${objection.question}"\n\n**Suggested Response:** ${objection.answer}`;
+        actions = [
+          { type: 'navigate', data: `stage-${objection.stageIndex}`, label: '📊 View Full Stage' },
+          { type: 'search', data: 'objection handling', label: '❓ More Objections' }
+        ];
+        break;
+    }
+
+    if (results.length > 1) {
+      response += `\n\n*I found ${results.length} related items. Would you like me to show more?*`;
+      actions.push({ type: 'search', data: originalQuery, label: '🔍 Show More Results' });
+    }
+
+    return { text: response, actions };
+  }
+
+  generateFallbackResponse(message) {
+    const keywords = message.toLowerCase();
+    
+    if (keywords.includes('persona') || keywords.includes('decision maker')) {
+      return {
+        text: "I can help you find information about decision makers and personas! Try asking about specific roles like 'COO', 'CIO', or 'Compliance Officer'.",
+        actions: [
+          { type: 'quickAction', data: 'search-personas', label: '👥 Browse All Personas' }
+        ]
+      };
+    }
+    
+    if (keywords.includes('objection') || keywords.includes('handle')) {
+      return {
+        text: "I can help you handle objections! Each sales stage has common objections with suggested responses.",
+        actions: [
+          { type: 'quickAction', data: 'search-objections', label: '❓ View Common Objections' }
+        ]
+      };
+    }
+    
+    if (keywords.includes('question') || keywords.includes('discovery')) {
+      return {
+        text: "I can help you find the right discovery questions! Each stage has categorized questions to guide your conversations.",
+        actions: [
+          { type: 'quickAction', data: 'search-questions', label: '❓ View Discovery Questions' }
+        ]
+      };
+    }
+
+    return {
+      text: "I can help you with information about:\n• **Personas** - Decision makers and their motivations\n• **Objections** - Common objections and responses\n• **Discovery Questions** - Questions for each sales stage\n• **Use Cases** - Industry-specific examples\n\nWhat would you like to explore?",
+      actions: [
+        { type: 'quickAction', data: 'search-personas', label: '👥 Personas' },
+        { type: 'quickAction', data: 'search-objections', label: '❓ Objections' },
+        { type: 'quickAction', data: 'search-questions', label: '💬 Questions' }
+      ]
+    };
+  }
+
+  hasAICredentials() {
+    return sessionStorage.getItem('claude_api_key') !== null;
+  }
+
+  async generateAIResponse(message) {
+    const apiKey = sessionStorage.getItem('claude_api_key');
+    
+    const prompt = `You are a UiPath sales expert assistant. The user is asking: "${message}". 
+
+    Based on this UiPath Sales Cycle Guide content, provide helpful guidance. Focus on:
+    - Sales processes and methodologies
+    - Handling objections
+    - Discovery questions
+    - Persona insights
+    - Use cases and value propositions
+
+    Keep your response conversational, helpful, and focused on sales guidance. If the question is outside sales topics, politely redirect to sales-related assistance.`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-haiku-20240307',
+          max_tokens: 300,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!response.ok) throw new Error('AI request failed');
+
+      const data = await response.json();
+      return {
+        text: data.content[0]?.text || 'I apologize, but I could not generate a response.',
+        actions: []
+      };
+    } catch (error) {
+      console.error('AI response error:', error);
+      return this.generateFallbackResponse(message);
+    }
+  }
+
+  handleAction(type, data) {
+    switch (type) {
+      case 'navigate':
+        // Navigate to specific section
+        if (data.startsWith('stage-')) {
+          const stageIndex = parseInt(data.split('-')[1]);
+          appState.set('currentStage', stageIndex);
+          this.addMessage(`Navigated to ${SALES_CYCLE_DATA.stages[stageIndex]?.title || 'stage'}`, 'bot');
+        }
+        break;
+      case 'search':
+        this.addMessage(data, 'user');
+        this.sendMessage();
+        break;
+      case 'quickAction':
+        this.handleQuickAction(data);
+        break;
+    }
+  }
+
+  handleQuickAction(action) {
+    this.openChat();
+    
+    switch (action) {
+      case 'search-personas':
+        this.addMessage('Tell me about the personas', 'user');
+        break;
+      case 'search-objections':
+        this.addMessage('How do I handle common objections?', 'user');
+        break;
+      case 'search-questions':
+        this.addMessage('What are good discovery questions?', 'user');
+        break;
+    }
+    
+    // Trigger search
+    setTimeout(() => this.sendMessage(), 100);
+  }
+
+  openChat() {
+    if (!this.isOpen) {
+      this.toggleChat();
+    }
+  }
+
+  showTypingIndicator() {
+    document.getElementById('typing-indicator')?.classList.remove('hidden');
+    const messagesContainer = document.getElementById('chat-messages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  hideTypingIndicator() {
+    document.getElementById('typing-indicator')?.classList.add('hidden');
+  }
+
+  clearChat() {
+    const messagesContainer = document.getElementById('chat-messages');
+    messagesContainer.innerHTML = `
+      <div class="flex items-start space-x-3">
+        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+          <p class="text-sm text-gray-800">Hi! I'm your UiPath Sales Assistant. I can help you find content, answer questions about sales processes, personas, objections, and more. What would you like to know?</p>
+        </div>
+      </div>
+    `;
+    this.conversationHistory = [];
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+}
+
 // ==================== EDIT SYSTEM ====================
 class ContentEditor {
   constructor() {
@@ -345,6 +832,7 @@ class TimelineUiPathApp {
   constructor() {
     this.initialized = false;
     this.contentEditor = new ContentEditor();
+    this.chatbot = null;
     
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.initialize());
@@ -367,6 +855,10 @@ class TimelineUiPathApp {
       
       // Load and render data
       this.loadData();
+
+      // Initialize AI chatbot
+      this.chatbot = new AIChatbot();
+      window.chatbot = this.chatbot; // Make globally accessible for action buttons
       
       this.initialized = true;
       console.log('Application initialized successfully');
