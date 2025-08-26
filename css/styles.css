@@ -51,6 +51,7 @@
   --shadow-default: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
   
   /* Typography Scale */
   --font-size-xs: 0.75rem;
@@ -1329,4 +1330,75 @@ html {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: none;
+}
+
+/* ===============================================
+   Customer Information Section Styles
+   =============================================== */
+
+/* Selected state styles for buttons */
+.industry-btn.selected,
+.customer-type-btn.selected,
+.project-type-btn.selected {
+  background-color: var(--uipath-orange) !important;
+  border-color: var(--uipath-orange) !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(250, 70, 22, 0.2);
+}
+
+/* Hover states for buttons */
+.industry-btn:hover:not(.selected),
+.customer-type-btn:hover:not(.selected),
+.project-type-btn:hover:not(.selected) {
+  border-color: var(--gray-300);
+  background-color: var(--gray-50);
+}
+
+/* Update button styles */
+#update-content-btn {
+  transition: var(--transition-default);
+  box-shadow: var(--shadow-sm);
+}
+
+#update-content-btn:hover {
+  background-color: var(--uipath-orange-dark);
+  box-shadow: var(--shadow-default);
+  transform: translateY(-1px);
+}
+
+/* Customer info card responsive adjustments */
+@media (max-width: 768px) {
+  .grid.grid-cols-1.md\:grid-cols-5 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Focus states for accessibility */
+.industry-btn:focus,
+.customer-type-btn:focus,
+.project-type-btn:focus,
+#update-content-btn:focus,
+#sub-vertical-selector:focus,
+#lob-selector:focus,
+#deployment-type:focus {
+  outline: 2px solid var(--uipath-orange);
+  outline-offset: 2px;
+}
+
+/* Deployment container animation */
+#deployment-container {
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+#deployment-container.hidden {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+#deployment-container:not(.hidden) {
+  max-height: 100px;
+  opacity: 1;
 }

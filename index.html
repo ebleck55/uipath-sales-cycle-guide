@@ -84,79 +84,10 @@
           </div>
         </div>
 
-        <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center space-x-6">
-          <!-- Industry Switcher -->
-          <div class="flex bg-gray-100 rounded-lg p-1">
-            <button class="industry-btn px-3 py-1 text-sm font-medium rounded-md transition-colors" data-industry="banking">
-              Banking
-            </button>
-            <button class="industry-btn px-3 py-1 text-sm font-medium rounded-md transition-colors" data-industry="insurance">
-              Insurance
-            </button>
-          </div>
-
-          <!-- Line of Business Selector -->
-          <div class="flex flex-col">
-            <label class="text-xs text-gray-500 mb-1">Line of Business</label>
-            <select id="lob-selector" class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-              <option value="">All LOBs</option>
-              <option value="consumer-banking">Consumer Banking</option>
-              <option value="capital-markets">Capital Markets</option>
-              <option value="operations">Operations</option>
-              <option value="it-operations">IT Operations</option>
-              <option value="finance-operations">Finance & Operations</option>
-            </select>
-          </div>
-
-          <!-- Project Type Toggles -->
-          <div class="flex flex-col">
-            <label class="text-xs text-gray-500 mb-1">Project Type</label>
-            <div class="flex bg-gray-100 rounded-lg p-1">
-              <button class="project-type-btn px-2 py-1 text-xs font-medium rounded transition-colors" data-type="rpa">
-                RPA
-              </button>
-              <button class="project-type-btn px-2 py-1 text-xs font-medium rounded transition-colors" data-type="idp">
-                IDP
-              </button>
-              <button class="project-type-btn px-2 py-1 text-xs font-medium rounded transition-colors" data-type="agentic">
-                Agentic
-              </button>
-              <button class="project-type-btn px-2 py-1 text-xs font-medium rounded transition-colors" data-type="maestro">
-                Maestro
-              </button>
-            </div>
-          </div>
-
-          <!-- Customer Type Selector -->
-          <div class="flex flex-col">
-            <label class="text-xs text-gray-500 mb-1">Customer Type</label>
-            <div class="flex bg-gray-100 rounded-lg p-1">
-              <button class="customer-type-btn px-3 py-1 text-xs font-medium rounded transition-colors" data-type="new-logo">
-                🆕 New Logo
-              </button>
-              <button class="customer-type-btn px-3 py-1 text-xs font-medium rounded transition-colors" data-type="existing">
-                🏢 Existing
-              </button>
-            </div>
-          </div>
-
-          <!-- Deployment Type Selector (hidden by default) -->
-          <div id="deployment-selector" class="flex flex-col hidden">
-            <label class="text-xs text-gray-500 mb-1">Deployment</label>
-            <select id="deployment-type" class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="">Select Deployment</option>
-              <option value="on-prem">On-Premises</option>
-              <option value="automation-suite">Automation Suite</option>
-              <option value="automation-cloud">Automation Cloud</option>
-            </select>
-          </div>
-
-          <!-- PWA Install Button (hidden by default) -->
-          <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
-            Install App
-          </button>
-        </nav>
+        <!-- PWA Install Button (hidden by default) -->
+        <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
+          Install App
+        </button>
 
         <!-- Mobile Menu Button -->
         <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
@@ -167,23 +98,51 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu - Navigation only -->
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
-      <div class="px-4 py-3 space-y-3">
-        <!-- Mobile Industry Switcher -->
-        <div class="flex space-x-2">
-          <button class="industry-btn flex-1 px-3 py-2 text-sm font-medium text-center border rounded-md" data-industry="banking">
-            Banking
-          </button>
-          <button class="industry-btn flex-1 px-3 py-2 text-sm font-medium text-center border rounded-md" data-industry="insurance">
-            Insurance
-          </button>
+      <div class="px-4 py-3">
+        <p class="text-sm text-gray-500 text-center">Use the Customer Information section below to configure your sales context</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Customer Information Section -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-gray-700">Customer Information</h2>
+        <button id="update-content-btn" class="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors">
+          Update Content
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <!-- 1. Vertical -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Vertical</label>
+          <div class="space-y-2">
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="banking">
+              Banking
+            </button>
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="insurance">
+              Insurance
+            </button>
+          </div>
         </div>
 
-        <!-- Mobile Line of Business Selector -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Line of Business</label>
-          <select id="mobile-lob-selector" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md">
+        <!-- 2. Sub Vertical -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Sub Vertical</label>
+          <select id="sub-vertical-selector" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+            <option value="">Select Sub Vertical</option>
+            <!-- Options will be populated based on vertical selection -->
+          </select>
+        </div>
+
+        <!-- 3. Line of Business -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Line of Business</label>
+          <select id="lob-selector" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
             <option value="">All LOBs</option>
             <option value="consumer-banking">Consumer Banking</option>
             <option value="capital-markets">Capital Markets</option>
@@ -193,52 +152,51 @@
           </select>
         </div>
 
-        <!-- Mobile Project Type Toggles -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Project Type</label>
+        <!-- 4. Project Type -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Project Type</label>
           <div class="grid grid-cols-2 gap-2">
-            <button class="project-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="rpa">
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="rpa">
               RPA
             </button>
-            <button class="project-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="idp">
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="idp">
               IDP
             </button>
-            <button class="project-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="agentic">
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="agentic">
               Agentic
             </button>
-            <button class="project-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="maestro">
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="maestro">
               Maestro
             </button>
           </div>
         </div>
 
-        <!-- Mobile Customer Type Selector -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Customer Type</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button class="customer-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="new-logo">
+        <!-- 5. Customer Type -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Customer Type</label>
+          <div class="space-y-2">
+            <button class="customer-type-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="new-logo">
               🆕 New Logo
             </button>
-            <button class="customer-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="existing">
+            <button class="customer-type-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="existing">
               🏢 Existing
             </button>
           </div>
+          
+          <!-- Deployment (shows when customer type is selected) -->
+          <div id="deployment-container" class="hidden mt-3">
+            <label class="block text-sm font-medium text-gray-600 mb-2">Deployment</label>
+            <select id="deployment-type" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <option value="">Select Deployment</option>
+              <option value="on-prem">On-Premises</option>
+              <option value="automation-suite">Automation Suite</option>
+              <option value="automation-cloud">Automation Cloud</option>
+            </select>
+          </div>
         </div>
-
-        <!-- Mobile Deployment Type Selector (hidden by default) -->
-        <div id="mobile-deployment-selector" class="hidden">
-          <label class="block text-xs text-gray-500 mb-1">Deployment</label>
-          <select id="mobile-deployment-type" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md">
-            <option value="">Select Deployment</option>
-            <option value="on-prem">On-Premises</option>
-            <option value="automation-suite">Automation Suite</option>
-            <option value="automation-cloud">Automation Cloud</option>
-          </select>
-        </div>
-        
       </div>
     </div>
-  </header>
+  </div>
 
   <!-- LLM Prompt Bar -->
   <div id="llm-prompt-bar" class="bg-gradient-to-r from-orange-500 to-blue-600 shadow-lg sticky top-16 z-30 transition-all duration-300">

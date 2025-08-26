@@ -134,40 +134,24 @@ const SALES_CYCLE_DATA = {
         '<strong>Partner Team:</strong> Channel engagement and enablement'
       ],
       questions: {
-        'Pain & Impact': [
-          'Walk me through how <em>X</em> happens today. Where are the delays or re-work?',
-          'If nothing changes in 6–12 months, what breaks or who is impacted most?',
-          'Can we quantify the impact in cost, revenue, risk, or CX terms?',
-          'What percentage of this work requires human judgment vs. following rules?'
+        'Business Impact & Pain': [
+          'Walk me through your biggest operational challenge. What breaks if nothing changes?',
+          'Can we quantify the impact in cost, revenue, risk, or customer satisfaction terms?',
+          'Which executive initiative does solving this support?'
         ],
-        'Strategic Alignment': [
-          'Which executive initiative does improving this process support (e.g., efficiency, CX, risk)?',
-          'What would a successful quarter look like if we fixed this?',
-          'How does this align with your digital transformation or AI strategy?'
+        'Industry & LOB Priorities': [
+          'What are your top 3 regulatory or compliance pressures this year?',
+          'How are you measuring operational efficiency across your lines of business?',
+          'What customer experience metrics are you being held accountable for?'
         ],
-        'AI & Automation Maturity': [
-          'Agent, Bot, do you know what lang is? Where are you in your AI maturity journey?',
-          'Are you using any AI tools today? Copilots? How does the company approach AI?',
-          'What governance or risk controls do you have around AI and automation?',
-          'Have you tried RPA, workflow tools, or other automation before? What worked or didn\'t?'
+        'Decision Process': [
+          'Who owns this process and who would benefit most from automation?',
+          'What would success look like to your CFO and your board?',
+          'What\'s your timeline and what triggers urgency?'
         ],
-        'People & Roles': [
-          'Who owns the process? Who needs to sign off?',
-          'Who benefits day-to-day and who could block it?',
-          'How comfortable are your teams with AI-assisted work?',
-          'What change management support would be needed?'
-        ],
-        'Tech & Data': [
-          'Which systems are in the flow (core, CRM, email, spreadsheets)?',
-          'What documents or data inputs are involved and how are they validated today?',
-          'What\'s your appetite for cloud vs. on-premise AI models?',
-          'How do you handle sensitive data in automated processes today?'
-        ],
-        'Process Deep-Dive': [
-          'What triggers this process? How often does it run?',
-          'Where do exceptions or edge cases get handled?',
-          'What would "straight-through processing" look like for this?',
-          'If an AI agent could handle 80% automatically, what would the 20% escalation look like?'
+        'AI Readiness': [
+          'How is your organization approaching AI governance and model risk management?',
+          'What systems and data would an AI solution need to integrate with?'
         ]
       },
       objections: [
@@ -294,13 +278,27 @@ const SALES_CYCLE_DATA = {
         '<strong>Executives:</strong> Executive sponsor alignment'
       ],
       questions: {
-        'Value & Outcomes': [
-          'What target KPIs would prove success (e.g., STP, AHT, leakage)?',
-          'What budget source funds this and when does it reset?'
+        'Value & ROI Validation': [
+          'What target KPIs would prove success (STP rates, cost per transaction, compliance metrics)?',
+          'What budget source funds this and what\'s the decision timeline?',
+          'How do you typically measure ROI for technology investments?'
         ],
-        'Decision & Process': [
-          'Who signs? What steps from now to signature?',
-          'Any security, privacy, or model risk approvals required?'
+        'Industry-Specific Business Drivers': [
+          'What are your biggest cost pressures in [LOB] operations right now?',
+          'How are regulatory changes impacting your operational costs and timelines?',
+          'What customer experience improvements would most impact your competitive position?',
+          'Which operational processes have the highest error rates or rework?'
+        ],
+        'Decision Authority & Process': [
+          'Who is the economic buyer and what\'s their approval threshold?',
+          'What steps remain from evaluation to signature?',
+          'Which stakeholders need to sign off (Risk, Compliance, IT, Legal)?',
+          'Any required security, privacy, or model risk management approvals?'
+        ],
+        'Implementation Readiness': [
+          'What would be the ideal pilot process to prove value quickly?',
+          'How do you typically handle change management for process automation?',
+          'What success metrics would convince leadership to expand the program?'
         ]
       },
       objections: [

@@ -171,12 +171,12 @@ function stageCard(stage){
 }
 
 const listHtml = (arr, checklist=false, stageId = '')=>{
-  return `<ul class="space-y-3">${arr.map((x, i)=>{
+  return `<ul class="list-disc list-inside space-y-3 text-gray-700 ml-4">${arr.map((x, i)=>{
     if(checklist){
       const checkboxId = `${stageId}-${i}`;
-      return `<li><label class="flex items-center text-gray-700 cursor-pointer"><input type="checkbox" class="form-checkbox h-5 w-5 rounded border-gray-300 focus:ring-orange-500" data-id="${checkboxId}"><span class="ml-3">${x}</span></label></li>`
+      return `<li class="list-none"><label class="flex items-center text-gray-700 cursor-pointer"><input type="checkbox" class="form-checkbox h-5 w-5 rounded border-gray-300 focus:ring-orange-500" data-id="${checkboxId}"><span class="ml-3">${x}</span></label></li>`
     }
-    return `<li>${x}</li>`
+    return `<li class="leading-relaxed">${x}</li>`
   }).join('')}</ul>`
 }
 

@@ -44,6 +44,232 @@ class HTMLSanitizer {
 
 const sanitizer = new HTMLSanitizer();
 
+// ==================== CUSTOMER INFO MANAGEMENT ====================
+class CustomerInfoManager {
+  constructor() {
+    this.selectedVertical = '';
+    this.selectedSubVertical = '';
+    this.selectedLOB = '';
+    this.selectedProjectTypes = new Set();
+    this.selectedCustomerType = '';
+    this.selectedDeployment = '';
+    this.initializeEventListeners();
+  }
+
+  initializeEventListeners() {
+    // Vertical selector buttons
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.industry-btn')) {
+        this.handleVerticalSelection(e.target);
+      }
+      if (e.target.matches('.customer-type-btn')) {
+        this.handleCustomerTypeSelection(e.target);
+      }
+      if (e.target.matches('.project-type-btn')) {
+        this.handleProjectTypeSelection(e.target);
+      }
+    });
+
+    // Sub vertical selector
+    const subVerticalSelector = document.getElementById('sub-vertical-selector');
+    if (subVerticalSelector) {
+      subVerticalSelector.addEventListener('change', (e) => {
+        this.selectedSubVertical = e.target.value;
+      });
+    }
+
+    // LOB selector
+    const lobSelector = document.getElementById('lob-selector');
+    if (lobSelector) {
+      lobSelector.addEventListener('change', (e) => {
+        this.selectedLOB = e.target.value;
+      });
+    }
+
+    // Deployment selector
+    const deploymentSelector = document.getElementById('deployment-type');
+    if (deploymentSelector) {
+      deploymentSelector.addEventListener('change', (e) => {
+        this.selectedDeployment = e.target.value;
+      });
+    }
+
+    // Update Content button
+    const updateBtn = document.getElementById('update-content-btn');
+    if (updateBtn) {
+      updateBtn.addEventListener('click', () => {
+        this.updateAllContent();
+      });
+    }
+  }
+
+  handleVerticalSelection(button) {
+    const vertical = button.dataset.industry;
+    
+    // Update button states
+    document.querySelectorAll('.industry-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+    button.classList.add('selected');
+    
+    this.selectedVertical = vertical;
+    this.updateSubVerticalOptions();
+  }
+
+  updateSubVerticalOptions() {
+    const subVerticalSelector = document.getElementById('sub-vertical-selector');
+    if (!subVerticalSelector) return;
+
+    // Clear existing options
+    subVerticalSelector.innerHTML = '<option value="">Select Sub Vertical</option>';
+
+    const subVerticals = {
+      banking: [
+        { value: 'retail-banking', label: 'Retail Banking' },
+        { value: 'commercial-banking', label: 'Commercial Banking' },
+        { value: 'investment-banking', label: 'Investment Banking' },
+        { value: 'private-banking', label: 'Private Banking' },
+        { value: 'corporate-banking', label: 'Corporate Banking' }
+      ],
+      insurance: [
+        { value: 'life-insurance', label: 'Life Insurance' },
+        { value: 'health-insurance', label: 'Health Insurance' },
+        { value: 'property-casualty', label: 'Property & Casualty' },
+        { value: 'commercial-insurance', label: 'Commercial Insurance' },
+        { value: 'reinsurance', label: 'Reinsurance' }
+      ]
+    };
+
+    const options = subVerticals[this.selectedVertical] || [];
+    options.forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.value;
+      optionElement.textContent = option.label;
+      subVerticalSelector.appendChild(optionElement);
+    });
+  }
+
+  handleCustomerTypeSelection(button) {
+    const type = button.dataset.type;
+    
+    // Update button states
+    document.querySelectorAll('.customer-type-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+    button.classList.add('selected');
+    
+    this.selectedCustomerType = type;
+    this.toggleDeploymentSelector(type);
+  }
+
+  toggleDeploymentSelector(customerType) {
+    const deploymentContainer = document.getElementById('deployment-container');
+    if (!deploymentContainer) return;
+
+    if (customerType) {
+      deploymentContainer.classList.remove('hidden');
+    } else {
+      deploymentContainer.classList.add('hidden');
+    }
+  }
+
+  handleProjectTypeSelection(button) {
+    const type = button.dataset.type;
+    
+    if (this.selectedProjectTypes.has(type)) {
+      // Deselect
+      this.selectedProjectTypes.delete(type);
+      button.classList.remove('selected');
+    } else {
+      // Select
+      this.selectedProjectTypes.add(type);
+      button.classList.add('selected');
+    }
+  }
+
+  updateAllContent() {
+    // Show loading state
+    const updateBtn = document.getElementById('update-content-btn');
+    const originalText = updateBtn.textContent;
+    updateBtn.textContent = 'Updating...';
+    updateBtn.disabled = true;
+
+    // Simulate content update (replace with actual update logic)
+    setTimeout(() => {
+      this.performContentUpdate();
+      
+      // Reset button
+      updateBtn.textContent = originalText;
+      updateBtn.disabled = false;
+      
+      // Show success feedback
+      this.showUpdateFeedback();
+    }, 1000);
+  }
+
+  performContentUpdate() {
+    const context = this.getSelectionContext();
+    
+    // Update personas based on context
+    this.updatePersonas(context);
+    
+    // Update discovery questions
+    this.updateDiscoveryQuestions(context);
+    
+    // Update objections
+    this.updateObjections(context);
+    
+    // Update LOB use cases
+    this.updateLOBUseCases(context);
+    
+    console.log('Content updated with context:', context);
+  }
+
+  getSelectionContext() {
+    return {
+      vertical: this.selectedVertical,
+      subVertical: this.selectedSubVertical,
+      lob: this.selectedLOB,
+      projectTypes: Array.from(this.selectedProjectTypes),
+      customerType: this.selectedCustomerType,
+      deployment: this.selectedDeployment
+    };
+  }
+
+  updatePersonas(context) {
+    // Implementation will be added to update personas based on context
+    console.log('Updating personas with context:', context);
+  }
+
+  updateDiscoveryQuestions(context) {
+    // Implementation will be added to update discovery questions
+    console.log('Updating discovery questions with context:', context);
+  }
+
+  updateObjections(context) {
+    // Implementation will be added to update objections
+    console.log('Updating objections with context:', context);
+  }
+
+  updateLOBUseCases(context) {
+    // Implementation will be added to update LOB use cases
+    console.log('Updating LOB use cases with context:', context);
+  }
+
+  showUpdateFeedback() {
+    // Create temporary success message
+    const message = document.createElement('div');
+    message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50 transition-opacity duration-300';
+    message.textContent = 'Content updated successfully!';
+    document.body.appendChild(message);
+
+    setTimeout(() => {
+      message.style.opacity = '0';
+      setTimeout(() => message.remove(), 300);
+    }, 2000);
+  }
+}
+
 // ==================== STATE MANAGEMENT ====================
 class AppState {
   constructor() {
@@ -3553,41 +3779,29 @@ class DynamicDiscoveryManager {
   getLOBSpecificQuestions() {
     const lobQuestions = {
       'consumer-banking': [
-        'What consumer banking operations require the most manual processing?',
-        'How do you currently handle account opening and KYC processes?',
-        'What compliance requirements must you maintain for consumer banking?',
-        'Where do you see delays in loan origination and processing?',
-        'How much time is spent on customer service and dispute resolution?',
-        'What manual processes exist in credit risk assessment?'
+        'What\'s driving your cost per account and how do you compete on digital experience?',
+        'How are you managing the speed vs. compliance balance in loan origination?',
+        'What consumer banking metrics is your board most focused on this year?'
       ],
       'capital-markets': [
-        'What capital markets processes have the highest operational risk?',
-        'How do you currently handle trade settlement and reconciliation?',
-        'What manual workflows exist in your wealth management operations?',
-        'Where do you see bottlenecks in treasury operations?',
-        'How much time is spent on regulatory reporting for capital markets?',
-        'What challenges exist in portfolio management and rebalancing?'
+        'What\'s your biggest operational risk in trade settlement and clearing?',
+        'How are you managing cost pressures in prime brokerage and custody operations?',
+        'What capital markets regulations are creating the most operational overhead?'
       ],
       'operations': [
-        'What operational processes have the highest error rates or rework?',
-        'How do you currently handle regulatory reporting and compliance?',
-        'What manual workflows exist in fraud detection and risk assessment?',
-        'Where do you see delays in operational risk management?',
-        'How much time is spent on data validation and exception handling?'
+        'Which operational processes create the most customer impact when delayed?',
+        'What operational KPIs are you accountable for at the executive level?',
+        'How do you balance operational risk management with process speed?'
       ],
       'it-operations': [
-        'What IT service requests consume the most support time?',
-        'How do you currently handle system monitoring and incident response?',
-        'What manual processes exist in ServiceNow integration and management?',
-        'Where do you see bottlenecks in system monitoring and maintenance?',
-        'How much time is spent on data migration and system integration?'
+        'How are you balancing innovation velocity with operational stability?',
+        'What\'s your strategy for managing technical debt while delivering new capabilities?',
+        'How do you measure mean time to resolution for business-critical incidents?'
       ],
       'finance-operations': [
-        'What finance processes require the most manual data entry and reconciliation?',
-        'How do you currently handle invoice processing and expense management?',
-        'What manual workflows exist in financial reconciliation?',
-        'Where do you see delays in accounts payable and receivable?',
-        'How much time is spent on financial reporting and month-end close?'
+        'What are your biggest challenges in month-end close timing and accuracy?',
+        'How do you manage cost allocation and profitability analysis across business lines?',
+        'What finance operations create the most audit or regulatory risk?'
       ],
       'compliance': [
         'What compliance processes require the most manual oversight?',
@@ -3751,24 +3965,20 @@ class DynamicDiscoveryManager {
     this.selectedProjectTypes.forEach(type => {
       const typeQuestions = {
         'rpa': [
-          'What repetitive, rule-based tasks take up the most time?',
-          'Which processes have clear decision trees and minimal exceptions?',
-          'What systems need to integrate without APIs?'
+          'What high-volume, rule-based processes are eating up your FTE budget?',
+          'Which manual tasks are causing your teams to work overtime or miss SLAs?'
         ],
         'idp': [
-          'What types of documents do you process in high volumes?',
-          'How much time is spent manually extracting data from documents?',
-          'What document-based processes have quality control issues?'
+          'What document-heavy processes are creating bottlenecks for your customers?',
+          'How much revenue or cost savings is tied up in manual document processing?'
         ],
         'agentic': [
-          'What processes require complex decision-making and reasoning?',
-          'Where do you need autonomous systems to handle exceptions?',
-          'What workflows would benefit from self-learning capabilities?'
+          'What business decisions currently require expensive expert judgment?',
+          'Where would autonomous decision-making provide competitive advantage?'
         ],
         'maestro': [
-          'What end-to-end processes span multiple departments and systems?',
-          'Where do you need orchestration of both human and digital workers?',
-          'What complex workflows require dynamic routing and escalation?'
+          'What cross-functional processes are impacting your customer experience metrics?',
+          'Which end-to-end workflows are you accountable for optimizing?'
         ]
       };
       questions.push(...(typeQuestions[type] || []));
@@ -3837,9 +4047,10 @@ class DynamicDiscoveryManager {
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     try {
+      window.customerInfoManager = new CustomerInfoManager();
       window.llmPromptBar = new LLMPromptBar();
       window.dynamicDiscoveryManager = new DynamicDiscoveryManager();
-      console.log('LLM Prompt Bar and Dynamic Discovery Manager initialized successfully');
+      console.log('Customer Info Manager, LLM Prompt Bar and Dynamic Discovery Manager initialized successfully');
     } catch (error) {
       console.error('Failed to initialize managers:', error);
     }
