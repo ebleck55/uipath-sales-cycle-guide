@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Guide - Content Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .admin-nav-active { @apply bg-blue-100 border-blue-500 text-blue-700; }
+    .tag-item { @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium; }
+    .tag-primary { @apply bg-blue-100 text-blue-800; }
+    .tag-secondary { @apply bg-green-100 text-green-800; }
+    .tag-pain-point { @apply bg-red-100 text-red-800; }
+    .tag-outcome { @apply bg-purple-100 text-purple-800; }
+    .drag-drop-zone { 
+      @apply border-2 border-dashed border-gray-300 rounded-lg p-4 transition-colors;
+      min-height: 100px;
+    }
+    .drag-drop-zone.drag-over { @apply border-blue-400 bg-blue-50; }
+    .draggable-tag { @apply cursor-move; }
+    .content-card { @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4; }
+    .form-section { @apply bg-gray-50 p-4 rounded-lg mb-4; }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <h1 class="text-xl font-semibold text-gray-900">🛠️ UiPath Sales Guide Admin</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button id="save-all-btn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
+            💾 Save All Changes
+          </button>
+          <button id="preview-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+            👁️ Preview Changes
+          </button>
+          <a href="../../index.html" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-medium">
+            🔙 Back to App
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex">
+      <!-- Sidebar Navigation -->
+      <nav class="w-64 bg-white rounded-lg shadow-sm p-6 mr-8 h-fit">
+        <div class="space-y-2">
+          <button class="admin-nav-btn w-full text-left px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors admin-nav-active" data-section="resources">
+            📚 Key Resources
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors" data-section="use-cases">
+            💼 LOB Use Cases
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors" data-section="personas">
+            👥 Personas
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors" data-section="tags">
+            🏷️ Tag Management
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors" data-section="filters">
+            ⚙️ Filter Rules
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-2 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors" data-section="import-export">
+            📤 Import/Export
+          </button>
+        </div>
+        
+        <!-- Stats Panel -->
+        <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+          <h3 class="text-sm font-medium text-gray-700 mb-3">Content Statistics</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span>Resources:</span>
+              <span id="stats-resources" class="font-semibold">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Use Cases:</span>
+              <span id="stats-use-cases" class="font-semibold">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Personas:</span>
+              <span id="stats-personas" class="font-semibold">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Total Tags:</span>
+              <span id="stats-tags" class="font-semibold">-</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="flex-1">
+        
+        <!-- Resources Management Section -->
+        <section id="section-resources" class="admin-section">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold text-gray-900">📚 Key Resources Management</h2>
+              <button id="add-resource-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                ➕ Add New Resource
+              </button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 grid md:grid-cols-4 gap-4">
+              <input type="text" id="resource-search" placeholder="Search resources..." 
+                     class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <select id="resource-vertical-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <option value="">All Verticals</option>
+                <option value="banking">Banking</option>
+                <option value="insurance">Insurance</option>
+                <option value="general">General</option>
+              </select>
+              <select id="resource-type-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <option value="">All Types</option>
+                <option value="calculator">Calculator</option>
+                <option value="playbook">Playbook</option>
+                <option value="template">Template</option>
+                <option value="guide">Guide</option>
+                <option value="accelerator">Accelerator</option>
+              </select>
+              <select id="resource-priority-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <option value="">All Priorities</option>
+                <option value="high">High Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="low">Low Priority</option>
+              </select>
+            </div>
+
+            <!-- Resources List -->
+            <div id="resources-list" class="space-y-4">
+              <!-- Resources will be populated here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Use Cases Management Section -->
+        <section id="section-use-cases" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold text-gray-900">💼 LOB Use Cases Management</h2>
+              <button id="add-use-case-btn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
+                ➕ Add New Use Case
+              </button>
+            </div>
+            <div class="text-center py-12 text-gray-500">
+              <p>Use Cases management will be implemented next...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Personas Management Section -->
+        <section id="section-personas" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold text-gray-900">👥 Personas Management</h2>
+              <button id="add-persona-btn" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium">
+                ➕ Add New Persona
+              </button>
+            </div>
+            <div id="personas-list" class="space-y-4">
+              <!-- Personas will be populated here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Tag Management Section -->
+        <section id="section-tags" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🏷️ Tag Management System</h2>
+            
+            <!-- Available Tags Pool -->
+            <div class="form-section">
+              <h3 class="text-lg font-semibold mb-4">Available Tags</h3>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-medium text-blue-700 mb-2">Primary Tags</h4>
+                  <div id="primary-tags-pool" class="drag-drop-zone">
+                    <!-- Primary tags will be populated here -->
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-medium text-green-700 mb-2">Secondary Tags</h4>
+                  <div id="secondary-tags-pool" class="drag-drop-zone">
+                    <!-- Secondary tags will be populated here -->
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-medium text-red-700 mb-2">Pain Point Tags</h4>
+                  <div id="pain-point-tags-pool" class="drag-drop-zone">
+                    <!-- Pain point tags will be populated here -->
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-medium text-purple-700 mb-2">Outcome Tags</h4>
+                  <div id="outcome-tags-pool" class="drag-drop-zone">
+                    <!-- Outcome tags will be populated here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Create New Tag -->
+            <div class="form-section">
+              <h3 class="text-lg font-semibold mb-4">Create New Tag</h3>
+              <div class="grid md:grid-cols-4 gap-4">
+                <input type="text" id="new-tag-name" placeholder="Tag name..." 
+                       class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <select id="new-tag-category" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                  <option value="primary">Primary</option>
+                  <option value="secondary">Secondary</option>
+                  <option value="pain_points">Pain Point</option>
+                  <option value="outcomes">Outcome</option>
+                </select>
+                <input type="color" id="new-tag-color" value="#3B82F6" 
+                       class="w-full h-10 border border-gray-300 rounded-md">
+                <button id="create-tag-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                  Create Tag
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filter Rules Section -->
+        <section id="section-filters" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">⚙️ Filter Rules Configuration</h2>
+            
+            <!-- Visual Rule Builder -->
+            <div class="form-section">
+              <h3 class="text-lg font-semibold mb-4">Visual Rule Builder</h3>
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center space-x-2 mb-4">
+                  <span class="text-sm font-medium">IF</span>
+                  <select class="px-2 py-1 border rounded text-sm">
+                    <option>Vertical</option>
+                    <option>LOB</option>
+                    <option>Customer Type</option>
+                    <option>Deployment</option>
+                  </select>
+                  <span class="text-sm">=</span>
+                  <input type="text" placeholder="value" class="px-2 py-1 border rounded text-sm">
+                  <span class="text-sm font-medium">AND</span>
+                  <select class="px-2 py-1 border rounded text-sm">
+                    <option>LOB</option>
+                    <option>Vertical</option>
+                    <option>Tags</option>
+                  </select>
+                  <span class="text-sm">=</span>
+                  <input type="text" placeholder="value" class="px-2 py-1 border rounded text-sm">
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-sm font-medium">THEN SHOW</span>
+                  <select class="px-2 py-1 border rounded text-sm">
+                    <option>Resources</option>
+                    <option>Personas</option>
+                    <option>Use Cases</option>
+                  </select>
+                  <span class="text-sm font-medium">TAGGED WITH</span>
+                  <input type="text" placeholder="tags..." class="px-2 py-1 border rounded text-sm">
+                  <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+                    Add Rule
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Current Rules List -->
+            <div class="form-section">
+              <h3 class="text-lg font-semibold mb-4">Current Filter Rules</h3>
+              <div id="filter-rules-list" class="space-y-2">
+                <div class="p-3 bg-gray-50 rounded border text-sm">
+                  <span class="font-medium">Banking + Capital Markets</span> → Show resources tagged with: 
+                  <span class="tag-item tag-primary">trade-settlement</span>
+                  <span class="tag-item tag-primary">regulatory-reporting</span>
+                  <button class="ml-2 text-red-600 hover:text-red-800">❌</button>
+                </div>
+                <div class="p-3 bg-gray-50 rounded border text-sm">
+                  <span class="font-medium">Insurance + Claims</span> → Show resources tagged with: 
+                  <span class="tag-item tag-primary">claims-processing</span>
+                  <span class="tag-item tag-primary">fraud-detection</span>
+                  <button class="ml-2 text-red-600 hover:text-red-800">❌</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Import/Export Section -->
+        <section id="section-import-export" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📤 Import/Export Content</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+              <!-- Export -->
+              <div class="form-section">
+                <h3 class="text-lg font-semibold mb-4">Export Content</h3>
+                <div class="space-y-3">
+                  <label class="flex items-center">
+                    <input type="checkbox" checked class="mr-2">
+                    <span>Resources</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" checked class="mr-2">
+                    <span>Personas</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" class="mr-2">
+                    <span>Use Cases</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" class="mr-2">
+                    <span>Tags</span>
+                  </label>
+                  <button class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    📥 Export Selected
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Import -->
+              <div class="form-section">
+                <h3 class="text-lg font-semibold mb-4">Import Content</h3>
+                <div class="space-y-3">
+                  <input type="file" accept=".json" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                  <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    📤 Import Content
+                  </button>
+                  <p class="text-sm text-gray-600">
+                    Upload JSON files exported from this system or compatible formats.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Resource Edit Modal -->
+  <div id="resource-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 id="resource-modal-title" class="text-xl font-semibold">Add New Resource</h3>
+            <button id="close-resource-modal" class="text-gray-400 hover:text-gray-600">✕</button>
+          </div>
+          
+          <form id="resource-form" class="space-y-6">
+            <!-- Basic Information -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Resource Name *</label>
+                <input type="text" id="resource-name" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                <select id="resource-type" required 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                  <option value="">Select Type</option>
+                  <option value="calculator">Calculator</option>
+                  <option value="playbook">Playbook</option>
+                  <option value="template">Template</option>
+                  <option value="guide">Guide</option>
+                  <option value="accelerator">Accelerator</option>
+                  <option value="kit">Kit</option>
+                  <option value="solution">Solution</option>
+                  <option value="platform">Platform</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Vertical *</label>
+                <select id="resource-vertical" required 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                  <option value="">Select Vertical</option>
+                  <option value="banking">Banking</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                <select id="resource-priority" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Complexity</label>
+                <select id="resource-complexity" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Overview *</label>
+              <textarea id="resource-overview" required rows="3" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Why This Matters *</label>
+              <textarea id="resource-why" required rows="2" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+
+            <!-- Tag Assignment -->
+            <div class="form-section">
+              <h4 class="text-lg font-medium mb-4">📋 Tag Assignment</h4>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Primary Tags</label>
+                  <div id="resource-primary-tags" class="drag-drop-zone min-h-20">
+                    <p class="text-gray-400 text-sm">Drag primary tags here...</p>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Tags</label>
+                  <div id="resource-secondary-tags" class="drag-drop-zone min-h-20">
+                    <p class="text-gray-400 text-sm">Drag secondary tags here...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4 border-t">
+              <button type="button" id="cancel-resource-btn" 
+                      class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+                Cancel
+              </button>
+              <button type="submit" 
+                      class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                Save Resource
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../api/contentAPI.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
