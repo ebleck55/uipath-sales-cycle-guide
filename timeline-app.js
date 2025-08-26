@@ -35,8 +35,7 @@ class AppState {
       currentStage: 0,
       adminMode: false,
       checkboxes: new Map(),
-      notes: new Map(),
-      stageProgress: new Map()
+      notes: new Map()
     };
     this.listeners = new Map();
   }
@@ -85,7 +84,6 @@ class AppState {
       checkboxes.delete(checkboxId);
     }
     this.set('checkboxes', checkboxes);
-    this.updateStageProgress();
   }
 
   updateNote(noteId, content) {
@@ -101,39 +99,6 @@ class AppState {
   clearFormState() {
     this.set('checkboxes', new Map());
     this.set('notes', new Map());
-    this.set('stageProgress', new Map());
-  }
-
-  updateStageProgress() {
-    const progress = new Map();
-    
-    if (typeof SALES_CYCLE_DATA !== 'undefined' && SALES_CYCLE_DATA.stages) {
-      SALES_CYCLE_DATA.stages.forEach((stage, index) => {
-        const stageCheckboxes = Array.from(this.state.checkboxes.keys()).filter(key => 
-          key.startsWith(`stage-${index}-`)
-        );
-        
-        const checkedCount = stageCheckboxes.filter(key => this.state.checkboxes.get(key)).length;
-        const totalCount = stageCheckboxes.length || 1;
-        
-        progress.set(index, {
-          completed: checkedCount,
-          total: totalCount,
-          percentage: Math.round((checkedCount / totalCount) * 100)
-        });
-      });
-    }
-    
-    this.set('stageProgress', progress);
-  }
-
-  getStageStatus(stageIndex) {
-    const progress = this.state.stageProgress.get(stageIndex);
-    if (!progress) return 'not-started';
-    
-    if (progress.percentage === 100) return 'completed';
-    if (progress.percentage > 0) return 'in-progress';
-    return 'not-started';
   }
 }
 
@@ -231,10 +196,6 @@ class TimelineUiPathApp {
     appState.subscribe('adminMode', (enabled) => {
       document.body.classList.toggle('admin-mode', enabled);
       this.updateAdminUI(enabled);
-    });
-
-    appState.subscribe('stageProgress', () => {
-      this.updateTimelineProgress();
     });
   }
 
@@ -382,9 +343,6 @@ class TimelineUiPathApp {
     
     // Render initial stage content
     this.renderStageContent(appState.get('currentStage') || 0);
-    
-    // Update progress
-    appState.updateStageProgress();
   }
 
   renderTimeline() {
@@ -404,44 +362,22 @@ class TimelineUiPathApp {
         <!-- Timeline Dots -->
         <div class="relative flex justify-between items-start">
           ${stages.map((stage, index) => {
-            const status = appState.getStageStatus(index);
             const isActive = index === currentStage;
-            const isPast = index < currentStage;
-            
-            let dotColor = 'bg-gray-300';
-            let textColor = 'text-gray-500';
-            let statusText = 'Not Started';
-            
-            if (status === 'completed') {
-              dotColor = 'bg-green-500';
-              textColor = 'text-green-600';
-              statusText = 'Completed';
-            } else if (status === 'in-progress' || isActive) {
-              dotColor = 'bg-orange-500';
-              textColor = 'text-orange-600';
-              statusText = 'In Progress';
-            }
             
             return `
               <div class="timeline-dot flex flex-col items-center cursor-pointer group transition-all duration-200 hover:scale-105"
                    data-stage="${index}">
                 <div class="relative">
-                  <div class="w-16 h-16 rounded-full ${dotColor} flex items-center justify-center text-white font-bold text-lg mb-3 
-                              transition-all duration-300 group-hover:shadow-lg ${isActive ? 'ring-4 ring-orange-200 scale-110' : ''}">
-                    ${status === 'completed' ? 
-                      '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' : 
-                      (index + 1)
-                    }
+                  <div class="w-16 h-16 rounded-full ${isActive ? 'bg-orange-500' : 'bg-gray-300'} flex items-center justify-center text-white font-bold text-lg mb-3 
+                              transition-all duration-300 group-hover:shadow-lg ${isActive ? 'ring-4 ring-orange-200 scale-110' : ''} hover:bg-orange-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                   </div>
                   ${isActive ? '<div class="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-25"></div>' : ''}
                 </div>
                 <div class="text-center">
-                  <div class="font-semibold text-sm ${textColor} mb-1">${sanitizer.escapeHtml(stage.title)}</div>
-                  <div class="text-xs ${textColor}">${statusText}</div>
-                  ${status === 'in-progress' ? 
-                    `<div class="text-xs font-bold ${textColor} mt-1">${appState.state.stageProgress.get(index)?.percentage || 0}%</div>` : 
-                    ''
-                  }
+                  <div class="font-semibold text-sm ${isActive ? 'text-orange-600' : 'text-gray-600'} mb-1 max-w-20 leading-tight">${sanitizer.escapeHtml(stage.title)}</div>
                 </div>
               </div>
             `;
@@ -490,31 +426,16 @@ class TimelineUiPathApp {
     const stage = SALES_CYCLE_DATA.stages[stageIndex];
     if (!stage) return;
     
-    const progress = appState.state.stageProgress.get(stageIndex) || { completed: 0, total: 0, percentage: 0 };
     const currentIndustry = appState.get('currentIndustry');
     
     const contentHTML = `
       <!-- Stage Header -->
       <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">
-              Stage ${stageIndex + 1}: ${sanitizer.escapeHtml(stage.title)}
-            </h2>
-            <p class="text-gray-600">${sanitizer.escapeHtml(stage.description || 'Drive the sales process forward in this critical stage.')}</p>
-          </div>
-          <div class="text-right">
-            <div class="text-4xl font-bold ${progress.percentage === 100 ? 'text-green-600' : 'text-orange-600'}">
-              ${progress.percentage}%
-            </div>
-            <div class="text-sm text-gray-500">${progress.completed} of ${progress.total} tasks</div>
-          </div>
-        </div>
-        
-        <!-- Progress Bar -->
-        <div class="w-full bg-gray-200 rounded-full h-3">
-          <div class="bg-gradient-to-r from-green-500 to-orange-500 h-3 rounded-full transition-all duration-500" 
-               style="width: ${progress.percentage}%"></div>
+        <div class="mb-6">
+          <h2 class="text-3xl font-bold text-gray-900 mb-2">
+            ${sanitizer.escapeHtml(stage.title)}
+          </h2>
+          <p class="text-gray-600">${sanitizer.escapeHtml(stage.description || 'Drive the sales process forward in this critical stage.')}</p>
         </div>
       </div>
 
@@ -694,27 +615,7 @@ class TimelineUiPathApp {
   }
 
   updateTimelineUI(stageIndex) {
-    // Update timeline dots
-    $$('.timeline-dot').forEach((dot, index) => {
-      const isActive = index === stageIndex;
-      const dotCircle = dot.querySelector('div > div');
-      
-      if (dotCircle) {
-        dotCircle.classList.toggle('ring-4', isActive);
-        dotCircle.classList.toggle('ring-orange-200', isActive);
-        dotCircle.classList.toggle('scale-110', isActive);
-      }
-    });
-    
-    // Update progress line
-    const progressLine = $('.absolute.bg-gradient-to-r');
-    if (progressLine && SALES_CYCLE_DATA.stages) {
-      progressLine.style.width = `${((stageIndex + 1) / SALES_CYCLE_DATA.stages.length) * 100}%`;
-    }
-  }
-
-  updateTimelineProgress() {
-    // Re-render timeline to show updated progress
+    // Re-render timeline to show updated active state
     this.renderTimeline();
   }
 
@@ -823,7 +724,6 @@ class TimelineUiPathApp {
         textarea.value = '';
       });
       
-      this.renderTimeline();
       this.showNotification('All data cleared', 'success');
     }
   }
