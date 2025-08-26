@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOB Selector Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">Dynamic LOB Selector Test</h1>
+    
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-lg font-semibold mb-4">1. Select a Vertical</h2>
+      <div class="space-y-2">
+        <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="">
+          Clear Selection
+        </button>
+        <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="banking">
+          Banking
+        </button>
+        <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="insurance">
+          Insurance
+        </button>
+      </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-lg font-semibold mb-4">2. LOB Selector (should update dynamically)</h2>
+      <select id="lob-selector" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    
+    <div id="test-results" class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-lg font-semibold mb-4">Test Results</h2>
+      <div id="results-content" class="space-y-2">
+        <p class="text-gray-600">Select a vertical to see LOB options change...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // LOB Options Data (copy from main app)
+    const LOB_OPTIONS = {
+      general: [
+        { value: '', label: 'All Lines of Business' },
+        { value: 'finance', label: 'Finance' },
+        { value: 'hr', label: 'Human Resources' },
+        { value: 'it', label: 'Information Technology' },
+        { value: 'operations', label: 'Operations' },
+        { value: 'procurement', label: 'Procurement' },
+        { value: 'customer-service', label: 'Customer Service' }
+      ],
+      banking: [
+        { value: '', label: 'All Banking LOBs' },
+        { value: 'consumer-banking', label: 'Consumer Banking' },
+        { value: 'capital-markets', label: 'Capital Markets' },
+        { value: 'commercial-banking', label: 'Commercial Banking' },
+        { value: 'wealth-management', label: 'Wealth Management' },
+        { value: 'operations', label: 'Operations' },
+        { value: 'it-operations', label: 'IT Operations' },
+        { value: 'finance-operations', label: 'Finance & Operations' }
+      ],
+      insurance: [
+        { value: '', label: 'All Insurance LOBs' },
+        { value: 'property-casualty', label: 'Property & Casualty' },
+        { value: 'life-annuities', label: 'Life & Annuities' },
+        { value: 'health-insurance', label: 'Health Insurance' },
+        { value: 'commercial-lines', label: 'Commercial Lines' },
+        { value: 'claims-processing', label: 'Claims Processing' },
+        { value: 'underwriting', label: 'Underwriting' },
+        { value: 'policy-administration', label: 'Policy Administration' },
+        { value: 'reinsurance', label: 'Reinsurance' },
+        { value: 'compliance-risk', label: 'Compliance & Risk' }
+      ]
+    };
+
+    class TestLOBSelector {
+      constructor() {
+        this.selectedVertical = '';
+        this.initializeEventListeners();
+        this.initializeLOBSelector();
+      }
+
+      initializeLOBSelector() {
+        // Initialize with general LOB options when no vertical is selected
+        this.updateLOBSelector('');
+      }
+
+      initializeEventListeners() {
+        document.addEventListener('click', (e) => {
+          if (e.target.matches('.industry-btn')) {
+            this.handleVerticalSelection(e.target);
+          }
+        });
+      }
+
+      handleVerticalSelection(button) {
+        const vertical = button.dataset.industry;
+        
+        // Update button states
+        document.querySelectorAll('.industry-btn').forEach(btn => {
+          btn.classList.remove('selected', 'border-blue-600', 'bg-blue-50');
+          btn.classList.add('border-gray-200');
+        });
+        button.classList.add('selected', 'border-blue-600', 'bg-blue-50');
+        button.classList.remove('border-gray-200');
+        
+        this.selectedVertical = vertical;
+        
+        // Update LOB selector based on selected vertical
+        this.updateLOBSelector(vertical);
+        
+        this.logResult(`Selected vertical: ${vertical || 'None'}`);
+      }
+
+      updateLOBSelector(vertical) {
+        const lobSelector = document.getElementById('lob-selector');
+        if (!lobSelector) return;
+
+        // Determine which LOB options to show
+        let options = LOB_OPTIONS.general; // Default to general
+        let categoryName = 'General';
+        
+        if (vertical === 'banking') {
+          options = LOB_OPTIONS.banking;
+          categoryName = 'Banking';
+        } else if (vertical === 'insurance') {
+          options = LOB_OPTIONS.insurance;
+          categoryName = 'Insurance';
+        }
+        
+        // Clear existing options
+        lobSelector.innerHTML = '';
+        
+        // Add options to selector
+        options.forEach(option => {
+          const optionElement = document.createElement('option');
+          optionElement.value = option.value;
+          optionElement.textContent = option.label;
+          lobSelector.appendChild(optionElement);
+        });
+        
+        // Enable the selector
+        lobSelector.disabled = false;
+        
+        this.logResult(`LOB selector updated with ${options.length} ${categoryName} options`);
+      }
+
+      logResult(message) {
+        const resultsContent = document.getElementById('results-content');
+        const timestamp = new Date().toLocaleTimeString();
+        
+        const logEntry = document.createElement('div');
+        logEntry.className = 'text-sm text-blue-600 border-l-4 border-blue-400 pl-3 py-1';
+        logEntry.innerHTML = `<span class="text-gray-400">[${timestamp}]</span> ${message}`;
+        
+        resultsContent.appendChild(logEntry);
+        resultsContent.scrollTop = resultsContent.scrollHeight;
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new TestLOBSelector();
+    });
+  </script>
+</body>
+</html>

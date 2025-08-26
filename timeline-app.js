@@ -44,6 +44,41 @@ class HTMLSanitizer {
 
 const sanitizer = new HTMLSanitizer();
 
+// ==================== LOB OPTIONS DATA ====================
+const LOB_OPTIONS = {
+  general: [
+    { value: '', label: 'All Lines of Business' },
+    { value: 'finance', label: 'Finance' },
+    { value: 'hr', label: 'Human Resources' },
+    { value: 'it', label: 'Information Technology' },
+    { value: 'operations', label: 'Operations' },
+    { value: 'procurement', label: 'Procurement' },
+    { value: 'customer-service', label: 'Customer Service' }
+  ],
+  banking: [
+    { value: '', label: 'All Banking LOBs' },
+    { value: 'consumer-banking', label: 'Consumer Banking' },
+    { value: 'capital-markets', label: 'Capital Markets' },
+    { value: 'commercial-banking', label: 'Commercial Banking' },
+    { value: 'wealth-management', label: 'Wealth Management' },
+    { value: 'operations', label: 'Operations' },
+    { value: 'it-operations', label: 'IT Operations' },
+    { value: 'finance-operations', label: 'Finance & Operations' }
+  ],
+  insurance: [
+    { value: '', label: 'All Insurance LOBs' },
+    { value: 'property-casualty', label: 'Property & Casualty' },
+    { value: 'life-annuities', label: 'Life & Annuities' },
+    { value: 'health-insurance', label: 'Health Insurance' },
+    { value: 'commercial-lines', label: 'Commercial Lines' },
+    { value: 'claims-processing', label: 'Claims Processing' },
+    { value: 'underwriting', label: 'Underwriting' },
+    { value: 'policy-administration', label: 'Policy Administration' },
+    { value: 'reinsurance', label: 'Reinsurance' },
+    { value: 'compliance-risk', label: 'Compliance & Risk' }
+  ]
+};
+
 // ==================== CUSTOMER INFO MANAGEMENT ====================
 class CustomerInfoManager {
   constructor() {
@@ -53,6 +88,12 @@ class CustomerInfoManager {
     this.selectedCustomerType = '';
     this.selectedDeployment = '';
     this.initializeEventListeners();
+    this.initializeLOBSelector();
+  }
+
+  initializeLOBSelector() {
+    // Initialize with general LOB options when no vertical is selected
+    this.updateLOBSelector('');
   }
 
   initializeEventListeners() {
@@ -104,6 +145,45 @@ class CustomerInfoManager {
     button.classList.add('selected');
     
     this.selectedVertical = vertical;
+    
+    // Update LOB selector based on selected vertical
+    this.updateLOBSelector(vertical);
+    
+    // Reset LOB selection when vertical changes
+    this.selectedLOB = '';
+  }
+
+  updateLOBSelector(vertical) {
+    const lobSelector = document.getElementById('lob-selector');
+    const mobileLobSelector = document.getElementById('mobile-lob-selector');
+    
+    const selectors = [lobSelector, mobileLobSelector].filter(selector => selector);
+    if (selectors.length === 0) return;
+
+    // Determine which LOB options to show
+    let options = LOB_OPTIONS.general; // Default to general
+    if (vertical === 'banking') {
+      options = LOB_OPTIONS.banking;
+    } else if (vertical === 'insurance') {
+      options = LOB_OPTIONS.insurance;
+    }
+    
+    // Update all selectors
+    selectors.forEach(selector => {
+      // Clear existing options
+      selector.innerHTML = '';
+      
+      // Add options to selector
+      options.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.value;
+        optionElement.textContent = option.label;
+        selector.appendChild(optionElement);
+      });
+      
+      // Enable the selector
+      selector.disabled = false;
+    });
   }
 
   handleCustomerTypeSelection(button) {
