@@ -686,6 +686,8 @@ class ContentEditor {
       'use-case': 'Edit Use Case',
       'initial-persona': 'Edit Initial Persona',
       'uipath-team': 'Edit UiPath Team Member',
+      'use-case-category': 'Edit Use Case Category',
+      'use-case-item': 'Edit Use Case Item',
       // New entry types
       'new-outcome': 'Add New Outcome',
       'new-question': 'Add New Discovery Question',
@@ -694,7 +696,9 @@ class ContentEditor {
       'new-use-case': 'Add New Use Case',
       'new-persona': 'Add New Persona',
       'new-initial-persona': 'Add New Initial Persona',
-      'new-uipath-team': 'Add New UiPath Team Member'
+      'new-uipath-team': 'Add New UiPath Team Member',
+      'new-use-case-category': 'Add New Use Case Category',
+      'new-use-case-item': 'Add New Use Case Item'
     };
     modalTitle.textContent = titles[type] || 'Edit Content';
     
@@ -738,6 +742,10 @@ class ContentEditor {
       case 'initial-persona':
       case 'uipath-team':
         return data.text || '';
+      case 'use-case-category':
+        return data.category || '';
+      case 'use-case-item':
+        return data.name || '';
       // New entry types start with empty content
       case 'new-outcome':
       case 'new-question':
@@ -747,6 +755,8 @@ class ContentEditor {
       case 'new-persona':
       case 'new-initial-persona':
       case 'new-uipath-team':
+      case 'new-use-case-category':
+      case 'new-use-case-item':
         return '';
       default:
         return element?.textContent || '';
@@ -815,6 +825,12 @@ class ContentEditor {
       case 'uipath-team':
         data.list[data.index] = content;
         break;
+      case 'use-case-category':
+        data.categoryData.category = textContent;
+        break;
+      case 'use-case-item':
+        data.useCaseData.name = textContent;
+        break;
       
       // Handle new entries
       case 'new-outcome':
@@ -865,6 +881,15 @@ class ContentEditor {
       case 'new-uipath-team':
         SALES_CYCLE_DATA.stages[data.stageIndex].uipathTeam.push(content);
         break;
+      case 'new-use-case-category':
+        // For static data, we would need to modify the useCasesData structure
+        // This is a placeholder for the functionality
+        console.log('Adding new use case category:', textContent);
+        break;
+      case 'new-use-case-item':
+        // For static data, we would need to modify the specific category's cases array
+        console.log('Adding new use case item:', textContent);
+        break;
     }
   }
 
@@ -904,6 +929,8 @@ class ContentEditor {
         app.renderPersonas();
         break;
       case 'new-use-case':
+      case 'new-use-case-category':
+      case 'new-use-case-item':
         // Re-render use cases section
         app.renderUseCases();
         break;
@@ -1326,8 +1353,23 @@ class TimelineUiPathApp {
         </div>
       </div>
     `).join('');
+
+    // Add "Add New Persona" button
+    const addNewPersonaButton = `
+      <div class="edit-btn hidden mt-4">
+        <button class="w-full p-4 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors" 
+                data-edit-type="new-persona" data-edit-id="${currentIndustry}">
+          <div class="flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add New Persona
+          </div>
+        </button>
+      </div>
+    `;
     
-    container.innerHTML = personasHTML || '<p class="text-gray-500 col-span-full text-center">No personas available for this industry.</p>';
+    container.innerHTML = (personasHTML || '<p class="text-gray-500 col-span-full text-center">No personas available for this industry.</p>') + addNewPersonaButton;
   }
 
   renderUseCases() {
@@ -1400,24 +1442,66 @@ class TimelineUiPathApp {
 
     const useCasesHTML = `
       <div class="grid md:grid-cols-2 gap-6">
-        ${allUseCases.map(category => {
+        ${allUseCases.map((category, categoryIndex) => {
           const colors = getColorClasses(category.color);
           return `
           <div class="${colors.bg} rounded-lg p-6">
-            <h3 class="text-lg font-semibold ${colors.text} mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${category.icon}"/>
-              </svg>
-              ${sanitizer.renderSafeHTML(category.category)}
-            </h3>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold ${colors.text} flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${category.icon}"/>
+                </svg>
+                <span data-editable>${sanitizer.renderSafeHTML(category.category)}</span>
+              </h3>
+              <button class="edit-btn hidden p-1 text-gray-400 hover:text-${category.color}-600 transition-colors" 
+                      data-edit-type="use-case-category" data-edit-id="${categoryIndex}" data-industry="${currentIndustry}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                </svg>
+              </button>
+            </div>
             <ul class="space-y-2">
-              ${category.cases.map(useCase => `
-                <li><button class="use-case-link text-sm ${colors.link} ${colors.linkHover} text-left transition-colors" data-page="${useCase.page}" data-name="${sanitizer.escapeHtml(useCase.name)}">• ${sanitizer.renderSafeHTML(useCase.name)}</button></li>
+              ${category.cases.map((useCase, useCaseIndex) => `
+                <li class="flex items-center justify-between group">
+                  <button class="use-case-link text-sm ${colors.link} ${colors.linkHover} text-left transition-colors flex-1" data-page="${useCase.page}" data-name="${sanitizer.escapeHtml(useCase.name)}">
+                    <span data-editable>• ${sanitizer.renderSafeHTML(useCase.name)}</span>
+                  </button>
+                  <button class="edit-btn hidden p-1 text-gray-400 hover:text-${category.color}-600 transition-colors ml-2" 
+                          data-edit-type="use-case-item" data-edit-id="${categoryIndex}-${useCaseIndex}" data-industry="${currentIndustry}">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                    </svg>
+                  </button>
+                </li>
               `).join('')}
+              <!-- Add New Use Case Button -->
+              <li class="edit-btn hidden mt-3">
+                <button class="w-full p-2 border-2 border-dashed border-${category.color}-300 rounded-lg text-${category.color}-600 hover:border-${category.color}-400 hover:bg-${category.color}-50 transition-colors" 
+                        data-edit-type="new-use-case-item" data-edit-id="${categoryIndex}" data-industry="${currentIndustry}">
+                  <div class="flex items-center justify-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Add New Use Case
+                  </div>
+                </button>
+              </li>
             </ul>
           </div>
         `;
         }).join('')}
+      </div>
+      <!-- Add New Category Button -->
+      <div class="edit-btn hidden mt-6">
+        <button class="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:bg-gray-50 transition-colors" 
+                data-edit-type="new-use-case-category" data-edit-id="${currentIndustry}">
+          <div class="flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add New Category
+          </div>
+        </button>
       </div>
     `;
 
@@ -1950,6 +2034,12 @@ class TimelineUiPathApp {
       case 'uipath-team':
         editData = this.getUipathTeamEditData(editId);
         break;
+      case 'use-case-category':
+        editData = this.getUseCaseCategoryEditData(editId);
+        break;
+      case 'use-case-item':
+        editData = this.getUseCaseItemEditData(editId);
+        break;
     }
 
     // Open editor
@@ -2021,6 +2111,24 @@ class TimelineUiPathApp {
       list: SALES_CYCLE_DATA.stages[stageIndex].uipathTeam,
       index: memberIndex,
       text: member
+    };
+  }
+
+  getUseCaseCategoryEditData(editId) {
+    // For static data editing - this is a simplified version
+    // In a full implementation, this would reference actual stored data
+    return {
+      categoryData: { category: 'Category Name' },
+      category: 'Category Name'
+    };
+  }
+
+  getUseCaseItemEditData(editId) {
+    // For static data editing - this is a simplified version
+    // In a full implementation, this would reference actual stored data
+    return {
+      useCaseData: { name: 'Use Case Name' },
+      name: 'Use Case Name'
     };
   }
 
