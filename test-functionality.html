@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOB Use Cases Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">LOB Use Cases Feature Test</h1>
+    
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-lg font-semibold mb-4">Test Use Cases with Images</h2>
+      <div class="space-y-2">
+        <button class="use-case-link block w-full text-left p-2 bg-blue-50 hover:bg-blue-100 rounded" 
+                data-page="10" data-name="Consumer Banking Operations">
+          • Consumer Banking Operations (Page 10) - Should have image
+        </button>
+        <button class="use-case-link block w-full text-left p-2 bg-blue-50 hover:bg-blue-100 rounded" 
+                data-page="15" data-name="Credit Risk Assessment">
+          • Credit Risk Assessment (Page 15) - Should have image
+        </button>
+        <button class="use-case-link block w-full text-left p-2 bg-blue-50 hover:bg-blue-100 rounded" 
+                data-page="20" data-name="Commercial Lending">
+          • Commercial Lending (Page 20) - Should have image
+        </button>
+      </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-lg font-semibold mb-4">Test Use Cases without Images</h2>
+      <div class="space-y-2">
+        <button class="use-case-link block w-full text-left p-2 bg-red-50 hover:bg-red-100 rounded" 
+                data-page="25" data-name="Trade Finance Automation">
+          • Trade Finance Automation (Page 25) - No image (should show fallback)
+        </button>
+      </div>
+    </div>
+    
+    <div id="test-results" class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-lg font-semibold mb-4">Test Results</h2>
+      <div id="results-content" class="space-y-2">
+        <p class="text-gray-600">Click on use cases above to test the functionality...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simplified version of the UseCasePDFHandler for testing
+    class TestUseCasePDFHandler {
+      constructor() {
+        this.initializeEventListeners();
+      }
+
+      initializeEventListeners() {
+        document.addEventListener('click', (e) => {
+          const useCaseButton = e.target.closest('.use-case-link');
+          if (useCaseButton) {
+            e.preventDefault();
+            this.handleUseCaseClick(useCaseButton);
+          }
+        });
+      }
+
+      async handleUseCaseClick(button) {
+        const pageNumber = button.dataset.page;
+        const useCaseName = button.dataset.name || button.textContent.trim().replace('• ', '');
+        
+        this.logResult(`Clicked: ${useCaseName} (Page ${pageNumber})`);
+        
+        if (!pageNumber) {
+          this.logResult('❌ Error: Page number not found', 'error');
+          return;
+        }
+
+        try {
+          // Show loading state
+          button.style.opacity = '0.6';
+          button.disabled = true;
+          
+          // Test image loading
+          await this.testImageLoading(pageNumber, useCaseName);
+          
+        } catch (error) {
+          this.logResult(`❌ Error: ${error.message}`, 'error');
+        } finally {
+          // Reset button state  
+          button.style.opacity = '1';
+          button.disabled = false;
+        }
+      }
+
+      async testImageLoading(pageNumber, useCaseName) {
+        const possibleExtensions = ['png', 'jpg', 'jpeg'];
+        let foundImage = false;
+
+        for (const ext of possibleExtensions) {
+          const imagePath = `assets/slides/page-${pageNumber}.${ext}`;
+          
+          try {
+            const imageExists = await this.checkImageExists(imagePath);
+            if (imageExists) {
+              this.logResult(`✅ Found image: ${imagePath}`, 'success');
+              this.showTestModal(pageNumber, useCaseName, imagePath);
+              foundImage = true;
+              break;
+            }
+          } catch (e) {
+            // Continue to next extension
+          }
+        }
+
+        if (!foundImage) {
+          this.logResult(`❌ No image found for page ${pageNumber}`, 'warning');
+          this.showTestModal(pageNumber, useCaseName, null);
+        }
+      }
+
+      checkImageExists(src) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = src;
+        });
+      }
+
+      showTestModal(pageNumber, useCaseName, imagePath) {
+        // Close any existing modal
+        const existingModal = document.getElementById('test-modal');
+        if (existingModal) {
+          existingModal.remove();
+        }
+
+        // Create test modal
+        const modal = document.createElement('div');
+        modal.id = 'test-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+        
+        const content = imagePath ? 
+          `<img src="${imagePath}" alt="${useCaseName}" class="max-w-full max-h-[80vh] object-contain rounded-lg">` :
+          `<div class="text-center text-white">
+             <div class="text-red-400 mb-4">❌</div>
+             <h4 class="text-lg font-semibold mb-2">Slide Image Not Available</h4>
+             <p>The slide image for page ${pageNumber} hasn't been uploaded yet.</p>
+           </div>`;
+
+        modal.innerHTML = `
+          <div class="bg-white rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold">${useCaseName} - Page ${pageNumber}</h3>
+              <button onclick="document.getElementById('test-modal').remove()" class="text-gray-500 hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+            <div class="text-center">
+              ${content}
+            </div>
+            <div class="mt-4 text-center">
+              <button onclick="document.getElementById('test-modal').remove()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Close
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        
+        // Log the modal creation
+        this.logResult(`📱 Modal displayed for ${useCaseName}`, 'info');
+      }
+
+      logResult(message, type = 'info') {
+        const resultsContent = document.getElementById('results-content');
+        const timestamp = new Date().toLocaleTimeString();
+        const colors = {
+          info: 'text-blue-600',
+          success: 'text-green-600', 
+          warning: 'text-yellow-600',
+          error: 'text-red-600'
+        };
+        
+        const logEntry = document.createElement('div');
+        logEntry.className = `text-sm ${colors[type]} border-l-4 pl-3 py-1`;
+        logEntry.style.borderColor = type === 'success' ? '#10B981' : 
+                                   type === 'warning' ? '#F59E0B' :
+                                   type === 'error' ? '#EF4444' : '#3B82F6';
+        logEntry.innerHTML = `<span class="text-gray-400">[${timestamp}]</span> ${message}`;
+        
+        resultsContent.appendChild(logEntry);
+        resultsContent.scrollTop = resultsContent.scrollHeight;
+      }
+    }
+
+    // Initialize the test handler when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new TestUseCasePDFHandler();
+    });
+  </script>
+</body>
+</html>
