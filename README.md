@@ -7,9 +7,12 @@ A comprehensive interactive web application that guides sales professionals thro
 - **Industry-Specific Content**: Toggle between Banking and Insurance industry views
 - **Interactive Sales Stages**: 5 comprehensive stages with collapsible sections
 - **Progress Tracking**: Checkbox-based progress tracking with visual progress bars
+- **AI-Powered Assistance**: Generate follow-up questions and objection responses using Claude, OpenAI, or Gemini
+- **Smart Objection Handling**: AI-generated responses to customer objections with context awareness
+- **Contextual Follow-up Questions**: AI generates relevant questions based on customer notes and sales stage
 - **Admin Mode**: Edit content inline (when enabled)
 - **Responsive Design**: Mobile-friendly interface with collapsible navigation
-- **Local Storage**: Persists progress across sessions
+- **Local Storage**: Persists progress and notes across sessions
 
 ## Sales Stages
 
@@ -45,17 +48,42 @@ This application is designed to work seamlessly with GitHub Pages:
 
 ```
 uipath-sales-cycle-guide/
-├── index.html              # Optimized HTML structure
+├── index.html              # Optimized HTML structure with AI integration
 ├── css/
 │   └── styles.css         # Separated CSS with performance optimizations
 ├── js/
 │   ├── data.js           # Sales cycle data configuration
 │   ├── app.js            # Main application logic
+│   ├── ai-integration.js # AI integration for Claude/OpenAI/Gemini
 │   └── performance.js    # Performance optimizations and utilities
 ├── sw.js                  # Service Worker for offline functionality
 ├── README.md             # Documentation
 └── .gitignore            # Git ignore file
 ```
+
+## AI Integration
+
+Configure any or all of these AI providers in the application:
+
+### Supported Providers:
+- **Claude (Anthropic)**: Get your API key from [console.anthropic.com](https://console.anthropic.com)
+- **OpenAI**: Get your API key from [platform.openai.com](https://platform.openai.com/api-keys)
+- **Google Gemini**: Get your API key from [aistudio.google.com](https://aistudio.google.com/app/apikey)
+
+### AI Features:
+- **Smart Follow-up Questions**: Generate contextual questions based on sales stage and customer notes
+- **Intelligent Objection Handling**: Get AI-powered responses to customer objections with industry context
+- **Contextual Awareness**: AI considers current sales stage, industry (Banking/Insurance), and customer notes
+- **Multi-Provider Support**: Switch between Claude, OpenAI, and Gemini seamlessly
+- **Customizable Settings**: Adjust temperature (creativity) and max tokens per response
+
+### Usage:
+1. Click the "AI Settings" button in the header
+2. Select your preferred AI provider
+3. Enter your API key(s)
+4. Test the connection
+5. Use the "✨ AI: Generate Follow-up Questions" buttons in each sales stage
+6. Click "✨ AI Response" on any objection for contextual responses
 
 ## Performance Optimizations
 
@@ -66,6 +94,7 @@ uipath-sales-cycle-guide/
 - **Modern clipboard API**: With fallback for older browsers
 - **Memory management**: Built-in monitoring and cleanup utilities
 - **Accessibility**: ARIA labels, semantic HTML, keyboard navigation
+- **AI Integration**: Modular AI system with error handling and fallbacks
 
 ## Browser Compatibility
 

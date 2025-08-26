@@ -364,3 +364,120 @@ details summary:focus {
   transform: translateY(-1px);
   box-shadow: var(--shadow-default);
 }
+
+/* AI Integration Styles */
+#ai-settings-btn {
+  transition: var(--transition-default);
+}
+
+#ai-settings-btn:hover {
+  background-color: #7c3aed;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-default);
+}
+
+.ai-provider-option input:checked + label {
+  border-color: #8b5cf6;
+  background-color: #f3f4f6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.ai-provider-option label {
+  transition: var(--transition-default);
+}
+
+.ai-provider-option:hover label {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.ai-custom-response {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    transform: translateY(0);
+  }
+}
+
+.ai-response-btn {
+  transition: var(--transition-default);
+}
+
+.ai-response-btn:hover {
+  background-color: #c4b5fd;
+  transform: scale(1.05);
+}
+
+/* AI generated content styles */
+.ai-generated-content {
+  border-left: 4px solid #8b5cf6;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.ai-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ai-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #8b5cf6;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Temperature slider styling */
+#ai-temperature {
+  background: linear-gradient(to right, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+#ai-temperature:hover {
+  opacity: 1;
+}
+
+#ai-temperature::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#ai-temperature::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: none;
+}
