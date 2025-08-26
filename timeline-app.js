@@ -2826,7 +2826,10 @@ document.head.appendChild(style);
 class LLMPromptBar {
   constructor() {
     this.isCollapsed = false;
+    this.promptHistory = this.loadPromptHistory();
+    this.currentContext = 'general';
     this.initializeEventListeners();
+    this.updateContextualPrompts();
   }
 
   initializeEventListeners() {
@@ -2878,6 +2881,9 @@ class LLMPromptBar {
       this.showNotification('Please enter a question or prompt', 'warning');
       return;
     }
+
+    // Track prompt usage for analytics
+    this.trackPromptUsage(prompt);
 
     // Check if the existing AI chatbot is available
     if (window.chatbot && typeof window.chatbot.handleUserMessage === 'function') {
@@ -2946,6 +2952,164 @@ class LLMPromptBar {
       console.log(`${type.toUpperCase()}: ${message}`);
       alert(message);
     }
+  }
+
+  // ==================== ANALYTICS & TRACKING ====================
+  trackPromptUsage(prompt) {
+    const timestamp = new Date().toISOString();
+    const context = this.getCurrentContext();
+    
+    const usage = {
+      prompt: prompt,
+      timestamp: timestamp,
+      context: context,
+      length: prompt.length,
+      category: this.categorizePrompt(prompt)
+    };
+    
+    // Store in localStorage for analytics
+    this.promptHistory.push(usage);
+    
+    // Keep only last 100 prompts
+    if (this.promptHistory.length > 100) {
+      this.promptHistory = this.promptHistory.slice(-100);
+    }
+    
+    localStorage.setItem('llm_prompt_history', JSON.stringify(this.promptHistory));
+    
+    // Update contextual suggestions based on usage
+    this.updateQuickActions();
+  }
+
+  loadPromptHistory() {
+    try {
+      const history = localStorage.getItem('llm_prompt_history');
+      return history ? JSON.parse(history) : [];
+    } catch (error) {
+      console.error('Failed to load prompt history:', error);
+      return [];
+    }
+  }
+
+  categorizePrompt(prompt) {
+    const lower = prompt.toLowerCase();
+    
+    if (lower.includes('objection') || lower.includes('handle') || lower.includes('overcome')) {
+      return 'objections';
+    } else if (lower.includes('persona') || lower.includes('decision maker') || lower.includes('stakeholder')) {
+      return 'personas';
+    } else if (lower.includes('discovery') || lower.includes('question') || lower.includes('ask')) {
+      return 'discovery';
+    } else if (lower.includes('price') || lower.includes('cost') || lower.includes('budget')) {
+      return 'pricing';
+    } else if (lower.includes('compete') || lower.includes('competitor') || lower.includes('vs')) {
+      return 'competitive';
+    } else if (lower.includes('demo') || lower.includes('show') || lower.includes('present')) {
+      return 'demonstration';
+    } else {
+      return 'general';
+    }
+  }
+
+  getCurrentContext() {
+    // Determine current context based on page state
+    const currentStage = window.appState?.get('currentStage') || 0;
+    const currentIndustry = window.appState?.get('currentIndustry') || 'banking';
+    
+    return {
+      stage: currentStage,
+      industry: currentIndustry,
+      section: this.getVisibleSection()
+    };
+  }
+
+  getVisibleSection() {
+    // Detect which section is currently expanded/visible
+    const expandedSections = document.querySelectorAll('.collapsible-content:not(.hidden)');
+    if (expandedSections.length > 0) {
+      const section = expandedSections[0].closest('[class*="section"]');
+      if (section) {
+        if (section.classList.contains('discovery-questions-section')) return 'discovery';
+        if (section.classList.contains('objections-section')) return 'objections';
+      }
+    }
+    return 'timeline';
+  }
+
+  updateContextualPrompts() {
+    // Update quick action buttons based on current context
+    setTimeout(() => {
+      const context = this.getCurrentContext();
+      const quickBtns = document.querySelectorAll('.llm-quick-btn');
+      
+      // Get contextual prompts
+      const contextualPrompts = this.getContextualPrompts(context);
+      
+      // Update button text and prompts
+      quickBtns.forEach((btn, index) => {
+        if (contextualPrompts[index]) {
+          btn.textContent = contextualPrompts[index].label;
+          btn.dataset.prompt = contextualPrompts[index].prompt;
+        }
+      });
+    }, 500);
+  }
+
+  getContextualPrompts(context) {
+    const stageNames = ['Discovery', 'Technical Evaluation', 'Business Case', 'Negotiation', 'Close'];
+    const currentStageName = stageNames[context.stage] || 'Discovery';
+    
+    const prompts = {
+      discovery: [
+        { label: '🔍 Discovery', prompt: `What are the best discovery questions for the ${currentStageName} stage?` },
+        { label: '👥 Personas', prompt: `Who are the key personas I should engage during ${currentStageName}?` },
+        { label: '⚠️ Risks', prompt: `What risks should I watch for in the ${currentStageName} stage?` }
+      ],
+      objections: [
+        { label: '💬 Handle', prompt: 'How do I handle the most common objections in this stage?' },
+        { label: '🎯 Reframe', prompt: 'How can I reframe this objection as an opportunity?' },
+        { label: '📊 Evidence', prompt: 'What evidence or proof points help overcome objections?' }
+      ],
+      timeline: [
+        { label: '🚀 Strategy', prompt: `What's the best strategy for the ${currentStageName} stage?` },
+        { label: '✅ Success', prompt: `What are the key success factors for ${currentStageName}?` },
+        { label: '⏰ Timeline', prompt: `How long should the ${currentStageName} stage typically take?` }
+      ]
+    };
+    
+    return prompts[context.section] || prompts.timeline;
+  }
+
+  updateQuickActions() {
+    // Analyze prompt history and update quick actions with popular queries
+    if (this.promptHistory.length < 5) return;
+    
+    const categories = {};
+    this.promptHistory.slice(-20).forEach(item => {
+      categories[item.category] = (categories[item.category] || 0) + 1;
+    });
+    
+    // Update context based on popular categories
+    const topCategories = Object.entries(categories)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([category]) => category);
+      
+    console.log('Popular prompt categories:', topCategories);
+  }
+
+  // ==================== POPULAR PROMPTS ====================
+  getPopularPrompts() {
+    return [
+      "How do I handle pricing objections effectively?",
+      "What questions should I ask to qualify this opportunity?",
+      "How do I position UiPath against competitors?",
+      "What ROI metrics should I focus on?",
+      "How do I identify the real decision maker?",
+      "What are the best demo scenarios for this industry?",
+      "How do I create urgency in the sales process?",
+      "What evidence do I need to build a business case?"
+    ];
   }
 }
 
