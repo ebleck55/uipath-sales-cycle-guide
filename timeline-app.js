@@ -680,7 +680,21 @@ class ContentEditor {
       'question': 'Edit Discovery Question',
       'objection-question': 'Edit Objection',
       'objection-answer': 'Edit Objection Response',
-      'resource': 'Edit Resource'
+      'resource': 'Edit Resource',
+      'resource-overview': 'Edit Resource Overview',
+      'resource-why': 'Edit Resource Why',
+      'use-case': 'Edit Use Case',
+      'initial-persona': 'Edit Initial Persona',
+      'uipath-team': 'Edit UiPath Team Member',
+      // New entry types
+      'new-outcome': 'Add New Outcome',
+      'new-question': 'Add New Discovery Question',
+      'new-objection': 'Add New Objection',
+      'new-resource': 'Add New Resource',
+      'new-use-case': 'Add New Use Case',
+      'new-persona': 'Add New Persona',
+      'new-initial-persona': 'Add New Initial Persona',
+      'new-uipath-team': 'Add New UiPath Team Member'
     };
     modalTitle.textContent = titles[type] || 'Edit Content';
     
@@ -715,8 +729,27 @@ class ContentEditor {
         return data.answer || '';
       case 'resource':
         return data.name || '';
+      case 'resource-overview':
+        return data.overview || '';
+      case 'resource-why':
+        return data.why || '';
+      case 'use-case':
+        return data.name || '';
+      case 'initial-persona':
+      case 'uipath-team':
+        return data.text || '';
+      // New entry types start with empty content
+      case 'new-outcome':
+      case 'new-question':
+      case 'new-objection':
+      case 'new-resource':
+      case 'new-use-case':
+      case 'new-persona':
+      case 'new-initial-persona':
+      case 'new-uipath-team':
+        return '';
       default:
-        return element.textContent || '';
+        return element?.textContent || '';
     }
   }
 
@@ -743,36 +776,137 @@ class ContentEditor {
   }
 
   updateData(type, data, content) {
+    const textContent = this.htmlToText(content);
+    
     switch (type) {
       case 'persona-field':
-        if (data.field === 'title') data.persona.title = this.htmlToText(content);
+        if (data.field === 'title') data.persona.title = textContent;
         else if (data.field === 'world') data.persona.world = content;
         else if (data.field === 'cares') data.persona.cares = content;
         else if (data.field === 'help') data.persona.help = content;
         break;
       case 'outcome':
-        data.outcome = this.htmlToText(content);
+        data.outcome = textContent;
         break;
       case 'question':
         data.question = content;
         break;
       case 'objection-question':
-        data.objection.q = this.htmlToText(content);
+        data.objection.q = textContent;
         break;
       case 'objection-answer':
         data.objection.a = content;
         break;
       case 'resource':
-        data.resource.name = this.htmlToText(content);
+        data.resource.name = textContent;
+        break;
+      case 'resource-overview':
+        data.resource.overview = content;
+        break;
+      case 'resource-why':
+        data.resource.why = content;
+        break;
+      case 'use-case':
+        data.useCase.name = textContent;
+        break;
+      case 'initial-persona':
+        data.list[data.index] = content;
+        break;
+      case 'uipath-team':
+        data.list[data.index] = content;
+        break;
+      
+      // Handle new entries
+      case 'new-outcome':
+        SALES_CYCLE_DATA.stages[data.stageIndex].outcomes.push(textContent);
+        break;
+      case 'new-question':
+        if (!SALES_CYCLE_DATA.stages[data.stageIndex].questions[data.category]) {
+          SALES_CYCLE_DATA.stages[data.stageIndex].questions[data.category] = [];
+        }
+        SALES_CYCLE_DATA.stages[data.stageIndex].questions[data.category].push(content);
+        break;
+      case 'new-objection':
+        if (!SALES_CYCLE_DATA.stages[data.stageIndex].objections) {
+          SALES_CYCLE_DATA.stages[data.stageIndex].objections = [];
+        }
+        SALES_CYCLE_DATA.stages[data.stageIndex].objections.push({
+          q: textContent,
+          a: 'Add your suggested response here...'
+        });
+        break;
+      case 'new-resource':
+        const currentIndustry = appState.get('currentIndustry');
+        if (!SALES_CYCLE_DATA.stages[data.stageIndex].resources) {
+          SALES_CYCLE_DATA.stages[data.stageIndex].resources = {};
+        }
+        if (!SALES_CYCLE_DATA.stages[data.stageIndex].resources[currentIndustry]) {
+          SALES_CYCLE_DATA.stages[data.stageIndex].resources[currentIndustry] = [];
+        }
+        SALES_CYCLE_DATA.stages[data.stageIndex].resources[currentIndustry].push({
+          name: textContent,
+          link: '#',
+          overview: 'Add overview here...',
+          why: 'Add why this is useful here...'
+        });
+        break;
+      case 'new-persona':
+        const industry = appState.get('currentIndustry');
+        SALES_CYCLE_DATA.personas[industry].push({
+          title: textContent,
+          world: 'Describe their world here...',
+          cares: 'Describe what they care about here...',
+          help: 'Describe how UiPath helps here...'
+        });
+        break;
+      case 'new-initial-persona':
+        SALES_CYCLE_DATA.stages[data.stageIndex].initialPersonas.push(content);
+        break;
+      case 'new-uipath-team':
+        SALES_CYCLE_DATA.stages[data.stageIndex].uipathTeam.push(content);
         break;
     }
   }
 
   updateUIElement(type, element, content) {
+    // For new entries, trigger re-rendering of the entire section
+    if (type.startsWith('new-')) {
+      this.triggerSectionRerender(type);
+      return;
+    }
+    
+    // For existing entries, update the element directly
     if (type === 'persona-field' && ['title'].includes(this.currentEditData.data.field)) {
       element.innerHTML = this.htmlToText(content);
-    } else {
+    } else if (element) {
       element.innerHTML = content;
+    }
+  }
+
+  triggerSectionRerender(type) {
+    // Get the main app instance
+    const app = window.appInstance || this.app;
+    if (!app) return;
+
+    switch (type) {
+      case 'new-outcome':
+      case 'new-question':
+      case 'new-objection':
+      case 'new-resource':
+      case 'new-initial-persona':
+      case 'new-uipath-team':
+        // Re-render the current stage
+        const currentStage = appState.get('currentStage');
+        app.renderStageContent(currentStage);
+        break;
+      case 'new-persona':
+        // Re-render personas section
+        app.renderPersonas();
+        break;
+      case 'new-use-case':
+        // Re-render use cases section
+        app.renderUseCases();
+        break;
     }
   }
 
@@ -1061,6 +1195,9 @@ class TimelineUiPathApp {
         // Continue without chatbot if initialization fails
       }
     }
+
+    // Make app instance globally accessible for content editor
+    window.appInstance = this;
     
     // Render personas
     this.renderPersonas();
@@ -1353,6 +1490,16 @@ class TimelineUiPathApp {
                 </button>
               </div>
             `).join('')}
+            <!-- Add New Outcome Button -->
+            <button class="edit-btn hidden w-full mt-4 p-3 border-2 border-dashed border-orange-300 rounded-lg text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-colors" 
+                    data-edit-type="new-outcome" data-edit-id="${stageIndex}">
+              <div class="flex items-center justify-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add New Outcome
+              </div>
+            </button>
           </div>
         </div>
 
@@ -1365,12 +1512,69 @@ class TimelineUiPathApp {
             Personas
           </h3>
           <ul class="space-y-2">
-            ${(stage.initialPersonas || []).map(persona => `
-              <li class="flex items-start">
-                <span class="text-blue-500 mr-2">•</span>
-                <span class="text-gray-700">${sanitizer.renderSafeHTML(persona)}</span>
+            ${(stage.initialPersonas || []).map((persona, i) => `
+              <li class="flex items-start justify-between group">
+                <div class="flex items-start">
+                  <span class="text-blue-500 mr-2">•</span>
+                  <span class="text-gray-700" data-editable>${sanitizer.renderSafeHTML(persona)}</span>
+                </div>
+                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors ml-2" 
+                        data-edit-type="initial-persona" data-edit-id="${stageIndex}-${i}">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                  </svg>
+                </button>
               </li>
             `).join('')}
+            <!-- Add New Initial Persona Button -->
+            <li>
+              <button class="edit-btn hidden w-full mt-3 p-2 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors" 
+                      data-edit-type="new-initial-persona" data-edit-id="${stageIndex}">
+                <div class="flex items-center justify-center">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add New Persona
+                </div>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- UiPath Team -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold mb-4 text-orange-500 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20a3 3 0 01-3-3v-2a3 3 0 01-3-3V9a3 3 0 013-3h3a3 3 0 013 3v3a3 3 0 01-3 3v2a3 3 0 01-3 3z"></path>
+            </svg>
+            UiPath Team
+          </h3>
+          <ul class="space-y-2">
+            ${(stage.uipathTeam || []).map((member, i) => `
+              <li class="flex items-start justify-between group">
+                <div class="flex items-start flex-1">
+                  <span class="text-gray-700" data-editable>${sanitizer.renderSafeHTML(member)}</span>
+                </div>
+                <button class="edit-btn hidden p-1 text-gray-400 hover:text-orange-500 transition-colors ml-2" 
+                        data-edit-type="uipath-team" data-edit-id="${stageIndex}-${i}">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                  </svg>
+                </button>
+              </li>
+            `).join('')}
+            <!-- Add New UiPath Team Member Button -->
+            <li>
+              <button class="edit-btn hidden w-full mt-3 p-2 border-2 border-dashed border-orange-300 rounded-lg text-orange-500 hover:border-orange-400 hover:bg-orange-50 transition-colors" 
+                      data-edit-type="new-uipath-team" data-edit-id="${stageIndex}">
+                <div class="flex items-center justify-center">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add New Team Member
+                </div>
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -1383,15 +1587,61 @@ class TimelineUiPathApp {
             Key Resources
           </h3>
           <ul class="space-y-2">
-            ${((stage.resources?.[currentIndustry] || []).slice(0, 5)).map(resource => `
-              <li>
-                <a href="${sanitizer.escapeHtml(resource.link)}" 
-                   class="text-blue-600 hover:underline text-sm" 
-                   target="_blank" rel="noopener noreferrer">
-                  → ${sanitizer.renderSafeHTML(resource.name)}
-                </a>
+            ${((stage.resources?.[currentIndustry] || []).slice(0, 5)).map((resource, i) => `
+              <li class="group">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-start">
+                      <a href="${sanitizer.escapeHtml(resource.link)}" 
+                         class="text-blue-600 hover:underline text-sm flex-1" 
+                         target="_blank" rel="noopener noreferrer" data-editable>
+                        → ${sanitizer.renderSafeHTML(resource.name)}
+                      </a>
+                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors ml-2" 
+                              data-edit-type="resource" data-edit-id="${stageIndex}-${i}">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="edit-btn hidden mt-1 text-xs text-gray-500 space-y-1">
+                      <div class="flex items-start">
+                        <span class="text-gray-400 mr-2">Overview:</span>
+                        <span data-editable class="flex-1">${resource.overview || 'No overview'}</span>
+                        <button class="p-1 text-gray-400 hover:text-green-600 transition-colors ml-1" 
+                                data-edit-type="resource-overview" data-edit-id="${stageIndex}-${i}">
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="flex items-start">
+                        <span class="text-gray-400 mr-2">Why:</span>
+                        <span data-editable class="flex-1">${resource.why || 'No reason specified'}</span>
+                        <button class="p-1 text-gray-400 hover:text-green-600 transition-colors ml-1" 
+                                data-edit-type="resource-why" data-edit-id="${stageIndex}-${i}">
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </li>
             `).join('')}
+            <!-- Add New Resource Button -->
+            <li>
+              <button class="edit-btn hidden w-full mt-3 p-2 border-2 border-dashed border-green-300 rounded-lg text-green-600 hover:border-green-400 hover:bg-green-50 transition-colors" 
+                      data-edit-type="new-resource" data-edit-id="${stageIndex}">
+                <div class="flex items-center justify-center">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add New Resource
+                </div>
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -1453,6 +1703,16 @@ class TimelineUiPathApp {
                       </details>
                     `;
                   }).join('')}
+                  <!-- Add New Question Button -->
+                  <button class="edit-btn hidden w-full mt-3 p-2 border-2 border-dashed border-purple-300 rounded-lg text-purple-600 hover:border-purple-400 hover:bg-purple-50 transition-colors" 
+                          data-edit-type="new-question" data-edit-id="${stageIndex}" data-category="${category}">
+                    <div class="flex items-center justify-center">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Add New Question
+                    </div>
+                  </button>
                 </div>
               </div>
             `).join('')}
@@ -1534,6 +1794,18 @@ class TimelineUiPathApp {
                 </div>
               `;
             }).join('')}
+            <!-- Add New Objection Button -->
+            <div class="edit-btn hidden col-span-2 mt-4">
+              <button class="w-full p-4 border-2 border-dashed border-red-300 rounded-lg text-red-600 hover:border-red-400 hover:bg-red-50 transition-colors" 
+                      data-edit-type="new-objection" data-edit-id="${stageIndex}">
+                <div class="flex items-center justify-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add New Objection
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1672,6 +1944,12 @@ class TimelineUiPathApp {
       case 'resource':
         editData = this.getResourceEditData(editId);
         break;
+      case 'initial-persona':
+        editData = this.getInitialPersonaEditData(editId);
+        break;
+      case 'uipath-team':
+        editData = this.getUipathTeamEditData(editId);
+        break;
     }
 
     // Open editor
@@ -1723,6 +2001,26 @@ class TimelineUiPathApp {
     return {
       resource,
       name: resource.name
+    };
+  }
+
+  getInitialPersonaEditData(personaId) {
+    const [stageIndex, personaIndex] = personaId.split('-').map(Number);
+    const persona = SALES_CYCLE_DATA.stages[stageIndex].initialPersonas[personaIndex];
+    return {
+      list: SALES_CYCLE_DATA.stages[stageIndex].initialPersonas,
+      index: personaIndex,
+      text: persona
+    };
+  }
+
+  getUipathTeamEditData(memberId) {
+    const [stageIndex, memberIndex] = memberId.split('-').map(Number);
+    const member = SALES_CYCLE_DATA.stages[stageIndex].uipathTeam[memberIndex];
+    return {
+      list: SALES_CYCLE_DATA.stages[stageIndex].uipathTeam,
+      index: memberIndex,
+      text: member
     };
   }
 
