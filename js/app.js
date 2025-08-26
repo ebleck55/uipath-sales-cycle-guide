@@ -13,7 +13,32 @@ function loadFullState() {
 }
 
 function saveFullState(state) {
-  localStorage.setItem('uipathSalesGuideState', JSON.stringify(state));
+  // Commenting out persistence - state should not persist across sessions
+  // localStorage.setItem('uipathSalesGuideState', JSON.stringify(state));
+}
+
+// Clear all form data (checkboxes and notes)
+function clearFormState() {
+  // Clear localStorage
+  localStorage.removeItem('uipathSalesGuideState');
+  
+  // Clear all checkboxes
+  $$('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = false;
+    checkbox.closest('label')?.classList.remove('checked-item');
+  });
+  
+  // Clear all textareas
+  $$('.note-textarea').forEach(textarea => {
+    textarea.value = '';
+  });
+  
+  // Update progress bars
+  $$('.progress-bar').forEach(bar => {
+    bar.style.width = '0%';
+  });
+  
+  console.log('Form state cleared');
 }
 
 // ---------- DOM UTILITIES ----------
@@ -112,12 +137,18 @@ function stageCard(stage){
         </div>
         <div class="collapsible-content hidden p-6 pt-0">
           <div class="editable-content">${questionsHtml(stage.questions)}</div>
-          <div class="flex justify-center mt-4">
+          <div class="flex justify-center gap-3 mt-4">
             <button class="export-notes-btn px-4 py-2 text-white rounded-md font-semibold flex items-center" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
               </svg>
               Copy Notes
+            </button>
+            <button class="clear-all-btn px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md font-semibold flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              Clear All
             </button>
           </div>
         </div>
@@ -298,9 +329,8 @@ function initCollapsibleSections() {
   });
 }
 
-// MODIFIED: initChecklists now uses the new state management
+// MODIFIED: initChecklists without persistent state loading
 function initChecklists(){
-  const fullState = loadFullState();
   $$('.content-section').forEach(sec=>{
     const checks = sec.querySelectorAll('input[type="checkbox"]');
     const bar = sec.querySelector('.progress-bar');
@@ -311,17 +341,11 @@ function initChecklists(){
       bar.style.width = `${(done/total)*100}%`;
     }
     checks.forEach(ch=>{
-      const checkboxId = ch.dataset.id;
-      if (fullState.checklists[checkboxId]) {
-        ch.checked = true;
-        ch.closest('label')?.classList.add('checked-item');
-      }
+      // No longer loading from persistent state
       if(ch.dataset.bound) return; ch.dataset.bound='1';
       ch.addEventListener('change',e=>{
         e.target.closest('label')?.classList.toggle('checked-item', e.target.checked);
-        const currentState = loadFullState();
-        currentState.checklists[e.target.dataset.id] = e.target.checked;
-        saveFullState(currentState);
+        // No longer saving to persistent state
         update();
       });
     })
@@ -329,19 +353,13 @@ function initChecklists(){
   })
 }
 
-// NEW: Initialize and handle notes persistence
+// NEW: Initialize notes without persistence
 function initNotes() {
-    const fullState = loadFullState();
     $$('.note-textarea').forEach(textarea => {
-        const noteId = textarea.dataset.noteId;
-        if (noteId && fullState.notes[noteId]) {
-            textarea.value = fullState.notes[noteId];
-        }
-
+        // No longer loading from persistent state
+        
         textarea.addEventListener('input', () => {
-            const currentState = loadFullState();
-            currentState.notes[textarea.dataset.noteId] = textarea.value;
-            saveFullState(currentState);
+            // No longer saving to persistent state
         });
     });
 }
@@ -432,6 +450,15 @@ function initExportNotes() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('.export-notes-btn') || e.target.closest('.export-notes-btn')) {
       handleExport();
+    }
+  });
+  
+  // Add event listener for clear all button
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.clear-all-btn') || e.target.closest('.clear-all-btn')) {
+      if (confirm('Are you sure you want to clear all checkboxes and notes? This cannot be undone.')) {
+        clearFormState();
+      }
     }
   });
 }
