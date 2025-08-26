@@ -1660,10 +1660,109 @@ class UseCasePDFHandler {
   }
 
   openPDFViewer(pageNumber, useCaseName) {
-    // Navigate to the dedicated PDF viewer page
-    const viewerUrl = `pdf-viewer.html?page=${encodeURIComponent(pageNumber)}&name=${encodeURIComponent(useCaseName)}`;
-    window.open(viewerUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    // Create an inline modal for PDF viewing
+    this.createPDFViewerModal(pageNumber, useCaseName);
     this.showNotification(`Opening ${useCaseName} (Page ${pageNumber})`, 'success');
+  }
+
+  createPDFViewerModal(pageNumber, useCaseName) {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('pdf-viewer-modal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    // Create modal HTML
+    const modal = document.createElement('div');
+    modal.id = 'pdf-viewer-modal';
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    
+    const pdfPath = '/Users/eric.bouchard/Downloads/FINS - MAESTRO - Use Case Deck- Aug 2025.pdf';
+    
+    modal.innerHTML = `
+      <div class="relative top-4 mx-auto p-4 border w-full max-w-6xl shadow-lg rounded-md bg-white" style="height: 90vh;">
+        <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-200">
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">${this.escapeHtml(useCaseName)}</h3>
+            <p class="text-sm text-gray-600">Document page ${pageNumber}</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="this.openDirectPDF()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+              Open in System Viewer
+            </button>
+            <button onclick="document.getElementById('pdf-viewer-modal').remove()" class="text-gray-400 hover:text-gray-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="h-full pb-16">
+          <div id="pdf-frame-container" class="h-full">
+            <div class="bg-gray-100 rounded-lg p-8 h-full flex items-center justify-center">
+              <div class="text-center max-w-md">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <div class="flex items-center mb-4">
+                    <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <h4 class="text-lg font-medium text-blue-900">${this.escapeHtml(useCaseName)}</h4>
+                  </div>
+                  <div class="text-sm text-blue-800 space-y-2">
+                    <p><strong>Document:</strong> FINS - MAESTRO - Use Case Deck- Aug 2025.pdf</p>
+                    <p><strong>Page Reference:</strong> ${pageNumber}</p>
+                    <p class="mt-4 text-blue-700">Please refer to page <strong>${pageNumber}</strong> in your UiPath use case document for detailed information about this use case.</p>
+                  </div>
+                  <div class="mt-6 space-y-3">
+                    <button onclick="this.tryOpenPDF('${pageNumber}')" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
+                      Try to Open PDF Directly
+                    </button>
+                    <p class="text-xs text-blue-600">
+                      Click above to attempt opening the PDF with your system's default viewer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add event handlers
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+
+    // Add PDF opening functionality
+    window.tryOpenPDF = (pageNum) => {
+      const pdfUrls = [
+        `file://${encodeURIComponent(pdfPath)}#page=${pageNum}`,
+        `file:///Users/eric.bouchard/Downloads/FINS%20-%20MAESTRO%20-%20Use%20Case%20Deck-%20Aug%202025.pdf#page=${pageNum}`,
+        `file:///Users/eric.bouchard/Downloads/`
+      ];
+      
+      // Try each URL
+      for (const url of pdfUrls) {
+        try {
+          window.open(url, '_blank');
+          break;
+        } catch (error) {
+          console.warn('Failed to open PDF URL:', url, error);
+          continue;
+        }
+      }
+    };
+
+    document.body.appendChild(modal);
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
 
