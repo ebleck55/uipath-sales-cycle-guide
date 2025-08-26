@@ -1020,6 +1020,12 @@ function initEditModal() {
     
     if (targetId.startsWith('persona-')) {
       openPersonaEditModal(targetId);
+    } else if (targetId.endsWith('-uipath-team')) {
+      openSimpleEditModal(targetId, 'UiPath Team');
+    } else if (targetId.endsWith('-initial-personas')) {
+      openSimpleEditModal(targetId, 'Initial Personas to Engage');
+    } else if (targetId.endsWith('-outcomes')) {
+      openSimpleEditModal(targetId, 'Verifiable Outcomes / Exit Criteria');
     } else {
       // Handle other edit types if needed
       console.log('Edit clicked for:', targetId);
@@ -1078,7 +1084,15 @@ function initEditModal() {
       </div>
     `;
     
-    openModal(personaId, content);
+    const modal = $('#editModal');
+    const modalContent = $('#modal-content');
+    
+    if (modal && modalContent) {
+      modalContent.innerHTML = content;
+      modal.setAttribute('data-edit-target', personaId);
+      modal.setAttribute('data-edit-type', 'persona');
+      modal.classList.remove('hidden');
+    }
     
     // Add delete functionality
     setTimeout(() => {
@@ -1107,10 +1121,71 @@ function initEditModal() {
   }
 
   function saveModalChanges() {
-    if (!currentEditTarget) return;
+    const modal = $('#editModal');
+    if (!modal) return;
     
-    if (currentEditTarget.startsWith('persona-')) {
-      const [, industry, index] = currentEditTarget.split('-');
+    const editTarget = modal.getAttribute('data-edit-target');
+    const editType = modal.getAttribute('data-edit-type');
+    
+    if (!editTarget) return;
+    
+    if (editType === 'simple') {
+      // Handle simple list editing
+      const content = $('#simple-edit-content')?.value || '';
+      const items = content.split('\n').filter(item => item.trim()).map(item => item.trim());
+      
+      // Find the stage and update the appropriate property
+      if (editTarget.endsWith('-uipath-team')) {
+        const stageId = editTarget.replace('-uipath-team', '');
+        const stage = SALES_CYCLE_DATA.stages.find(s => s.id === stageId);
+        if (stage) {
+          stage.uipathTeam = items;
+          
+          // Re-render the stage content
+          const targetElement = $(`#${editTarget}`);
+          if (targetElement) {
+            const contentDiv = targetElement.querySelector('.editable-content');
+            if (contentDiv) {
+              contentDiv.innerHTML = listHtml(items);
+            }
+          }
+          showMessage('UiPath Team updated successfully!', 'success');
+        }
+      } else if (editTarget.endsWith('-initial-personas')) {
+        const stageId = editTarget.replace('-initial-personas', '');
+        const stage = SALES_CYCLE_DATA.stages.find(s => s.id === stageId);
+        if (stage) {
+          stage.initialPersonas = items;
+          
+          // Re-render the stage content
+          const targetElement = $(`#${editTarget}`);
+          if (targetElement) {
+            const contentDiv = targetElement.querySelector('.editable-content');
+            if (contentDiv) {
+              contentDiv.innerHTML = listHtml(items);
+            }
+          }
+          showMessage('Initial Personas updated successfully!', 'success');
+        }
+      } else if (editTarget.endsWith('-outcomes')) {
+        const stageId = editTarget.replace('-outcomes', '');
+        const stage = SALES_CYCLE_DATA.stages.find(s => s.id === stageId);
+        if (stage) {
+          stage.outcomes = items;
+          
+          // Re-render the stage content
+          const targetElement = $(`#${editTarget}`);
+          if (targetElement) {
+            const contentDiv = targetElement.querySelector('.editable-content');
+            if (contentDiv) {
+              contentDiv.innerHTML = listHtml(items, true, stageId);
+            }
+          }
+          showMessage('Outcomes updated successfully!', 'success');
+        }
+      }
+    } else if (editType === 'persona') {
+      const [, industry, index] = editTarget.split('-');
       const persona = SALES_CYCLE_DATA.personas[industry][parseInt(index)];
       
       if (persona) {
@@ -1125,6 +1200,41 @@ function initEditModal() {
       }
     }
   }
+}
+
+function openSimpleEditModal(targetId, title) {
+  const targetElement = $(`#${targetId}`);
+  if (!targetElement) return;
+  
+  const contentDiv = targetElement.querySelector('.editable-content');
+  if (!contentDiv) return;
+  
+  // Extract current content from HTML
+  const items = Array.from(contentDiv.querySelectorAll('li')).map(li => li.innerHTML.replace(/<[^>]*>/g, ''));
+  const currentContent = items.join('\n');
+  
+  const modal = $('#editModal');
+  const modalContent = $('#modal-content');
+  if (!modal || !modalContent) return;
+  
+  modalContent.innerHTML = `
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold mb-4">${title}</h3>
+      <div>
+        <label class="block text-sm font-medium mb-2">Content (one item per line):</label>
+        <textarea id="simple-edit-content" rows="8" class="w-full p-2 border rounded-md resize-vertical" placeholder="Enter each item on a separate line...">${currentContent}</textarea>
+      </div>
+      <div class="text-sm text-gray-600">
+        <strong>Tip:</strong> You can use HTML formatting like &lt;strong&gt;bold text&lt;/strong&gt;
+      </div>
+    </div>
+  `;
+  
+  // Store the target for saving
+  modal.setAttribute('data-edit-target', targetId);
+  modal.setAttribute('data-edit-type', 'simple');
+  
+  modal.classList.remove('hidden');
 }
 
 // Add new persona
@@ -1307,6 +1417,15 @@ function loadAllContentToBulkEditor() {
       });
     }
     
+    // Load UiPath team
+    const uipathTeamContainer = $(`#${stagePrefix}-uipathteam-container`);
+    if (uipathTeamContainer && stage.uipathTeam) {
+      uipathTeamContainer.innerHTML = '';
+      stage.uipathTeam.forEach(teamMember => {
+        addContentItem(uipathTeamContainer, 'uipathteam', teamMember, stagePrefix);
+      });
+    }
+    
     // Load questions by category
     const questionsContainer = $(`#${stagePrefix}-questions-container`);
     if (questionsContainer && stage.questions) {
@@ -1410,6 +1529,18 @@ function saveBulkChanges() {
           if (value) personas.push(value);
         });
         stage.initialPersonas = personas;
+      }
+      
+      // Save UiPath team (if exists)
+      const uipathTeamContainer = $(`#${stagePrefix}-uipathteam-container`);
+      if (uipathTeamContainer) {
+        const teamMembers = [];
+        const teamInputs = uipathTeamContainer.querySelectorAll('.content-input');
+        teamInputs.forEach(input => {
+          const value = input.value.trim();
+          if (value) teamMembers.push(value);
+        });
+        stage.uipathTeam = teamMembers;
       }
       
       // Save questions by category
