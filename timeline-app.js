@@ -48,7 +48,6 @@ const sanitizer = new HTMLSanitizer();
 class CustomerInfoManager {
   constructor() {
     this.selectedVertical = '';
-    this.selectedSubVertical = '';
     this.selectedLOB = '';
     this.selectedProjectTypes = new Set();
     this.selectedCustomerType = '';
@@ -69,14 +68,6 @@ class CustomerInfoManager {
         this.handleProjectTypeSelection(e.target);
       }
     });
-
-    // Sub vertical selector
-    const subVerticalSelector = document.getElementById('sub-vertical-selector');
-    if (subVerticalSelector) {
-      subVerticalSelector.addEventListener('change', (e) => {
-        this.selectedSubVertical = e.target.value;
-      });
-    }
 
     // LOB selector
     const lobSelector = document.getElementById('lob-selector');
@@ -113,40 +104,6 @@ class CustomerInfoManager {
     button.classList.add('selected');
     
     this.selectedVertical = vertical;
-    this.updateSubVerticalOptions();
-  }
-
-  updateSubVerticalOptions() {
-    const subVerticalSelector = document.getElementById('sub-vertical-selector');
-    if (!subVerticalSelector) return;
-
-    // Clear existing options
-    subVerticalSelector.innerHTML = '<option value="">Select Sub Vertical</option>';
-
-    const subVerticals = {
-      banking: [
-        { value: 'retail-banking', label: 'Retail Banking' },
-        { value: 'commercial-banking', label: 'Commercial Banking' },
-        { value: 'investment-banking', label: 'Investment Banking' },
-        { value: 'private-banking', label: 'Private Banking' },
-        { value: 'corporate-banking', label: 'Corporate Banking' }
-      ],
-      insurance: [
-        { value: 'life-insurance', label: 'Life Insurance' },
-        { value: 'health-insurance', label: 'Health Insurance' },
-        { value: 'property-casualty', label: 'Property & Casualty' },
-        { value: 'commercial-insurance', label: 'Commercial Insurance' },
-        { value: 'reinsurance', label: 'Reinsurance' }
-      ]
-    };
-
-    const options = subVerticals[this.selectedVertical] || [];
-    options.forEach(option => {
-      const optionElement = document.createElement('option');
-      optionElement.value = option.value;
-      optionElement.textContent = option.label;
-      subVerticalSelector.appendChild(optionElement);
-    });
   }
 
   handleCustomerTypeSelection(button) {
@@ -228,7 +185,6 @@ class CustomerInfoManager {
   getSelectionContext() {
     return {
       vertical: this.selectedVertical,
-      subVertical: this.selectedSubVertical,
       lob: this.selectedLOB,
       projectTypes: Array.from(this.selectedProjectTypes),
       customerType: this.selectedCustomerType,
@@ -237,23 +193,295 @@ class CustomerInfoManager {
   }
 
   updatePersonas(context) {
-    // Implementation will be added to update personas based on context
-    console.log('Updating personas with context:', context);
+    // Update personas based on customer selections
+    const personaSelectors = document.querySelectorAll('[data-stage-id] .editable-content');
+    personaSelectors.forEach(personaContainer => {
+      if (personaContainer.parentElement.id && personaContainer.parentElement.id.includes('-personas')) {
+        const updatedPersonas = this.getContextualPersonas(context);
+        personaContainer.innerHTML = this.createPersonaHTML(updatedPersonas);
+      }
+    });
+    
+    // Update UiPath team based on context
+    const teamSelectors = document.querySelectorAll('[data-stage-id] .editable-content');
+    teamSelectors.forEach(teamContainer => {
+      if (teamContainer.parentElement.id && teamContainer.parentElement.id.includes('-team')) {
+        const updatedTeam = this.getContextualTeam(context);
+        teamContainer.innerHTML = this.createTeamHTML(updatedTeam);
+      }
+    });
   }
 
   updateDiscoveryQuestions(context) {
-    // Implementation will be added to update discovery questions
-    console.log('Updating discovery questions with context:', context);
+    // Add cloud migration questions for on-prem/hub deployments
+    if (['on-prem', 'automation-suite'].includes(context.deployment)) {
+      this.addCloudMigrationQuestions(context);
+    }
+    
+    // Add contract review questions for existing customers
+    if (context.customerType === 'existing') {
+      this.addContractReviewQuestions(context);
+    }
   }
 
   updateObjections(context) {
-    // Implementation will be added to update objections
-    console.log('Updating objections with context:', context);
+    // Add deployment-specific objections
+    const objectionContainers = document.querySelectorAll('.objection-item, .objection-container');
+    if (['on-prem', 'automation-suite'].includes(context.deployment)) {
+      this.addCloudMigrationObjections(objectionContainers, context);
+    }
   }
 
   updateLOBUseCases(context) {
-    // Implementation will be added to update LOB use cases
-    console.log('Updating LOB use cases with context:', context);
+    // Update LOB use cases based on vertical, LOB, and project types
+    const useCaseSection = document.getElementById('use-cases-section');
+    if (useCaseSection) {
+      const updatedUseCases = this.getContextualUseCases(context);
+      this.updateUseCaseContent(useCaseSection, updatedUseCases);
+    }
+    
+    // Update Key Resources section
+    this.updateKeyResources(context);
+  }
+
+  updateKeyResources(context) {
+    // Update resources sections across all stages
+    const resourceSections = document.querySelectorAll('.resources-section, [id$="-resources"]');
+    resourceSections.forEach(section => {
+      const updatedResources = this.getContextualResources(context);
+      this.updateResourceContent(section, updatedResources);
+    });
+  }
+
+  updateResourceContent(resourceSection, resources) {
+    const contentContainer = resourceSection.querySelector('.editable-content');
+    if (contentContainer) {
+      contentContainer.innerHTML = `
+        <div class="space-y-4">
+          ${resources.map(resource => `
+            <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+              <h4 class="font-semibold text-gray-800 mb-2">${resource.name}</h4>
+              <p class="text-sm text-gray-600 mb-2">${resource.overview}</p>
+              <p class="text-xs text-orange-700 font-medium">${resource.why}</p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+  }
+
+  getContextualPersonas(context) {
+    // Return personas based on LOB and customer context
+    const personas = {
+      'consumer-banking': [
+        '<strong>Chief Operating Officer:</strong> Focused on cost-per-account reduction and digital experience.',
+        '<strong>Head of Lending Operations:</strong> Driving loan origination speed and approval automation.',
+        '<strong>Head of Contact Center:</strong> Improving customer experience and agent productivity.'
+      ],
+      'capital-markets': [
+        '<strong>Head of Trading Operations:</strong> Managing settlement risk and operational efficiency.',
+        '<strong>COO Capital Markets:</strong> Focused on regulatory compliance and cost control.',
+        '<strong>Head of Prime Services:</strong> Managing client onboarding and servicing efficiency.'
+      ],
+      'operations': [
+        '<strong>Chief Operating Officer:</strong> Accountable for operational KPIs and efficiency metrics.',
+        '<strong>Head of Process Excellence:</strong> Driving operational risk reduction and automation.',
+        '<strong>VP Operations:</strong> Managing day-to-day operational performance.'
+      ],
+      'it-operations': [
+        '<strong>CIO/CTO:</strong> Balancing innovation velocity with operational stability.',
+        '<strong>Head of IT Operations:</strong> Managing incident response and system reliability.',
+        '<strong>Director of Infrastructure:</strong> Focused on technical debt and platform modernization.'
+      ],
+      'finance-operations': [
+        '<strong>CFO:</strong> Focused on month-end close timing and financial accuracy.',
+        '<strong>Controller:</strong> Managing financial controls and audit readiness.',
+        '<strong>Head of Financial Planning:</strong> Driving cost allocation and profitability analysis.'
+      ]
+    };
+    
+    return personas[context.lob] || [
+      '<strong>Business Stakeholder:</strong> Operational efficiency and customer experience focus.',
+      '<strong>IT Stakeholder:</strong> Integration and governance requirements.'
+    ];
+  }
+
+  getContextualTeam(context) {
+    let team = [
+      '<strong>Sales:</strong> Lead business case development and stakeholder alignment',
+      '<strong>Sales Engineer:</strong> Technical validation and solution demonstrations'
+    ];
+    
+    // Add specific roles based on deployment and customer type
+    if (['on-prem', 'automation-suite'].includes(context.deployment)) {
+      team.push('<strong>Cloud Solutions Architect:</strong> Cloud migration planning and value positioning');
+    }
+    
+    if (context.customerType === 'existing') {
+      team.push('<strong>Customer Success Manager:</strong> Contract optimization and expansion planning');
+      team.push('<strong>Legal/Procurement:</strong> Contract review and terms evaluation');
+    }
+    
+    return team;
+  }
+
+  addCloudMigrationQuestions(context) {
+    // Add cloud migration questions to discovery stages
+    const discoveryStage = document.querySelector('[data-stage-id="discovery"]');
+    if (discoveryStage) {
+      const cloudQuestions = this.createCloudMigrationQuestionsHTML();
+      this.insertAdditionalQuestions(discoveryStage, cloudQuestions, 'Cloud Migration Strategy');
+    }
+  }
+
+  addContractReviewQuestions(context) {
+    // Add contract review questions for technical and business qualification
+    const technicalStage = document.querySelector('[data-stage-id="technical-qualification"]');
+    const businessStage = document.querySelector('[data-stage-id="business-qualification"]');
+    
+    if (technicalStage) {
+      const contractQuestions = this.createContractReviewQuestionsHTML();
+      this.insertAdditionalQuestions(technicalStage, contractQuestions, 'Contract & Legal Review');
+    }
+  }
+
+  createCloudMigrationQuestionsHTML() {
+    return `
+      <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h4 class="font-semibold text-blue-800 mb-2">🌤️ Cloud Migration Questions</h4>
+        <ul class="space-y-2 text-sm">
+          <li>• What are your organization's current policies regarding cloud adoption?</li>
+          <li>• What security or compliance concerns do you have about moving to cloud?</li>
+          <li>• How do you evaluate the TCO of cloud vs on-premise solutions?</li>
+          <li>• What would need to happen for your organization to consider cloud deployment?</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  createContractReviewQuestionsHTML() {
+    return `
+      <div class="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+        <h4 class="font-semibold text-purple-800 mb-2">📋 Contract Review Questions</h4>
+        <ul class="space-y-2 text-sm">
+          <li>• When does your current UiPath contract expire?</li>
+          <li>• What are your current licensing terms and usage patterns?</li>
+          <li>• Are there any contractual restrictions we should be aware of?</li>
+          <li>• Who needs to be involved in contract modifications or expansions?</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  insertAdditionalQuestions(stageElement, questionsHTML, title) {
+    const questionsContainer = stageElement.querySelector('.questions-container, .editable-content');
+    if (questionsContainer) {
+      questionsContainer.insertAdjacentHTML('beforeend', questionsHTML);
+    }
+  }
+
+  createPersonaHTML(personas) {
+    return `<ul class="list-disc list-inside space-y-3 text-gray-700 ml-4">
+      ${personas.map(persona => `<li class="leading-relaxed">${persona}</li>`).join('')}
+    </ul>`;
+  }
+
+  createTeamHTML(team) {
+    return `<ul class="list-disc list-inside space-y-3 text-gray-700 ml-4">
+      ${team.map(member => `<li class="leading-relaxed">${member}</li>`).join('')}
+    </ul>`;
+  }
+
+  getContextualResources(context) {
+    // Return resources based on vertical, deployment, and customer type
+    let resources = [];
+    
+    // Add base resources from SALES_CYCLE_DATA
+    if (SALES_CYCLE_DATA && SALES_CYCLE_DATA.stages) {
+      const discoveryStage = SALES_CYCLE_DATA.stages.find(stage => stage.id === 'discovery');
+      if (discoveryStage && discoveryStage.resources && discoveryStage.resources[context.vertical]) {
+        resources = [...discoveryStage.resources[context.vertical]];
+      }
+    }
+    
+    // Add cloud migration resources for on-prem/hub deployments
+    if (['on-prem', 'automation-suite'].includes(context.deployment)) {
+      resources = resources.filter(resource => 
+        resource.name.includes('Cloud Migration') || 
+        resource.name.includes('Cloud Security') || 
+        resource.name.includes('TCO Calculator')
+      );
+    }
+    
+    // Add existing customer resources
+    if (context.customerType === 'existing') {
+      resources.push({
+        name: 'Contract Optimization Guide',
+        link: '#',
+        overview: 'Best practices for expanding UiPath usage and optimizing existing contract terms.',
+        why: 'Maximize value from current investment while planning expansion.'
+      });
+    }
+    
+    return resources;
+  }
+
+  getContextualUseCases(context) {
+    // Return use cases based on LOB, project types, and deployment
+    const useCases = {
+      'consumer-banking': {
+        'rpa': ['Account opening automation', 'Loan processing workflows', 'Customer data updates'],
+        'idp': ['Document verification', 'KYC document processing', 'Loan application intake'],
+        'agentic': ['Intelligent loan underwriting', 'Customer inquiry routing', 'Fraud detection workflows'],
+        'maestro': ['End-to-end loan origination', 'Customer onboarding orchestration', 'Cross-channel customer service']
+      },
+      'capital-markets': {
+        'rpa': ['Trade confirmation processing', 'Settlement workflows', 'Regulatory report generation'],
+        'idp': ['Trade document processing', 'Client agreement extraction', 'Compliance documentation'],
+        'agentic': ['Trade exception handling', 'Client risk assessment', 'Market data analysis'],
+        'maestro': ['End-to-end trade lifecycle', 'Client onboarding and servicing', 'Risk management workflows']
+      },
+      'operations': {
+        'rpa': ['Data entry automation', 'Report generation', 'System reconciliation'],
+        'idp': ['Invoice processing', 'Contract extraction', 'Compliance documentation'],
+        'agentic': ['Exception handling', 'Quality assurance', 'Process optimization'],
+        'maestro': ['End-to-end process orchestration', 'Cross-functional workflows', 'Business process management']
+      }
+    };
+    
+    const lobUseCases = useCases[context.lob] || {};
+    let contextualUseCases = [];
+    
+    context.projectTypes.forEach(projectType => {
+      if (lobUseCases[projectType]) {
+        contextualUseCases.push(...lobUseCases[projectType].map(useCase => ({
+          name: useCase,
+          type: projectType,
+          deployment: context.deployment
+        })));
+      }
+    });
+    
+    return contextualUseCases;
+  }
+
+  updateUseCaseContent(useCaseSection, useCases) {
+    const contentContainer = useCaseSection.querySelector('.editable-content');
+    if (contentContainer) {
+      contentContainer.innerHTML = `
+        <div class="grid gap-4">
+          ${useCases.map(useCase => `
+            <div class="p-3 bg-gray-50 rounded border-l-4 border-orange-500">
+              <h4 class="font-semibold text-gray-800">${useCase.name}</h4>
+              <div class="text-sm text-gray-600 mt-1">
+                <span class="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs mr-2">${useCase.type.toUpperCase()}</span>
+                ${useCase.deployment ? `<span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${useCase.deployment}</span>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
   }
 
   showUpdateFeedback() {

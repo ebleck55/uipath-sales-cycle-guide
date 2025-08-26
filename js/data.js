@@ -162,6 +162,18 @@ const SALES_CYCLE_DATA = {
         {
           q: "We tried RPA before and it didn't scale.",
           a: "Many programs stalled without central governance and discovery. We bake in guardrails, testing, and pipeline management to scale safely."
+        },
+        {
+          q: "We can't move to cloud due to security/compliance requirements.",
+          a: "UiPath offers flexible deployment options including private cloud and on-premise. However, our cloud platform provides enhanced security, compliance certifications (SOC2, FedRAMP), and significant cost advantages—let's explore what specific requirements we need to address."
+        },
+        {
+          q: "Cloud costs will be too high compared to on-premise.",
+          a: "Cloud TCO is typically 30-40% lower when you factor in infrastructure management, updates, security, and scalability. We can model your specific usage patterns to show the complete cost comparison including reduced IT overhead."
+        },
+        {
+          q: "We've already invested heavily in our current infrastructure.",
+          a: "We understand sunk cost concerns. Cloud migration can be phased to maximize your existing investment while gaining immediate benefits like automatic updates, enhanced security, and access to newest AI capabilities that aren't available on-premise."
         }
       ],
       resources: {
@@ -219,6 +231,18 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Automated trade settlement, reconciliation, and regulatory reporting with risk analytics.',
             why: 'Minimize settlement breaks and ensure real-time compliance monitoring.'
+          },
+          {
+            name: 'Cloud Migration Strategy for Financial Services',
+            link: '#',
+            overview: 'Comprehensive guide for migrating banking operations to UiPath Cloud with security, compliance, and governance frameworks.',
+            why: 'Reduce infrastructure costs by 40% while gaining access to latest AI capabilities and enhanced security.'
+          },
+          {
+            name: 'UiPath Cloud Security & Compliance Guide',
+            link: '#',
+            overview: 'Security architecture, compliance certifications (SOC2, FedRAMP), and data residency options for banking.',
+            why: 'Address security and compliance concerns while demonstrating cloud advantages.'
           }
         ],
         insurance: [
@@ -251,6 +275,18 @@ const SALES_CYCLE_DATA = {
             link: '#',
             overview: 'Streamline policy changes, renewals, and endorsements with AI-powered document processing and validation.',
             why: 'Reduce processing time by 70% and improve customer satisfaction scores.'
+          },
+          {
+            name: 'Insurance Cloud Migration Roadmap',
+            link: '#',
+            overview: 'Step-by-step guide for moving insurance operations to cloud with regulatory compliance and security best practices.',
+            why: 'Reduce infrastructure costs and gain access to advanced AI capabilities for claims and underwriting.'
+          },
+          {
+            name: 'UiPath Cloud TCO Calculator for Insurance',
+            link: '#',
+            overview: 'Total cost of ownership analysis comparing cloud vs on-premise deployment for insurance operations.',
+            why: 'Demonstrate cost savings and ROI of cloud migration for CFO approval.'
           }
         ]
       }

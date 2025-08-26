@@ -1368,7 +1368,7 @@ html {
 
 /* Customer info card responsive adjustments */
 @media (max-width: 768px) {
-  .grid.grid-cols-1.md\:grid-cols-5 {
+  .grid.grid-cols-1.md\:grid-cols-4 {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
@@ -1379,7 +1379,6 @@ html {
 .customer-type-btn:focus,
 .project-type-btn:focus,
 #update-content-btn:focus,
-#sub-vertical-selector:focus,
 #lob-selector:focus,
 #deployment-type:focus {
   outline: 2px solid var(--uipath-orange);
