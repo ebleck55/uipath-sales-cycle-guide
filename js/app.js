@@ -943,7 +943,222 @@ document.addEventListener('DOMContentLoaded',()=>{
   initExportNotes();
   initAIIntegration(); // Initialize AI functionality
   initBulkAdmin(); // Initialize bulk admin interface
+  initAdminMode(); // Initialize admin mode
 });
+
+// ---------- ADMIN MODE ----------
+function initAdminMode() {
+  const adminModeBtn = $('#admin-mode-btn');
+  const adminStatus = $('#admin-status');
+  const bodyElement = document.body;
+  let adminModeEnabled = false;
+
+  function toggleAdminMode() {
+    adminModeEnabled = !adminModeEnabled;
+    
+    if (adminModeEnabled) {
+      bodyElement.classList.add('admin-mode');
+      adminStatus.classList.remove('hidden');
+      adminModeBtn.textContent = 'Exit Edit Mode';
+      adminModeBtn.classList.add('text-uipath-orange');
+    } else {
+      bodyElement.classList.remove('admin-mode');
+      adminStatus.classList.add('hidden');
+      adminModeBtn.textContent = 'Edit';
+      adminModeBtn.classList.remove('text-uipath-orange');
+    }
+  }
+
+  if (adminModeBtn) {
+    adminModeBtn.addEventListener('click', toggleAdminMode);
+  }
+
+  // Initialize edit modal functionality
+  initEditModal();
+}
+
+// Initialize edit modal
+function initEditModal() {
+  const modal = $('#edit-modal');
+  const modalCancel = $('#modal-cancel');
+  const modalSave = $('#modal-save');
+  let currentEditTarget = null;
+
+  // Close modal
+  function closeModal() {
+    if (modal) modal.classList.add('hidden');
+    currentEditTarget = null;
+  }
+
+  // Open modal for editing
+  function openModal(targetId, content) {
+    if (!modal) return;
+    
+    currentEditTarget = targetId;
+    const modalContent = $('#modal-content-area');
+    
+    if (modalContent) {
+      modalContent.innerHTML = content;
+      modal.classList.remove('hidden');
+    }
+  }
+
+  // Handle edit icon clicks
+  document.addEventListener('click', (e) => {
+    const editIcon = e.target.closest('.edit-icon');
+    if (!editIcon) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const targetId = editIcon.getAttribute('data-target');
+    if (!targetId) return;
+    
+    if (targetId.startsWith('persona-')) {
+      openPersonaEditModal(targetId);
+    } else {
+      // Handle other edit types if needed
+      console.log('Edit clicked for:', targetId);
+    }
+  });
+
+  // Save modal changes
+  if (modalSave) {
+    modalSave.addEventListener('click', () => {
+      saveModalChanges();
+      closeModal();
+    });
+  }
+
+  // Cancel modal
+  if (modalCancel) {
+    modalCancel.addEventListener('click', closeModal);
+  }
+
+  // Close modal on background click
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  function openPersonaEditModal(personaId) {
+    const [, industry, index] = personaId.split('-');
+    const persona = SALES_CYCLE_DATA.personas[industry][parseInt(index)];
+    
+    if (!persona) return;
+    
+    const content = `
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-2">Title</label>
+          <input type="text" id="edit-title" value="${persona.title || ''}" class="w-full p-2 border rounded-md">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Their World</label>
+          <textarea id="edit-world" rows="3" class="w-full p-2 border rounded-md">${persona.world || ''}</textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">What They Care About</label>
+          <textarea id="edit-cares" rows="3" class="w-full p-2 border rounded-md">${persona.cares || ''}</textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">How UiPath Helps</label>
+          <textarea id="edit-help" rows="3" class="w-full p-2 border rounded-md">${persona.help || ''}</textarea>
+        </div>
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <button type="button" id="delete-persona-btn" class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 transition-colors">
+            🗑️ Delete Persona
+          </button>
+        </div>
+      </div>
+    `;
+    
+    openModal(personaId, content);
+    
+    // Add delete functionality
+    setTimeout(() => {
+      const deleteBtn = $('#delete-persona-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+          if (confirm('Are you sure you want to delete this persona? This action cannot be undone.')) {
+            deletePersona(personaId);
+            closeModal();
+          }
+        });
+      }
+    }, 100);
+  }
+
+  function deletePersona(personaId) {
+    const [, industry, index] = personaId.split('-');
+    const indexNum = parseInt(index);
+    
+    // Remove from data
+    SALES_CYCLE_DATA.personas[industry].splice(indexNum, 1);
+    
+    // Re-render personas
+    renderPersonas();
+    showMessage('Persona deleted successfully!', 'success');
+  }
+
+  function saveModalChanges() {
+    if (!currentEditTarget) return;
+    
+    if (currentEditTarget.startsWith('persona-')) {
+      const [, industry, index] = currentEditTarget.split('-');
+      const persona = SALES_CYCLE_DATA.personas[industry][parseInt(index)];
+      
+      if (persona) {
+        persona.title = $('#edit-title')?.value || '';
+        persona.world = $('#edit-world')?.value || '';
+        persona.cares = $('#edit-cares')?.value || '';
+        persona.help = $('#edit-help')?.value || '';
+        
+        // Re-render personas
+        renderPersonas();
+        showMessage('Persona updated successfully!', 'success');
+      }
+    }
+  }
+}
+
+// Add new persona
+function addNewPersona() {
+  // Determine current active industry
+  const bankingContainer = $('#personas-banking');
+  const insuranceContainer = $('#personas-insurance');
+  const isInsuranceActive = insuranceContainer && !insuranceContainer.classList.contains('hidden');
+  const activeIndustry = isInsuranceActive ? 'insurance' : 'banking';
+  
+  // Create new blank persona
+  const newPersona = {
+    title: 'New Persona',
+    world: '',
+    cares: '',
+    help: ''
+  };
+  
+  // Add to data
+  SALES_CYCLE_DATA.personas[activeIndustry].push(newPersona);
+  
+  // Re-render personas
+  renderPersonas();
+  
+  // Auto-open edit modal for the new persona
+  const newIndex = SALES_CYCLE_DATA.personas[activeIndustry].length - 1;
+  const newPersonaId = `persona-${activeIndustry}-${newIndex}`;
+  
+  // Wait a bit for render, then open modal
+  setTimeout(() => {
+    const editIcon = document.querySelector(`[data-target="${newPersonaId}"]`);
+    if (editIcon) {
+      editIcon.click();
+    }
+  }, 100);
+  
+  showMessage(`New ${activeIndustry} persona added!`, 'success');
+}
 
 // ---------- BULK ADMIN INTERFACE ----------
 function initBulkAdmin() {
