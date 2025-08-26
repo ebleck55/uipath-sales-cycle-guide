@@ -23,15 +23,22 @@ class AIIntegration {
 
   // Get API key from various sources
   getApiKey() {
-    // First check if there's a stored key in localStorage
-    const stored = localStorage.getItem('claude_api_key');
-    if (stored) return stored;
+    // Use the secure getStoredApiKey function from app.js
+    if (typeof getStoredApiKey === 'function') {
+      const apiKey = getStoredApiKey();
+      if (apiKey) return apiKey;
+    }
     
-    // If no stored key, prompt user for it
-    const apiKey = prompt('Please enter your Claude API key:\n\nGet it from: https://console.anthropic.com\n\n(This will be stored locally in your browser)');
-    if (apiKey && apiKey.trim()) {
-      localStorage.setItem('claude_api_key', apiKey.trim());
-      return apiKey.trim();
+    // Fallback: check for legacy stored key
+    const stored = localStorage.getItem('claude_api_key');
+    if (stored) {
+      try {
+        // Try to decode if it's base64 encoded
+        return atob(stored);
+      } catch (e) {
+        // If decoding fails, return as-is (legacy format)
+        return stored;
+      }
     }
     
     return null;

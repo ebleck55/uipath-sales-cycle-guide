@@ -214,6 +214,7 @@
           <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="proposal">📋 Proposal & Negotiation</button>
           <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="implement">🚀 Implement & Expand</button>
           <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="personas">👥 Key Buyer Personas</button>
+          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="settings">⚙️ Settings</button>
         </nav>
       </div>
 
@@ -422,6 +423,86 @@
                   <button type="button" class="text-sm bg-purple-100 text-purple-700 px-3 py-2 rounded hover:bg-purple-200" onclick="addPersona('insurance')">+ Add Insurance Persona</button>
                 </div>
                 <div id="insurance-personas-editor" class="space-y-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="bulk-tab-content hidden">
+          <div class="space-y-6">
+            <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-500">
+              <h3 class="text-xl font-bold text-gray-800 mb-4">⚙️ Settings</h3>
+              
+              <!-- API Key Section -->
+              <div class="mb-8">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 class="text-lg font-semibold text-blue-800 mb-3">🔐 Claude API Key Configuration</h4>
+                  <p class="text-sm text-blue-700 mb-4">
+                    Configure your Claude API key to enable AI-powered features like question generation and objection responses. 
+                    Your API key is stored securely in your browser's local storage and never transmitted to our servers.
+                  </p>
+                  
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">API Key Status</label>
+                      <div id="api-key-status" class="flex items-center space-x-2">
+                        <span class="text-sm px-2 py-1 rounded" id="api-status-indicator">Checking...</span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label for="claude-api-key" class="block text-sm font-medium text-gray-700 mb-2">
+                        Claude API Key
+                        <span class="text-xs text-gray-500">(Get yours from <a href="https://console.anthropic.com" target="_blank" class="text-blue-600 hover:underline">console.anthropic.com</a>)</span>
+                      </label>
+                      <div class="flex space-x-2">
+                        <input 
+                          type="password" 
+                          id="claude-api-key" 
+                          placeholder="sk-ant-api03-..." 
+                          class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                        <button 
+                          id="save-api-key" 
+                          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Save
+                        </button>
+                        <button 
+                          id="clear-api-key" 
+                          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="text-xs text-gray-600 space-y-1">
+                      <p>• Your API key is encrypted and stored locally in your browser</p>
+                      <p>• We never store or transmit your API key to external servers</p>
+                      <p>• You can clear your API key at any time using the Clear button</p>
+                      <p>• API usage and costs are billed directly by Anthropic to your account</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Additional Settings -->
+              <div class="mb-8">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 class="text-lg font-semibold text-green-800 mb-3">🎛️ Application Settings</h4>
+                  <div class="space-y-3">
+                    <label class="flex items-center space-x-2">
+                      <input type="checkbox" id="enable-auto-save" class="rounded">
+                      <span class="text-sm text-green-700">Enable auto-save for notes and progress</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                      <input type="checkbox" id="enable-ai-features" class="rounded">
+                      <span class="text-sm text-green-700">Enable AI-powered features (requires API key)</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

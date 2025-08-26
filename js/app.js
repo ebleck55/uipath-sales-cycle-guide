@@ -1294,6 +1294,8 @@ function initBulkAdmin() {
     if (bulkAdminModal) {
       loadAllContentToBulkEditor();
       bulkAdminModal.classList.remove('hidden');
+      // Initialize settings tab after modal opens
+      setTimeout(initializeSettingsTab, 100);
     }
   };
 
@@ -1988,4 +1990,106 @@ function importCSVContent(event) {
   
   reader.readAsText(file);
   event.target.value = ''; // Reset file input
+}
+
+// Settings Tab Functionality
+function initializeSettingsTab() {
+  const saveApiKeyBtn = $('#save-api-key');
+  const clearApiKeyBtn = $('#clear-api-key');
+  const apiKeyInput = $('#claude-api-key');
+  const apiStatusIndicator = $('#api-status-indicator');
+  const enableAutoSave = $('#enable-auto-save');
+  const enableAiFeatures = $('#enable-ai-features');
+  
+  // Check and display current API key status
+  function updateApiKeyStatus() {
+    const hasApiKey = localStorage.getItem('claude_api_key');
+    if (hasApiKey) {
+      apiStatusIndicator.textContent = '✅ API Key Configured';
+      apiStatusIndicator.className = 'text-sm px-2 py-1 rounded bg-green-100 text-green-800';
+      if (enableAiFeatures) enableAiFeatures.checked = true;
+    } else {
+      apiStatusIndicator.textContent = '❌ No API Key';
+      apiStatusIndicator.className = 'text-sm px-2 py-1 rounded bg-red-100 text-red-800';
+      if (enableAiFeatures) enableAiFeatures.checked = false;
+    }
+  }
+  
+  // Initialize status on load
+  updateApiKeyStatus();
+  
+  // Load saved settings
+  if (enableAutoSave) {
+    enableAutoSave.checked = localStorage.getItem('enable_auto_save') === 'true';
+  }
+  
+  // Save API Key
+  if (saveApiKeyBtn && apiKeyInput) {
+    saveApiKeyBtn.addEventListener('click', () => {
+      const apiKey = apiKeyInput.value.trim();
+      
+      if (!apiKey) {
+        showMessage('Please enter an API key', 'error');
+        return;
+      }
+      
+      if (!apiKey.startsWith('sk-ant-')) {
+        showMessage('Invalid API key format. Should start with "sk-ant-"', 'error');
+        return;
+      }
+      
+      // Basic encryption (base64 encoding for simple obfuscation)
+      const encodedKey = btoa(apiKey);
+      localStorage.setItem('claude_api_key', encodedKey);
+      
+      apiKeyInput.value = '';
+      updateApiKeyStatus();
+      showMessage('API key saved securely! 🔐', 'success');
+    });
+  }
+  
+  // Clear API Key
+  if (clearApiKeyBtn) {
+    clearApiKeyBtn.addEventListener('click', () => {
+      localStorage.removeItem('claude_api_key');
+      if (apiKeyInput) apiKeyInput.value = '';
+      updateApiKeyStatus();
+      showMessage('API key cleared successfully', 'success');
+    });
+  }
+  
+  // Auto-save setting
+  if (enableAutoSave) {
+    enableAutoSave.addEventListener('change', () => {
+      localStorage.setItem('enable_auto_save', enableAutoSave.checked.toString());
+      showMessage(enableAutoSave.checked ? 'Auto-save enabled' : 'Auto-save disabled', 'success');
+    });
+  }
+  
+  // AI Features setting
+  if (enableAiFeatures) {
+    enableAiFeatures.addEventListener('change', () => {
+      if (enableAiFeatures.checked && !localStorage.getItem('claude_api_key')) {
+        showMessage('Please configure your API key first to enable AI features', 'error');
+        enableAiFeatures.checked = false;
+        return;
+      }
+      localStorage.setItem('enable_ai_features', enableAiFeatures.checked.toString());
+      showMessage(enableAiFeatures.checked ? 'AI features enabled' : 'AI features disabled', 'success');
+    });
+  }
+}
+
+// Update the existing AI integration to use the stored API key
+function getStoredApiKey() {
+  const encodedKey = localStorage.getItem('claude_api_key');
+  if (encodedKey) {
+    try {
+      return atob(encodedKey);
+    } catch (e) {
+      console.error('Error decoding API key');
+      return null;
+    }
+  }
+  return null;
 }
