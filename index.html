@@ -24,16 +24,6 @@
   <header class="bg-white shadow-md sticky top-0 z-50">
     <div class="header-container flex justify-between items-center">
       <div class="flex items-center">
-        <svg class="h-8 w-auto mr-3" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-          <g fill="#FA4616">
-            <!-- UiPath logo elements -->
-            <path d="M20 10 L20 50 L30 50 L30 35 L45 35 C52 35 55 30 55 25 C55 20 52 15 45 15 L30 15 L30 10 Z M30 25 L30 30 L42 30 C45 30 45 25 42 25 Z"/>
-            <path d="M65 15 L65 50 L75 50 L75 15 Z"/>
-            <path d="M85 15 L85 50 L95 50 L95 35 L110 35 C117 35 120 30 120 25 C120 20 117 15 110 15 L95 15 L95 10 Z M95 25 L95 30 L107 30 C110 30 110 25 107 25 Z"/>
-            <path d="M130 15 C123 15 120 20 120 25 L120 40 C120 45 123 50 130 50 L145 50 C152 50 155 45 155 40 L155 25 C155 20 152 15 145 15 Z M130 25 L145 25 C145 30 145 35 145 40 L130 40 C130 35 130 30 130 25 Z"/>
-            <path d="M165 15 L165 25 L175 25 L175 50 L185 50 L185 25 L195 25 L195 15 Z"/>
-          </g>
-        </svg>
         <h1 class="text-xl font-bold">UiPath Sales Cycle Guide</h1>
       </div>
       
@@ -57,11 +47,8 @@
           <button id="insurance" class="px-3 py-1 text-sm font-semibold rounded-md" role="tab" aria-selected="false">Insurance</button>
         </div>
         
-        <!-- Admin Controls -->
-        <div class="hidden md:flex items-center ml-4 gap-3">
-          <button id="bulk-admin-btn" class="px-3 py-1.5 text-white rounded-md font-semibold text-sm" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
-            📝 Bulk Edit
-          </button>
+        <!-- Admin Toggle -->
+        <div class="hidden md:flex items-center ml-4">
           <div class="flex items-center">
             <span class="text-sm font-medium text-gray-700 mr-2">Admin Mode</span>
             <label for="admin-toggle" class="flex items-center cursor-pointer">
@@ -103,9 +90,6 @@
       </nav>
       
       <div class="mt-4">
-        <button id="bulk-admin-btn-mobile" class="w-full mb-3 px-3 py-2 text-white rounded-md font-semibold text-sm" style="background-color: #FA4616;">
-          📝 Bulk Edit Content
-        </button>
         <div class="flex items-center">
           <span class="text-sm font-medium text-gray-700 mr-2">Admin Mode</span>
           <label for="admin-toggle-mobile" class="flex items-center cursor-pointer">
@@ -191,6 +175,21 @@
         </div>
       </section>
     </div>
+    
+    <!-- Admin Controls (Bottom of Page) -->
+    <div class="admin-mode-controls hidden mt-8 p-6 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+      <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2 md:mb-0">Admin Controls</h3>
+        <div class="flex flex-col md:flex-row gap-3">
+          <button id="bulk-admin-btn" class="px-4 py-2 text-white rounded-md font-semibold text-sm transition-all duration-200 hover:scale-105 hover:shadow-lg" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
+            📝 Bulk Edit Content
+          </button>
+          <button id="bulk-admin-btn-mobile" class="px-4 py-2 text-white rounded-md font-semibold text-sm md:hidden transition-all duration-200 hover:scale-105 hover:shadow-lg" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
+            📝 Bulk Edit Content
+          </button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Copy to Clipboard Success Message -->
@@ -205,142 +204,252 @@
       <div class="flex justify-between items-center mb-4">
         <h3 id="bulk-admin-title" class="text-2xl leading-6 font-bold text-gray-900">📝 Bulk Content Editor</h3>
         <div class="flex gap-2">
-          <button id="bulk-admin-export" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">📥 Export</button>
-          <button id="bulk-admin-import" class="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">📤 Import</button>
-          <input type="file" id="bulk-import-file" accept=".json" class="hidden">
+          <div class="relative">
+            <button id="bulk-admin-export" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">📥 Export</button>
+            <div id="export-dropdown" class="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg border hidden z-10">
+              <button id="export-csv" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100">📊 Export as CSV</button>
+              <button id="export-json" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100">🔧 Export as JSON</button>
+            </div>
+          </div>
+          <div class="relative">
+            <button id="bulk-admin-import" class="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">📤 Import</button>
+            <div id="import-dropdown" class="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg border hidden z-10">
+              <label for="bulk-import-csv" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer">📊 Import CSV</label>
+              <label for="bulk-import-json" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer">🔧 Import JSON</label>
+            </div>
+          </div>
+          <input type="file" id="bulk-import-csv" accept=".csv" class="hidden">
+          <input type="file" id="bulk-import-json" accept=".json" class="hidden">
         </div>
       </div>
       
-      <div class="max-h-[80vh] overflow-y-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <!-- Left Column -->
+      <!-- Tab Navigation -->
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="flex space-x-8" aria-label="Tabs">
+          <button class="bulk-tab active py-2 px-1 border-b-2 font-medium text-sm" data-tab="discovery">🔍 Discovery</button>
+          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="business">💼 Business Qualification</button>
+          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="technical">⚙️ Technical Qualification</button>
+          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="proposal">📋 Proposal & Negotiation</button>
+          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="implement">🚀 Implement & Expand</button>
+          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="personas">👥 Key Buyer Personas</button>
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="max-h-[70vh] overflow-y-auto">
+        
+        <!-- Discovery Tab -->
+        <div id="discovery-tab" class="bulk-tab-content">
           <div class="space-y-6">
-            
-            <!-- Key Buyer Personas -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="text-lg font-semibold mb-3 text-purple-700">👥 Key Buyer Personas</h4>
+            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+              <h3 class="text-xl font-bold text-blue-800 mb-4">🔍 Discovery Stage</h3>
               
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Banking Personas</label>
-                <div id="banking-personas-editor" class="space-y-3"></div>
-                <button type="button" class="mt-2 px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-md hover:bg-purple-200" onclick="addPersona('banking')">+ Add Banking Persona</button>
+              <!-- Outcomes Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
+                  <button type="button" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" onclick="addOutcome('discovery')">+ Add Outcome</button>
+                </div>
+                <div id="discovery-outcomes-container" class="space-y-2"></div>
               </div>
-              
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Insurance Personas</label>
-                <div id="insurance-personas-editor" class="space-y-3"></div>
-                <button type="button" class="mt-2 px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-md hover:bg-purple-200" onclick="addPersona('insurance')">+ Add Insurance Persona</button>
+
+              <!-- Initial Personas Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
+                  <button type="button" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" onclick="addInitialPersona('discovery')">+ Add Persona</button>
+                </div>
+                <div id="discovery-personas-container" class="space-y-2"></div>
               </div>
-            </div>
-            
-            <!-- Discovery Stage -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="text-lg font-semibold mb-3 text-blue-700">🔍 Discovery Stage</h4>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Outcomes/Exit Criteria</label>
-                  <textarea id="discovery-outcomes" class="w-full h-24 p-2 border rounded-md text-sm" placeholder="Enter outcomes, one per line"></textarea>
+
+              <!-- Questions Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
+                  <button type="button" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" onclick="addQuestionCategory('discovery')">+ Add Category</button>
                 </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Initial Personas</label>
-                  <textarea id="discovery-personas" class="w-full h-20 p-2 border rounded-md text-sm" placeholder="Enter personas, one per line"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Discovery Questions (JSON format)</label>
-                  <textarea id="discovery-questions" class="w-full h-32 p-2 border rounded-md text-sm font-mono" placeholder='{"Category": ["Question 1", "Question 2"]}'></textarea>
-                </div>
+                <div id="discovery-questions-container" class="space-y-4"></div>
               </div>
             </div>
-            
-            <!-- Business Qualification -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="text-lg font-semibold mb-3 text-green-700">💼 Business Qualification</h4>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Outcomes/Exit Criteria</label>
-                  <textarea id="business-outcomes" class="w-full h-24 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Initial Personas</label>
-                  <textarea id="business-personas" class="w-full h-20 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Discovery Questions (JSON)</label>
-                  <textarea id="business-questions" class="w-full h-32 p-2 border rounded-md text-sm font-mono"></textarea>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-          
-          <!-- Right Column -->
-          <div class="space-y-6">
-            
-            <!-- Technical Qualification -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="text-lg font-semibold mb-3 text-red-700">⚙️ Technical Qualification</h4>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Outcomes/Exit Criteria</label>
-                  <textarea id="technical-outcomes" class="w-full h-24 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Initial Personas</label>
-                  <textarea id="technical-personas" class="w-full h-20 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Discovery Questions (JSON)</label>
-                  <textarea id="technical-questions" class="w-full h-32 p-2 border rounded-md text-sm font-mono"></textarea>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Proposal & Negotiation -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="text-lg font-semibold mb-3 text-orange-700">📋 Proposal & Negotiation</h4>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Outcomes/Exit Criteria</label>
-                  <textarea id="proposal-outcomes" class="w-full h-24 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Initial Personas</label>
-                  <textarea id="proposal-personas" class="w-full h-20 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Discovery Questions (JSON)</label>
-                  <textarea id="proposal-questions" class="w-full h-32 p-2 border rounded-md text-sm font-mono"></textarea>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Implement & Expand -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="text-lg font-semibold mb-3 text-indigo-700">🚀 Implement & Expand</h4>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Outcomes/Exit Criteria</label>
-                  <textarea id="implement-outcomes" class="w-full h-24 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Initial Personas</label>
-                  <textarea id="implement-personas" class="w-full h-20 p-2 border rounded-md text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Discovery Questions (JSON)</label>
-                  <textarea id="implement-questions" class="w-full h-32 p-2 border rounded-md text-sm font-mono"></textarea>
-                </div>
-              </div>
-            </div>
-            
           </div>
         </div>
+
+        <!-- Business Qualification Tab -->
+        <div id="business-tab" class="bulk-tab-content hidden">
+          <div class="space-y-6">
+            <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+              <h3 class="text-xl font-bold text-green-800 mb-4">💼 Business Qualification</h3>
+              
+              <!-- Outcomes Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
+                  <button type="button" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200" onclick="addOutcome('business')">+ Add Outcome</button>
+                </div>
+                <div id="business-outcomes-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Initial Personas Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
+                  <button type="button" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200" onclick="addInitialPersona('business')">+ Add Persona</button>
+                </div>
+                <div id="business-personas-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Questions Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
+                  <button type="button" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200" onclick="addQuestionCategory('business')">+ Add Category</button>
+                </div>
+                <div id="business-questions-container" class="space-y-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Qualification Tab -->
+        <div id="technical-tab" class="bulk-tab-content hidden">
+          <div class="space-y-6">
+            <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-500">
+              <h3 class="text-xl font-bold text-red-800 mb-4">⚙️ Technical Qualification</h3>
+              
+              <!-- Outcomes Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
+                  <button type="button" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200" onclick="addOutcome('technical')">+ Add Outcome</button>
+                </div>
+                <div id="technical-outcomes-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Initial Personas Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
+                  <button type="button" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200" onclick="addInitialPersona('technical')">+ Add Persona</button>
+                </div>
+                <div id="technical-personas-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Questions Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
+                  <button type="button" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200" onclick="addQuestionCategory('technical')">+ Add Category</button>
+                </div>
+                <div id="technical-questions-container" class="space-y-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal & Negotiation Tab -->
+        <div id="proposal-tab" class="bulk-tab-content hidden">
+          <div class="space-y-6">
+            <div class="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
+              <h3 class="text-xl font-bold text-orange-800 mb-4">📋 Proposal & Negotiation</h3>
+              
+              <!-- Outcomes Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
+                  <button type="button" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200" onclick="addOutcome('proposal')">+ Add Outcome</button>
+                </div>
+                <div id="proposal-outcomes-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Initial Personas Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
+                  <button type="button" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200" onclick="addInitialPersona('proposal')">+ Add Persona</button>
+                </div>
+                <div id="proposal-personas-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Questions Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
+                  <button type="button" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200" onclick="addQuestionCategory('proposal')">+ Add Category</button>
+                </div>
+                <div id="proposal-questions-container" class="space-y-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Implement & Expand Tab -->
+        <div id="implement-tab" class="bulk-tab-content hidden">
+          <div class="space-y-6">
+            <div class="bg-indigo-50 p-6 rounded-lg border-l-4 border-indigo-500">
+              <h3 class="text-xl font-bold text-indigo-800 mb-4">🚀 Implement & Expand</h3>
+              
+              <!-- Outcomes Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
+                  <button type="button" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200" onclick="addOutcome('implement')">+ Add Outcome</button>
+                </div>
+                <div id="implement-outcomes-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Initial Personas Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
+                  <button type="button" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200" onclick="addInitialPersona('implement')">+ Add Persona</button>
+                </div>
+                <div id="implement-personas-container" class="space-y-2"></div>
+              </div>
+
+              <!-- Questions Section -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
+                  <button type="button" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200" onclick="addQuestionCategory('implement')">+ Add Category</button>
+                </div>
+                <div id="implement-questions-container" class="space-y-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Buyer Personas Tab -->
+        <div id="personas-tab" class="bulk-tab-content hidden">
+          <div class="space-y-6">
+            <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+              <h3 class="text-xl font-bold text-purple-800 mb-4">👥 Key Buyer Personas</h3>
+              
+              <!-- Banking Personas -->
+              <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                  <h4 class="text-lg font-semibold text-gray-800">Banking Industry</h4>
+                  <button type="button" class="text-sm bg-purple-100 text-purple-700 px-3 py-2 rounded hover:bg-purple-200" onclick="addPersona('banking')">+ Add Banking Persona</button>
+                </div>
+                <div id="banking-personas-editor" class="space-y-4"></div>
+              </div>
+
+              <!-- Insurance Personas -->
+              <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                  <h4 class="text-lg font-semibold text-gray-800">Insurance Industry</h4>
+                  <button type="button" class="text-sm bg-purple-100 text-purple-700 px-3 py-2 rounded hover:bg-purple-200" onclick="addPersona('insurance')">+ Add Insurance Persona</button>
+                </div>
+                <div id="insurance-personas-editor" class="space-y-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
       
       <div class="flex justify-between items-center px-4 py-3 mt-4 border-t">
         <div class="text-sm text-gray-600">
-          💡 Tip: Use line breaks for lists. JSON format for questions: {"Category": ["Question 1", "Question 2"]}
+          💡 Tip: Use line breaks for lists. For questions use format: "Category Name | Question text" - one per line
         </div>
         <div class="flex gap-2">
           <button id="bulk-admin-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>

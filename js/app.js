@@ -28,20 +28,44 @@ function renderPersonas(){
     APP_STATE.personas[ind].forEach((p,i)=>{
       host.innerHTML += `
         <div class="persona-card editable-card" id="persona-${ind}-${i}">
-          <h3 class="flex justify-between items-center">
+          <h3 class="flex justify-between items-center cursor-pointer persona-toggle" onclick="togglePersonaDetails('persona-${ind}-${i}')">
             <span>${p.title}</span>
-            <svg class="edit-icon w-5 h-5 text-gray-400 hover:text-orange-600 transition-colors" data-target="persona-${ind}-${i}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+            <div class="flex items-center gap-2">
+              <svg class="edit-icon w-5 h-5 text-gray-400 hover:text-orange-600 transition-colors" data-target="persona-${ind}-${i}" onclick="event.stopPropagation()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+              <svg class="persona-toggle-icon w-5 h-5 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </div>
           </h3>
-          <div class="editable-content">
-            <ul class="space-y-3">
-              <li><strong>Their world:</strong> ${p.world}</li>
-              <li><strong>What they care about:</strong> ${p.cares}</li>
-              <li><strong>How UiPath helps:</strong> ${p.help}</li>
-            </ul>
+          <div class="persona-details hidden transition-all duration-300 ease-in-out">
+            <div class="editable-content pt-3 border-t border-gray-100 mt-3">
+              <ul class="space-y-3">
+                <li><strong>Their world:</strong> ${p.world}</li>
+                <li><strong>What they care about:</strong> ${p.cares}</li>
+                <li><strong>How UiPath helps:</strong> ${p.help}</li>
+              </ul>
+            </div>
           </div>
         </div>`
     });
   });
+}
+
+// Toggle persona details visibility
+function togglePersonaDetails(personaId) {
+  const personaCard = document.getElementById(personaId);
+  if (!personaCard) return;
+  
+  const details = personaCard.querySelector('.persona-details');
+  const toggleIcon = personaCard.querySelector('.persona-toggle-icon');
+  
+  if (details.classList.contains('hidden')) {
+    // Show details
+    details.classList.remove('hidden');
+    toggleIcon.style.transform = 'rotate(180deg)';
+  } else {
+    // Hide details
+    details.classList.add('hidden');
+    toggleIcon.style.transform = 'rotate(0deg)';
+  }
 }
 
 function stageCard(stage){
@@ -901,6 +925,46 @@ function showMessage(message, type = 'info') {
   }
 }
 
+// ---------- ADMIN MODE TOGGLE ----------
+function initAdminMode() {
+  const adminToggle = $('#admin-toggle');
+  const adminToggleMobile = $('#admin-toggle-mobile');
+  const adminControls = $('.admin-mode-controls');
+  const bodyElement = document.body;
+  
+  function toggleAdminMode(isAdmin) {
+    if (isAdmin) {
+      bodyElement.classList.add('admin-mode');
+      adminControls.forEach(control => control.classList.remove('hidden'));
+    } else {
+      bodyElement.classList.remove('admin-mode');
+      adminControls.forEach(control => control.classList.add('hidden'));
+    }
+  }
+  
+  // Desktop admin toggle
+  if (adminToggle) {
+    adminToggle.addEventListener('change', (e) => {
+      toggleAdminMode(e.target.checked);
+      // Sync mobile toggle
+      if (adminToggleMobile) {
+        adminToggleMobile.checked = e.target.checked;
+      }
+    });
+  }
+  
+  // Mobile admin toggle
+  if (adminToggleMobile) {
+    adminToggleMobile.addEventListener('change', (e) => {
+      toggleAdminMode(e.target.checked);
+      // Sync desktop toggle
+      if (adminToggle) {
+        adminToggle.checked = e.target.checked;
+      }
+    });
+  }
+}
+
 // ---------- MAIN INITIALIZATION ----------
 document.addEventListener('DOMContentLoaded',()=>{
   // Render initial content
@@ -917,6 +981,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initMobileMenu();
   initExportNotes();
   initAIIntegration(); // Initialize AI functionality
+  initAdminMode(); // Initialize admin mode toggle
   initBulkAdmin(); // Initialize bulk admin interface
 });
 
@@ -929,7 +994,12 @@ function initBulkAdmin() {
   const bulkAdminSave = $('#bulk-admin-save');
   const bulkAdminExport = $('#bulk-admin-export');
   const bulkAdminImport = $('#bulk-admin-import');
-  const bulkImportFile = $('#bulk-import-file');
+  const bulkImportJsonFile = $('#bulk-import-json');
+  const bulkImportCsvFile = $('#bulk-import-csv');
+  const exportDropdown = $('#export-dropdown');
+  const importDropdown = $('#import-dropdown');
+  const exportCsvBtn = $('#export-csv');
+  const exportJsonBtn = $('#export-json');
 
   // Show bulk admin modal
   const showBulkAdmin = () => {
@@ -953,19 +1023,84 @@ function initBulkAdmin() {
     bulkAdminSave.addEventListener('click', saveBulkChanges);
   }
 
+  // Export dropdown toggle
   if (bulkAdminExport) {
-    bulkAdminExport.addEventListener('click', exportAllContent);
-  }
-
-  if (bulkAdminImport) {
-    bulkAdminImport.addEventListener('click', () => {
-      if (bulkImportFile) bulkImportFile.click();
+    bulkAdminExport.addEventListener('click', () => {
+      if (exportDropdown) {
+        exportDropdown.classList.toggle('hidden');
+        if (importDropdown) importDropdown.classList.add('hidden');
+      }
     });
   }
 
-  if (bulkImportFile) {
-    bulkImportFile.addEventListener('change', importAllContent);
+  // Import dropdown toggle
+  if (bulkAdminImport) {
+    bulkAdminImport.addEventListener('click', () => {
+      if (importDropdown) {
+        importDropdown.classList.toggle('hidden');
+        if (exportDropdown) exportDropdown.classList.add('hidden');
+      }
+    });
   }
+
+  // Export options
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', () => {
+      exportAllContentAsCSV();
+      if (exportDropdown) exportDropdown.classList.add('hidden');
+    });
+  }
+
+  if (exportJsonBtn) {
+    exportJsonBtn.addEventListener('click', () => {
+      exportAllContent();
+      if (exportDropdown) exportDropdown.classList.add('hidden');
+    });
+  }
+
+  // Import file handlers
+  if (bulkImportJsonFile) {
+    bulkImportJsonFile.addEventListener('change', importAllContent);
+  }
+
+  if (bulkImportCsvFile) {
+    bulkImportCsvFile.addEventListener('change', importCSVContent);
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#bulk-admin-export') && !e.target.closest('#export-dropdown')) {
+      if (exportDropdown) exportDropdown.classList.add('hidden');
+    }
+    if (!e.target.closest('#bulk-admin-import') && !e.target.closest('#import-dropdown')) {
+      if (importDropdown) importDropdown.classList.add('hidden');
+    }
+  });
+
+  // Initialize tabs
+  initBulkAdminTabs();
+}
+
+// Initialize bulk admin tabs
+function initBulkAdminTabs() {
+  const tabs = $$('.bulk-tab');
+  const tabContents = $$('.bulk-tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(content => content.classList.add('hidden'));
+
+      // Add active to clicked tab and show corresponding content
+      tab.classList.add('active');
+      const tabId = tab.getAttribute('data-tab') + '-tab';
+      const content = document.getElementById(tabId);
+      if (content) {
+        content.classList.remove('hidden');
+      }
+    });
+  });
 }
 
 // Load all current content into the bulk editor
@@ -978,21 +1113,30 @@ function loadAllContentToBulkEditor() {
     const stagePrefix = stage.id.replace('-', '');
     
     // Load outcomes
-    const outcomesTextarea = $(`#${stagePrefix}-outcomes`);
-    if (outcomesTextarea && stage.outcomes) {
-      outcomesTextarea.value = stage.outcomes.join('\\n');
+    const outcomesContainer = $(`#${stagePrefix}-outcomes-container`);
+    if (outcomesContainer && stage.outcomes) {
+      outcomesContainer.innerHTML = '';
+      stage.outcomes.forEach(outcome => {
+        addContentItem(outcomesContainer, 'outcome', outcome, stagePrefix);
+      });
     }
     
-    // Load personas
-    const personasTextarea = $(`#${stagePrefix}-personas`);
-    if (personasTextarea && stage.initialPersonas) {
-      personasTextarea.value = stage.initialPersonas.join('\\n');
+    // Load initial personas
+    const personasContainer = $(`#${stagePrefix}-personas-container`);
+    if (personasContainer && stage.initialPersonas) {
+      personasContainer.innerHTML = '';
+      stage.initialPersonas.forEach(persona => {
+        addContentItem(personasContainer, 'persona', persona, stagePrefix);
+      });
     }
     
-    // Load questions as JSON
-    const questionsTextarea = $(`#${stagePrefix}-questions`);
-    if (questionsTextarea && stage.questions) {
-      questionsTextarea.value = JSON.stringify(stage.questions, null, 2);
+    // Load questions by category
+    const questionsContainer = $(`#${stagePrefix}-questions-container`);
+    if (questionsContainer && stage.questions) {
+      questionsContainer.innerHTML = '';
+      Object.entries(stage.questions).forEach(([category, questions]) => {
+        addQuestionCategoryToContainer(questionsContainer, category, questions, stagePrefix);
+      });
     }
   });
 }
@@ -1068,27 +1212,55 @@ function saveBulkChanges() {
       const stagePrefix = stage.id.replace('-', '');
       
       // Save outcomes
-      const outcomesTextarea = $(`#${stagePrefix}-outcomes`);
-      if (outcomesTextarea && outcomesTextarea.value.trim()) {
-        stage.outcomes = outcomesTextarea.value.split('\\n').filter(line => line.trim());
+      const outcomesContainer = $(`#${stagePrefix}-outcomes-container`);
+      if (outcomesContainer) {
+        const outcomes = [];
+        const outcomeInputs = outcomesContainer.querySelectorAll('.content-input');
+        outcomeInputs.forEach(input => {
+          const value = input.value.trim();
+          if (value) outcomes.push(value);
+        });
+        stage.outcomes = outcomes;
       }
       
-      // Save personas
-      const personasTextarea = $(`#${stagePrefix}-personas`);
-      if (personasTextarea && personasTextarea.value.trim()) {
-        stage.initialPersonas = personasTextarea.value.split('\\n').filter(line => line.trim());
+      // Save initial personas
+      const personasContainer = $(`#${stagePrefix}-personas-container`);
+      if (personasContainer) {
+        const personas = [];
+        const personaInputs = personasContainer.querySelectorAll('.content-input');
+        personaInputs.forEach(input => {
+          const value = input.value.trim();
+          if (value) personas.push(value);
+        });
+        stage.initialPersonas = personas;
       }
       
-      // Save questions
-      const questionsTextarea = $(`#${stagePrefix}-questions`);
-      if (questionsTextarea && questionsTextarea.value.trim()) {
-        try {
-          stage.questions = JSON.parse(questionsTextarea.value);
-        } catch (e) {
-          console.error(`Invalid JSON for ${stage.id} questions:`, e);
-          showMessage(`Invalid JSON format for ${stage.title} questions`, 'error');
-          return;
-        }
+      // Save questions by category
+      const questionsContainer = $(`#${stagePrefix}-questions-container`);
+      if (questionsContainer) {
+        const questions = {};
+        const categories = questionsContainer.querySelectorAll('.question-category');
+        
+        categories.forEach(categoryDiv => {
+          const categoryInput = categoryDiv.querySelector('.category-name-input');
+          const categoryName = categoryInput.value.trim();
+          
+          if (categoryName) {
+            const questionInputs = categoryDiv.querySelectorAll('.questions-list .content-input');
+            const categoryQuestions = [];
+            
+            questionInputs.forEach(input => {
+              const value = input.value.trim();
+              if (value) categoryQuestions.push(value);
+            });
+            
+            if (categoryQuestions.length > 0) {
+              questions[categoryName] = categoryQuestions;
+            }
+          }
+        });
+        
+        stage.questions = questions;
       }
     });
     
@@ -1202,6 +1374,307 @@ function importAllContent(event) {
     } catch (error) {
       console.error('Import error:', error);
       showMessage('Error importing file: ' + error.message, 'error');
+    }
+  };
+  
+  reader.readAsText(file);
+  event.target.value = ''; // Reset file input
+}
+
+// Helper functions for new bulk editor interface
+
+// Add content item (outcome, persona, etc.)
+function addContentItem(container, type, value = '', stagePrefix) {
+  const item = document.createElement('div');
+  item.className = 'content-item';
+  
+  const input = type === 'outcome' ? 
+    `<textarea rows="2" placeholder="Enter ${type}..." class="content-input">${value}</textarea>` :
+    `<input type="text" placeholder="Enter ${type}..." value="${value}" class="content-input">`;
+  
+  item.innerHTML = `
+    ${input}
+    <button type="button" class="remove-item-btn" onclick="removeContentItem(this)">✕</button>
+  `;
+  
+  container.appendChild(item);
+  return item;
+}
+
+// Remove content item
+function removeContentItem(button) {
+  const item = button.closest('.content-item');
+  if (item) {
+    item.remove();
+  }
+}
+
+// Add outcome
+function addOutcome(stagePrefix) {
+  const container = $(`#${stagePrefix}-outcomes-container`);
+  if (container) {
+    addContentItem(container, 'outcome', '', stagePrefix);
+  }
+}
+
+// Add initial persona
+function addInitialPersona(stagePrefix) {
+  const container = $(`#${stagePrefix}-personas-container`);
+  if (container) {
+    addContentItem(container, 'persona', '', stagePrefix);
+  }
+}
+
+// Add question category
+function addQuestionCategory(stagePrefix) {
+  const container = $(`#${stagePrefix}-questions-container`);
+  if (container) {
+    addQuestionCategoryToContainer(container, '', [], stagePrefix);
+  }
+}
+
+// Add question category to container
+function addQuestionCategoryToContainer(container, categoryName = '', questions = [], stagePrefix) {
+  const categoryDiv = document.createElement('div');
+  categoryDiv.className = 'question-category';
+  
+  categoryDiv.innerHTML = `
+    <div class="question-category-header">
+      <input type="text" placeholder="Category Name (e.g., Pain Points)" value="${categoryName}" class="category-name-input">
+      <button type="button" class="add-question-btn" onclick="addQuestion(this)">+ Question</button>
+      <button type="button" class="remove-item-btn" onclick="removeQuestionCategory(this)">✕</button>
+    </div>
+    <div class="questions-list"></div>
+  `;
+  
+  container.appendChild(categoryDiv);
+  
+  // Add existing questions
+  const questionsList = categoryDiv.querySelector('.questions-list');
+  questions.forEach(question => {
+    addQuestionToCategory(questionsList, question);
+  });
+  
+  // Add empty question if no questions exist
+  if (questions.length === 0) {
+    addQuestionToCategory(questionsList, '');
+  }
+  
+  return categoryDiv;
+}
+
+// Add question to category
+function addQuestion(button) {
+  const categoryDiv = button.closest('.question-category');
+  const questionsList = categoryDiv.querySelector('.questions-list');
+  addQuestionToCategory(questionsList, '');
+}
+
+// Add question to category list
+function addQuestionToCategory(questionsList, questionText = '') {
+  const questionDiv = document.createElement('div');
+  questionDiv.className = 'content-item';
+  
+  questionDiv.innerHTML = `
+    <textarea rows="2" placeholder="Enter question..." class="content-input">${questionText}</textarea>
+    <button type="button" class="remove-item-btn" onclick="removeContentItem(this)">✕</button>
+  `;
+  
+  questionsList.appendChild(questionDiv);
+}
+
+// Remove question category
+function removeQuestionCategory(button) {
+  const category = button.closest('.question-category');
+  if (category) {
+    category.remove();
+  }
+}
+
+// Export all content as CSV
+function exportAllContentAsCSV() {
+  const csvData = [];
+  
+  // Add header
+  csvData.push(['Type', 'Industry/Stage', 'Category', 'Field', 'Content']);
+  
+  // Export personas
+  Object.entries(SALES_CYCLE_DATA.personas).forEach(([industry, personas]) => {
+    personas.forEach((persona, index) => {
+      csvData.push(['Persona', industry, `Persona ${index + 1}`, 'Title', persona.title || '']);
+      csvData.push(['Persona', industry, `Persona ${index + 1}`, 'World', persona.world || '']);
+      csvData.push(['Persona', industry, `Persona ${index + 1}`, 'Cares About', persona.cares || '']);
+      csvData.push(['Persona', industry, `Persona ${index + 1}`, 'How We Help', persona.help || '']);
+    });
+  });
+  
+  // Export stage data
+  SALES_CYCLE_DATA.stages.forEach(stage => {
+    // Outcomes
+    if (stage.outcomes && stage.outcomes.length > 0) {
+      stage.outcomes.forEach(outcome => {
+        csvData.push(['Stage', stage.title, 'Outcomes', 'Outcome', outcome]);
+      });
+    }
+    
+    // Initial Personas
+    if (stage.initialPersonas && stage.initialPersonas.length > 0) {
+      stage.initialPersonas.forEach(persona => {
+        csvData.push(['Stage', stage.title, 'Initial Personas', 'Persona', persona]);
+      });
+    }
+    
+    // Questions
+    if (stage.questions) {
+      Object.entries(stage.questions).forEach(([category, questions]) => {
+        questions.forEach(question => {
+          csvData.push(['Stage', stage.title, 'Questions', category, question]);
+        });
+      });
+    }
+  });
+  
+  // Convert to CSV string
+  const csvString = csvData.map(row => 
+    row.map(cell => {
+      // Escape quotes and wrap in quotes if contains comma, quote, or newline
+      const escaped = String(cell || '').replace(/"/g, '""');
+      return /[",\n\r]/.test(escaped) ? `"${escaped}"` : escaped;
+    }).join(',')
+  ).join('\n');
+  
+  // Download CSV
+  const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `sales-cycle-content-${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  showMessage('Content exported as CSV! 📊', 'success');
+}
+
+// Import CSV content
+function importCSVContent(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const csvText = e.target.result;
+      const lines = csvText.split('\n');
+      const header = lines[0];
+      
+      // Validate header
+      if (!header.includes('Type') || !header.includes('Industry/Stage') || !header.includes('Content')) {
+        throw new Error('Invalid CSV format. Please use the exported CSV template.');
+      }
+      
+      // Parse CSV data
+      const newPersonas = { banking: [], insurance: [] };
+      const stageUpdates = {};
+      
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        // Simple CSV parser (handles quoted fields)
+        const fields = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let j = 0; j < line.length; j++) {
+          const char = line[j];
+          if (char === '"') {
+            if (inQuotes && line[j + 1] === '"') {
+              current += '"';
+              j++; // Skip next quote
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            fields.push(current);
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        fields.push(current); // Add last field
+        
+        if (fields.length >= 5) {
+          const [type, industryOrStage, category, field, content] = fields;
+          
+          if (type === 'Persona') {
+            const industry = industryOrStage.toLowerCase();
+            if (newPersonas[industry]) {
+              let persona = newPersonas[industry].find(p => p.category === category);
+              if (!persona) {
+                persona = { category, title: '', world: '', cares: '', help: '' };
+                newPersonas[industry].push(persona);
+              }
+              
+              switch (field) {
+                case 'Title': persona.title = content; break;
+                case 'World': persona.world = content; break;
+                case 'Cares About': persona.cares = content; break;
+                case 'How We Help': persona.help = content; break;
+              }
+            }
+          } else if (type === 'Stage') {
+            if (!stageUpdates[industryOrStage]) {
+              stageUpdates[industryOrStage] = { outcomes: [], initialPersonas: [], questions: {} };
+            }
+            
+            const stageData = stageUpdates[industryOrStage];
+            
+            if (category === 'Outcomes') {
+              stageData.outcomes.push(content);
+            } else if (category === 'Initial Personas') {
+              stageData.initialPersonas.push(content);
+            } else if (category === 'Questions') {
+              if (!stageData.questions[field]) {
+                stageData.questions[field] = [];
+              }
+              stageData.questions[field].push(content);
+            }
+          }
+        }
+      }
+      
+      // Update personas
+      Object.entries(newPersonas).forEach(([industry, personas]) => {
+        if (personas.length > 0) {
+          SALES_CYCLE_DATA.personas[industry] = personas.map(p => ({
+            title: p.title || '',
+            world: p.world || '',
+            cares: p.cares || '',
+            help: p.help || ''
+          }));
+        }
+      });
+      
+      // Update stages
+      Object.entries(stageUpdates).forEach(([stageTitle, updates]) => {
+        const stage = SALES_CYCLE_DATA.stages.find(s => s.title === stageTitle);
+        if (stage) {
+          if (updates.outcomes.length > 0) stage.outcomes = updates.outcomes;
+          if (updates.initialPersonas.length > 0) stage.initialPersonas = updates.initialPersonas;
+          if (Object.keys(updates.questions).length > 0) stage.questions = updates.questions;
+        }
+      });
+      
+      // Reload the bulk editor with new data
+      loadAllContentToBulkEditor();
+      
+      showMessage('CSV content imported successfully! 📊', 'success');
+      
+    } catch (error) {
+      console.error('CSV import error:', error);
+      showMessage('Error importing CSV: ' + error.message, 'error');
     }
   };
   

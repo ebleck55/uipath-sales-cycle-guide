@@ -278,6 +278,35 @@ header {
   font-weight: 600;
 }
 
+/* Persona collapsible functionality */
+.persona-toggle {
+  transition: var(--transition-default);
+}
+
+.persona-toggle:hover {
+  color: var(--uipath-orange);
+}
+
+.persona-toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.persona-details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.persona-details:not(.hidden) {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.persona-card:hover .persona-toggle-icon {
+  color: var(--uipath-orange);
+}
+
 /* Form Elements */
 .form-checkbox:checked {
   background-color: var(--uipath-orange);
@@ -383,6 +412,189 @@ details > summary:hover {
 .edit-icon:hover {
   color: var(--uipath-orange);
   transform: scale(1.1);
+}
+
+/* Admin Controls Section */
+.admin-mode-controls {
+  background: linear-gradient(135deg, var(--gray-100) 0%, #f8fafc 100%);
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-default);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.admin-mode-controls:hover {
+  border-color: var(--uipath-orange);
+  box-shadow: var(--shadow-default);
+}
+
+.admin-mode-controls h3 {
+  color: var(--gray-800);
+  font-size: var(--font-size-lg);
+  margin: 0;
+}
+
+.admin-mode-controls button {
+  box-shadow: var(--shadow-default);
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.admin-mode-controls button:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Bulk Editor Tabs */
+.bulk-tab {
+  color: var(--gray-500);
+  border-color: transparent;
+  transition: var(--transition-default);
+  white-space: nowrap;
+}
+
+.bulk-tab:hover {
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+
+.bulk-tab.active {
+  color: var(--uipath-orange);
+  border-color: var(--uipath-orange);
+}
+
+.bulk-tab-content {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Stage-specific colors for tabs */
+.bulk-tab[data-tab="discovery"]:hover,
+.bulk-tab[data-tab="discovery"].active {
+  color: #3B82F6;
+  border-color: #3B82F6;
+}
+
+.bulk-tab[data-tab="business"]:hover,
+.bulk-tab[data-tab="business"].active {
+  color: #10B981;
+  border-color: #10B981;
+}
+
+.bulk-tab[data-tab="technical"]:hover,
+.bulk-tab[data-tab="technical"].active {
+  color: #EF4444;
+  border-color: #EF4444;
+}
+
+.bulk-tab[data-tab="proposal"]:hover,
+.bulk-tab[data-tab="proposal"].active {
+  color: #F59E0B;
+  border-color: #F59E0B;
+}
+
+.bulk-tab[data-tab="implement"]:hover,
+.bulk-tab[data-tab="implement"].active {
+  color: #8B5CF6;
+  border-color: #8B5CF6;
+}
+
+.bulk-tab[data-tab="personas"]:hover,
+.bulk-tab[data-tab="personas"].active {
+  color: #7C3AED;
+  border-color: #7C3AED;
+}
+
+/* Content item styling */
+.content-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-default);
+}
+
+.content-item:hover {
+  border-color: var(--gray-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.content-item input,
+.content-item textarea {
+  border: none;
+  background: transparent;
+  flex: 1;
+  font-size: var(--font-size-sm);
+  resize: none;
+}
+
+.content-item input:focus,
+.content-item textarea:focus {
+  outline: none;
+  background: var(--gray-50);
+  border-radius: 4px;
+}
+
+.remove-item-btn {
+  color: var(--gray-400);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition-default);
+  flex-shrink: 0;
+}
+
+.remove-item-btn:hover {
+  color: var(--error);
+  background: var(--error-light);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Question category styling */
+.question-category {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  background: white;
+}
+
+.question-category-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.question-category-header input {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  padding: 0.5rem;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.add-question-btn {
+  font-size: var(--font-size-xs);
+  padding: 0.25rem 0.5rem;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.add-question-btn:hover {
+  background: var(--gray-200);
+  border-color: var(--gray-300);
 }
 
 /* Industry Selector */
