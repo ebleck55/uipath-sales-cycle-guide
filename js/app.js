@@ -1048,6 +1048,12 @@ function initEditModal() {
       openSimpleEditModal(targetId, 'Initial Personas to Engage');
     } else if (targetId.endsWith('-outcomes')) {
       openSimpleEditModal(targetId, 'Verifiable Outcomes / Exit Criteria');
+    } else if (targetId.endsWith('-questions')) {
+      openSimpleEditModal(targetId, 'Key Discovery Questions');
+    } else if (targetId.endsWith('-objections')) {
+      openSimpleEditModal(targetId, 'Common Objections & Responses');
+    } else if (targetId.endsWith('-resources')) {
+      openSimpleEditModal(targetId, 'Key Content & Resources');
     } else {
       // Handle other edit types if needed
       console.log('Edit clicked for:', targetId);
