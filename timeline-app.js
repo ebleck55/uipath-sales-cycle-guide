@@ -265,7 +265,7 @@ class TimelineUiPathApp {
           // Update the hint text
           const hintText = header.querySelector('span');
           if (hintText) {
-            hintText.textContent = isHidden ? 'Click to collapse' : 'Click to expand';
+            // Removed hint text functionality
           }
         }
       }
@@ -406,7 +406,6 @@ class TimelineUiPathApp {
               </svg>
               ${sanitizer.escapeHtml(persona.title)}
             </h3>
-            <span class="text-xs text-gray-500">Click to expand</span>
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
@@ -478,7 +477,7 @@ class TimelineUiPathApp {
             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
             </svg>
-            Key Personas
+            Personas
           </h3>
           <ul class="space-y-2">
             ${(stage.initialPersonas || []).map(persona => `
@@ -527,7 +526,6 @@ class TimelineUiPathApp {
                 Key Discovery Questions
               </h3>
             </div>
-            <span class="text-sm text-gray-500">Click to expand</span>
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
@@ -959,6 +957,143 @@ if (typeof window !== 'undefined') {
   window.appState = appState;
 }
 
+// ==================== USE CASE PDF FUNCTIONALITY ====================
+class UseCasePDFHandler {
+  constructor() {
+    this.pdfPath = '/Users/eric.bouchard/Downloads/FINS - MAESTRO - Use Case Deck- Aug 2025.pdf';
+    this.initializeEventListeners();
+  }
+
+  initializeEventListeners() {
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.use-case-link')) {
+        e.preventDefault();
+        this.handleUseCaseClick(e.target);
+      }
+    });
+  }
+
+  async handleUseCaseClick(button) {
+    const pageNumber = button.dataset.page;
+    const useCaseName = button.textContent.trim();
+    
+    if (!pageNumber) {
+      this.showNotification('Page number not found for this use case', 'error');
+      return;
+    }
+
+    try {
+      // Show loading state
+      button.style.opacity = '0.6';
+      button.disabled = true;
+      
+      // Try to open the PDF at the specific page
+      await this.openPDFAtPage(pageNumber, useCaseName);
+      
+    } catch (error) {
+      console.error('Error opening PDF:', error);
+      this.showNotification(`Unable to open PDF at page ${pageNumber}`, 'error');
+    } finally {
+      // Reset button state
+      button.style.opacity = '1';
+      button.disabled = false;
+    }
+  }
+
+  async openPDFAtPage(pageNumber, useCaseName) {
+    // Try multiple approaches to open the PDF
+    const attempts = [
+      () => this.openWithPreview(pageNumber),
+      () => this.openWithSystemDefault(pageNumber),
+      () => this.showPDFModal(pageNumber, useCaseName)
+    ];
+
+    for (const attempt of attempts) {
+      try {
+        await attempt();
+        this.showNotification(`Opening ${useCaseName} (Page ${pageNumber})`, 'success');
+        return;
+      } catch (error) {
+        console.warn('PDF open attempt failed:', error);
+        continue;
+      }
+    }
+    
+    throw new Error('All PDF open attempts failed');
+  }
+
+  async openWithPreview(pageNumber) {
+    // macOS Preview can open PDFs at specific pages
+    const command = `open -a "Preview" "${this.pdfPath}" --args -p ${pageNumber}`;
+    
+    // This would work in a native macOS environment
+    // For web context, we'll fall back to the modal approach
+    throw new Error('Preview not available in web context');
+  }
+
+  async openWithSystemDefault(pageNumber) {
+    // Try to open with system default PDF viewer
+    // This would work with file:// protocol in some browsers
+    const pdfUrl = `file://${encodeURIComponent(this.pdfPath)}#page=${pageNumber}`;
+    window.open(pdfUrl, '_blank');
+  }
+
+  showPDFModal(pageNumber, useCaseName) {
+    // Create a modal to show PDF information and link
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    modal.innerHTML = `
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">${useCaseName}</h3>
+          <div class="mt-2 px-7 py-3">
+            <p class="text-sm text-gray-500">
+              Please refer to <strong>page ${pageNumber}</strong> in the FINS Maestro Use Case document for detailed information about this use case.
+            </p>
+            <p class="text-xs text-gray-400 mt-2">
+              Document: FINS - MAESTRO - Use Case Deck- Aug 2025.pdf
+            </p>
+          </div>
+          <div class="items-center px-4 py-3">
+            <button class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300" onclick="this.closest('.fixed').remove()">
+              Got it
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Auto-close after 5 seconds
+    setTimeout(() => {
+      if (modal.parentElement) {
+        modal.remove();
+      }
+    }, 5000);
+  }
+
+  showNotification(message, type = 'info') {
+    // Reuse the existing notification system
+    if (window.appInstance && window.appInstance.notificationManager) {
+      window.appInstance.notificationManager.showNotification(message, type);
+    } else {
+      // Fallback notification
+      console.log(`${type.toUpperCase()}: ${message}`);
+    }
+  }
+}
+
+// Initialize PDF handler when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  window.useCasePDFHandler = new UseCasePDFHandler();
+});
+
 // Add CSS animations
 const style = document.createElement('style');
 style.textContent = `
@@ -975,5 +1110,15 @@ style.textContent = `
     75%, 100% { transform: scale(2); opacity: 0; }
   }
   .animate-ping { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+  .use-case-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .use-case-link:hover {
+    transform: translateX(2px);
+  }
 `;
 document.head.appendChild(style);
