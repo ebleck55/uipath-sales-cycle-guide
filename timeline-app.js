@@ -23,6 +23,23 @@ class HTMLSanitizer {
     if (typeof html !== 'string') return '';
     return this.escapeHtml(html);
   }
+
+  // New method for rendering safe HTML content
+  renderSafeHTML(content) {
+    if (typeof content !== 'string') return '';
+    
+    // Allow specific safe HTML tags and escape the rest
+    return content
+      .replace(/&lt;strong&gt;(.*?)&lt;\/strong&gt;/gi, '<strong>$1</strong>')
+      .replace /<strong>(.*?)<\/strong>/gi, '<strong>$1</strong>')
+      .replace(/&lt;em&gt;(.*?)&lt;\/em&gt;/gi, '<em>$1</em>')
+      .replace(/<em>(.*?)<\/em>/gi, '<em>$1</em>')
+      .replace(/&lt;br&gt;/gi, '<br>')
+      .replace(/<br>/gi, '<br>')
+      .replace(/&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&');
+  }
 }
 
 const sanitizer = new HTMLSanitizer();
@@ -414,7 +431,7 @@ class TimelineUiPathApp {
               <svg class="chevron-icon w-4 h-4 mr-2 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
-              ${sanitizer.escapeHtml(persona.title)}
+              ${sanitizer.renderSafeHTML(persona.title)}
             </h3>
           </div>
         </div>
@@ -422,15 +439,15 @@ class TimelineUiPathApp {
           <div class="space-y-2 pt-2 border-t border-gray-100">
             <div>
               <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.world || '')}</p>
+              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.renderSafeHTML(persona.world || '')}</p>
             </div>
             <div>
               <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.cares || '')}</p>
+              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.renderSafeHTML(persona.cares || '')}</p>
             </div>
             <div>
               <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.help || '')}</p>
+              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.renderSafeHTML(persona.help || '')}</p>
             </div>
           </div>
         </div>
@@ -518,11 +535,11 @@ class TimelineUiPathApp {
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${category.icon}"/>
               </svg>
-              ${sanitizer.escapeHtml(category.category)}
+              ${sanitizer.renderSafeHTML(category.category)}
             </h3>
             <ul class="space-y-2">
               ${category.cases.map(useCase => `
-                <li><button class="use-case-link text-sm ${colors.link} ${colors.linkHover} text-left transition-colors" data-page="${useCase.page}" data-name="${sanitizer.escapeHtml(useCase.name)}">• ${sanitizer.escapeHtml(useCase.name)}</button></li>
+                <li><button class="use-case-link text-sm ${colors.link} ${colors.linkHover} text-left transition-colors" data-page="${useCase.page}" data-name="${sanitizer.escapeHtml(useCase.name)}">• ${sanitizer.renderSafeHTML(useCase.name)}</button></li>
               `).join('')}
             </ul>
           </div>
@@ -589,7 +606,7 @@ class TimelineUiPathApp {
               <label class="flex items-start cursor-pointer group">
                 <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-orange-600 rounded focus:ring-orange-500" 
                        data-id="stage-${stageIndex}-outcome-${i}">
-                <span class="text-gray-700 group-hover:text-gray-900">${sanitizer.escapeHtml(outcome)}</span>
+                <span class="text-gray-700 group-hover:text-gray-900">${sanitizer.renderSafeHTML(outcome)}</span>
               </label>
             `).join('')}
           </div>
@@ -607,7 +624,7 @@ class TimelineUiPathApp {
             ${(stage.initialPersonas || []).map(persona => `
               <li class="flex items-start">
                 <span class="text-blue-500 mr-2">•</span>
-                <span class="text-gray-700">${sanitizer.escapeHtml(persona)}</span>
+                <span class="text-gray-700">${sanitizer.renderSafeHTML(persona)}</span>
               </li>
             `).join('')}
           </ul>
@@ -627,7 +644,7 @@ class TimelineUiPathApp {
                 <a href="${sanitizer.escapeHtml(resource.link)}" 
                    class="text-blue-600 hover:underline text-sm" 
                    target="_blank" rel="noopener noreferrer">
-                  → ${sanitizer.escapeHtml(resource.name)}
+                  → ${sanitizer.renderSafeHTML(resource.name)}
                 </a>
               </li>
             `).join('')}
@@ -656,14 +673,14 @@ class TimelineUiPathApp {
           <div class="grid md:grid-cols-2 gap-4">
             ${Object.entries(stage.questions || {}).map(([category, questions]) => `
               <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.escapeHtml(category)}</h4>
+                <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.renderSafeHTML(category)}</h4>
                 <div class="space-y-3">
                   ${questions.map((q, i) => {
                     const noteId = `stage-${stageIndex}-q-${category.replace(/\s+/g, '-')}-${i}`;
                     return `
                       <details class="bg-white rounded border border-gray-200 question-details">
                         <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm">
-                          ${sanitizer.escapeHtml(q)}
+                          ${sanitizer.renderSafeHTML(q)}
                         </summary>
                         <div class="p-3 pt-0 space-y-3">
                           <div>
@@ -718,7 +735,7 @@ class TimelineUiPathApp {
                 <div class="bg-gray-50 p-4 rounded-lg">
                   <details class="bg-white rounded border border-gray-200 objection-details">
                     <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm">
-                      ${sanitizer.escapeHtml(objection.q)}
+                      ${sanitizer.renderSafeHTML(objection.q)}
                     </summary>
                     <div class="p-3 pt-0 space-y-3">
                       <div class="bg-green-50 p-3 rounded-lg border border-green-100">
@@ -728,7 +745,7 @@ class TimelineUiPathApp {
                           </svg>
                           Suggested Response:
                         </h5>
-                        <p class="text-sm text-gray-700">${sanitizer.escapeHtml(objection.a)}</p>
+                        <p class="text-sm text-gray-700">${sanitizer.renderSafeHTML(objection.a)}</p>
                       </div>
                       <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1">Your Custom Response & Notes:</label>
