@@ -2553,9 +2553,10 @@ class UseCasePDFHandler {
 
   initializeEventListeners() {
     document.addEventListener('click', (e) => {
-      if (e.target.matches('.use-case-link')) {
+      const useCaseButton = e.target.closest('.use-case-link');
+      if (useCaseButton) {
         e.preventDefault();
-        this.handleUseCaseClick(e.target);
+        this.handleUseCaseClick(useCaseButton);
       }
     });
   }
