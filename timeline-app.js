@@ -343,12 +343,16 @@ class TimelineUiPathApp {
     
     // Render personas
     this.renderPersonas();
+    this.renderUseCases();
     
     // Render timeline
     this.renderTimeline();
     
     // Render initial stage content
     this.renderStageContent(appState.get('currentStage') || 0);
+    
+    // Set default expanded states
+    this.setDefaultExpandedStates();
   }
 
   renderTimeline() {
@@ -434,6 +438,106 @@ class TimelineUiPathApp {
     `).join('');
     
     container.innerHTML = personasHTML || '<p class="text-gray-500 col-span-full text-center">No personas available for this industry.</p>';
+  }
+
+  renderUseCases() {
+    const container = document.getElementById('use-cases-container');
+    if (!container) return;
+    
+    const currentIndustry = appState.get('currentIndustry');
+    
+    const useCasesData = {
+      banking: [
+        { category: 'Consumer Banking', color: 'blue', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1', cases: [
+          { name: 'Consumer Banking Operations', page: 10 },
+          { name: 'Credit Risk Assessment', page: 15 },
+          { name: 'Commercial Lending', page: 20 },
+          { name: 'Trade Finance Automation', page: 25 }
+        ]},
+        { category: 'Capital Markets', color: 'indigo', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', cases: [
+          { name: 'Capital Markets Processing', page: 30 },
+          { name: 'Wealth Management', page: 35 },
+          { name: 'Payments Processing', page: 40 },
+          { name: 'Treasury Operations', page: 45 }
+        ]}
+      ],
+      insurance: [
+        { category: 'Core Insurance', color: 'green', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', cases: [
+          { name: 'Claims Processing', page: 50 },
+          { name: 'Policy Administration', page: 52 },
+          { name: 'Underwriting Automation', page: 54 },
+          { name: 'Customer Onboarding', page: 56 }
+        ]},
+        { category: 'Operations', color: 'teal', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', cases: [
+          { name: 'Regulatory Reporting', page: 58 },
+          { name: 'Fraud Detection', page: 60 },
+          { name: 'Risk Assessment', page: 62 },
+          { name: 'Compliance Monitoring', page: 64 }
+        ]}
+      ]
+    };
+
+    // Common horizontal functions for both industries
+    const horizontalFunctions = [
+      { category: 'IT Operations', color: 'purple', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', cases: [
+        { name: 'ServiceNow Integration', page: 66 },
+        { name: 'System Monitoring', page: 68 },
+        { name: 'Data Migration', page: 70 },
+        { name: 'Infrastructure Automation', page: 72 }
+      ]},
+      { category: 'Finance & Operations', color: 'orange', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', cases: [
+        { name: 'Invoice Processing', page: 74 },
+        { name: 'Financial Reconciliation', page: 76 },
+        { name: 'Expense Management', page: 78 },
+        { name: 'Procurement Automation', page: 80 }
+      ]}
+    ];
+
+    const industryUseCases = useCasesData[currentIndustry] || [];
+    const allUseCases = [...industryUseCases, ...horizontalFunctions];
+
+    const useCasesHTML = `
+      <div class="grid md:grid-cols-2 gap-6">
+        ${allUseCases.map(category => `
+          <div class="bg-${category.color}-50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-${category.color}-900 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${category.icon}"/>
+              </svg>
+              ${sanitizer.escapeHtml(category.category)}
+            </h3>
+            <ul class="space-y-2">
+              ${category.cases.map(useCase => `
+                <li><button class="use-case-link text-sm text-${category.color}-700 hover:text-${category.color}-900 text-left" data-page="${useCase.page}">• ${sanitizer.escapeHtml(useCase.name)}</button></li>
+              `).join('')}
+            </ul>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    container.innerHTML = useCasesHTML;
+  }
+
+  setDefaultExpandedStates() {
+    // Default expand personas and use cases sections
+    setTimeout(() => {
+      const personasSection = document.querySelector('#personas-section .collapsible-content');
+      const personasChevron = document.querySelector('#personas-section .chevron-icon');
+      
+      if (personasSection && personasChevron) {
+        personasSection.classList.remove('hidden');
+        personasChevron.style.transform = 'rotate(90deg)';
+      }
+      
+      const useCasesSection = document.querySelector('#use-cases-section .collapsible-content');
+      const useCasesChevron = document.querySelector('#use-cases-section .chevron-icon');
+      
+      if (useCasesSection && useCasesChevron) {
+        useCasesSection.classList.remove('hidden');
+        useCasesChevron.style.transform = 'rotate(90deg)';
+      }
+    }, 100);
   }
 
   renderStageContent(stageIndex) {
@@ -748,6 +852,9 @@ class TimelineUiPathApp {
       btn.classList.toggle('bg-white', !isActive);
       btn.classList.toggle('text-gray-700', !isActive);
     });
+    
+    this.renderPersonas();
+    this.renderUseCases();
   }
 
   async handleExportNotes() {
@@ -1171,25 +1278,48 @@ class UseCasePDFHandler {
   }
 
   async openPDFAtPage(pageNumber, useCaseName) {
-    // Try multiple approaches to open the PDF
+    // Try to open PDF in new window first
+    try {
+      await this.openPDFInNewWindow(pageNumber, useCaseName);
+      this.showNotification(`Opening ${useCaseName} (Page ${pageNumber})`, 'success');
+      return;
+    } catch (error) {
+      console.warn('PDF window open failed:', error);
+      // Fallback to modal
+      this.showPDFModal(pageNumber, useCaseName);
+      this.showNotification(`Showing ${useCaseName} reference (Page ${pageNumber})`, 'info');
+    }
+  }
+
+  async openPDFInNewWindow(pageNumber, useCaseName) {
+    // Create a URL-safe path for the PDF
+    const pdfName = encodeURIComponent('FINS - MAESTRO - Use Case Deck- Aug 2025.pdf');
+    
+    // Try different approaches to open PDF
     const attempts = [
-      () => this.openWithPreview(pageNumber),
-      () => this.openWithSystemDefault(pageNumber),
-      () => this.showPDFModal(pageNumber, useCaseName)
+      // Try local file path (works in some browsers with file access)
+      `file:///Users/eric.bouchard/Downloads/${pdfName}#page=${pageNumber}`,
+      // Try relative path (if PDF is served with the app)
+      `./downloads/${pdfName}#page=${pageNumber}`,
+      // Fallback: open system file browser to downloads
+      `file:///Users/eric.bouchard/Downloads/`
     ];
 
-    for (const attempt of attempts) {
+    let lastError;
+    for (const url of attempts) {
       try {
-        await attempt();
-        this.showNotification(`Opening ${useCaseName} (Page ${pageNumber})`, 'success');
-        return;
+        const newWindow = window.open(url, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
+        if (newWindow) {
+          // PDF opened successfully
+          return;
+        }
       } catch (error) {
-        console.warn('PDF open attempt failed:', error);
+        lastError = error;
         continue;
       }
     }
     
-    throw new Error('All PDF open attempts failed');
+    throw lastError || new Error('Unable to open PDF in new window');
   }
 
   async openWithPreview(pageNumber) {
