@@ -3113,14 +3113,295 @@ class LLMPromptBar {
   }
 }
 
-// Initialize LLM Prompt Bar when DOM is ready
+// ==================== DYNAMIC DISCOVERY QUESTIONS ====================
+class DynamicDiscoveryManager {
+  constructor() {
+    this.selectedLOB = '';
+    this.selectedProjectTypes = new Set();
+    this.initializeEventListeners();
+  }
+
+  initializeEventListeners() {
+    // LOB selector handlers
+    const lobSelector = document.getElementById('lob-selector');
+    const mobileLobSelector = document.getElementById('mobile-lob-selector');
+    
+    if (lobSelector) {
+      lobSelector.addEventListener('change', (e) => {
+        this.selectedLOB = e.target.value;
+        if (mobileLobSelector) mobileLobSelector.value = e.target.value;
+        this.updateDiscoveryQuestions();
+      });
+    }
+
+    if (mobileLobSelector) {
+      mobileLobSelector.addEventListener('change', (e) => {
+        this.selectedLOB = e.target.value;
+        if (lobSelector) lobSelector.value = e.target.value;
+        this.updateDiscoveryQuestions();
+      });
+    }
+
+    // Project type button handlers
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.project-type-btn')) {
+        this.handleProjectTypeToggle(e.target);
+      }
+    });
+  }
+
+  handleProjectTypeToggle(button) {
+    const type = button.dataset.type;
+    const isSelected = button.classList.contains('bg-orange-600');
+
+    // Toggle selection
+    if (isSelected) {
+      this.selectedProjectTypes.delete(type);
+      button.classList.remove('bg-orange-600', 'text-white');
+      button.classList.add('text-gray-700');
+    } else {
+      this.selectedProjectTypes.add(type);
+      button.classList.add('bg-orange-600', 'text-white');
+      button.classList.remove('text-gray-700');
+    }
+
+    // Sync desktop and mobile versions
+    const allButtons = document.querySelectorAll(`[data-type="${type}"]`);
+    allButtons.forEach(btn => {
+      if (isSelected) {
+        btn.classList.remove('bg-orange-600', 'text-white');
+        btn.classList.add('text-gray-700');
+      } else {
+        btn.classList.add('bg-orange-600', 'text-white');
+        btn.classList.remove('text-gray-700');
+      }
+    });
+
+    this.updateDiscoveryQuestions();
+  }
+
+  updateDiscoveryQuestions() {
+    // Get current stage data
+    const currentStage = window.appState?.get('currentStage') || 0;
+    const stageData = SALES_CYCLE_DATA?.stages?.[currentStage];
+    
+    if (!stageData) return;
+
+    // Generate dynamic questions based on selections
+    const dynamicQuestions = this.generateContextualQuestions();
+    
+    // Store original questions if not already stored
+    if (!stageData.originalQuestions) {
+      stageData.originalQuestions = JSON.parse(JSON.stringify(stageData.questions));
+    }
+
+    // Replace or enhance questions
+    if (this.selectedLOB || this.selectedProjectTypes.size > 0) {
+      stageData.questions = { ...stageData.originalQuestions, ...dynamicQuestions };
+    } else {
+      stageData.questions = stageData.originalQuestions;
+    }
+
+    // Re-render the stage content to show updated questions
+    if (window.appInstance) {
+      window.appInstance.renderStageContent(currentStage);
+    }
+  }
+
+  generateContextualQuestions() {
+    const questions = {};
+
+    // LOB-specific questions
+    if (this.selectedLOB) {
+      questions[this.getLOBQuestionCategory()] = this.getLOBSpecificQuestions();
+    }
+
+    // Project type-specific questions
+    if (this.selectedProjectTypes.size > 0) {
+      questions['Technology & Implementation'] = this.getProjectTypeQuestions();
+    }
+
+    // Combined LOB + Project Type questions
+    if (this.selectedLOB && this.selectedProjectTypes.size > 0) {
+      questions['Specialized Use Cases'] = this.getCombinedQuestions();
+    }
+
+    return questions;
+  }
+
+  getLOBQuestionCategory() {
+    const lobCategories = {
+      'finance': 'Finance & Accounting Focus',
+      'hr': 'Human Resources Focus', 
+      'it': 'IT Operations Focus',
+      'operations': 'Business Operations Focus',
+      'customer-service': 'Customer Experience Focus',
+      'procurement': 'Procurement & Supply Chain Focus',
+      'legal': 'Legal & Compliance Focus',
+      'compliance': 'Risk & Compliance Focus'
+    };
+    return lobCategories[this.selectedLOB] || 'Department-Specific Questions';
+  }
+
+  getLOBSpecificQuestions() {
+    const lobQuestions = {
+      'finance': [
+        'What financial processes consume the most manual effort each month?',
+        'How do you currently handle month-end closing and reconciliation?',
+        'What regulatory reporting requirements create bottlenecks?',
+        'Where do you see the most errors in financial data processing?',
+        'How much time does your team spend on invoice processing and AP/AR?'
+      ],
+      'hr': [
+        'What HR processes require the most manual data entry?',
+        'How do you currently handle employee onboarding and offboarding?',
+        'What compliance reporting do you need to maintain for HR?',
+        'Where do you see delays in your recruitment and hiring process?',
+        'How much time is spent on benefits administration and payroll?'
+      ],
+      'it': [
+        'What IT service requests consume the most support time?',
+        'How do you currently handle system monitoring and incident response?',
+        'What manual processes exist in your infrastructure management?',
+        'Where do you see bottlenecks in user provisioning and access management?',
+        'How much time is spent on routine maintenance and patching?'
+      ],
+      'operations': [
+        'What operational processes have the highest error rates?',
+        'How do you currently handle order processing and fulfillment?',
+        'What manual quality control processes could be improved?',
+        'Where do you see delays in your supply chain operations?',
+        'How much time is spent on data collection and reporting?'
+      ],
+      'customer-service': [
+        'What customer inquiries require the most manual research?',
+        'How do you currently handle case routing and escalation?',
+        'What processes slow down your first-call resolution rates?',
+        'Where do you see opportunities to improve customer response times?',
+        'How much time is spent on manual ticket updates and documentation?'
+      ],
+      'procurement': [
+        'What procurement processes involve the most manual approvals?',
+        'How do you currently handle vendor onboarding and management?',
+        'What spend analysis and reporting is done manually?',
+        'Where do you see delays in your requisition-to-pay process?',
+        'How much time is spent on contract management and compliance?'
+      ],
+      'legal': [
+        'What legal document processes require extensive manual review?',
+        'How do you currently handle contract management and tracking?',
+        'What compliance monitoring is done manually?',
+        'Where do you see bottlenecks in legal request processing?',
+        'How much time is spent on regulatory filing and reporting?'
+      ],
+      'compliance': [
+        'What compliance processes require the most manual oversight?',
+        'How do you currently handle risk assessment and monitoring?',
+        'What regulatory reporting involves manual data collection?',
+        'Where do you see gaps in your compliance monitoring?',
+        'How much time is spent on audit preparation and documentation?'
+      ]
+    };
+    return lobQuestions[this.selectedLOB] || [];
+  }
+
+  getProjectTypeQuestions() {
+    const questions = [];
+    
+    this.selectedProjectTypes.forEach(type => {
+      const typeQuestions = {
+        'rpa': [
+          'What repetitive, rule-based tasks take up the most time?',
+          'Which processes have clear decision trees and minimal exceptions?',
+          'What systems need to integrate without APIs?'
+        ],
+        'idp': [
+          'What types of documents do you process in high volumes?',
+          'How much time is spent manually extracting data from documents?',
+          'What document-based processes have quality control issues?'
+        ],
+        'agentic': [
+          'What processes require complex decision-making and reasoning?',
+          'Where do you need autonomous systems to handle exceptions?',
+          'What workflows would benefit from self-learning capabilities?'
+        ],
+        'maestro': [
+          'What end-to-end processes span multiple departments and systems?',
+          'Where do you need orchestration of both human and digital workers?',
+          'What complex workflows require dynamic routing and escalation?'
+        ]
+      };
+      questions.push(...(typeQuestions[type] || []));
+    });
+
+    return questions;
+  }
+
+  getCombinedQuestions() {
+    const questions = [];
+    const selectedTypes = Array.from(this.selectedProjectTypes);
+    
+    // Generate combined questions based on LOB + Project Type combinations
+    selectedTypes.forEach(type => {
+      const combinedKey = `${this.selectedLOB}-${type}`;
+      const combinedQuestions = this.getCombinedQuestionsByKey(combinedKey);
+      questions.push(...combinedQuestions);
+    });
+
+    return questions;
+  }
+
+  getCombinedQuestionsByKey(key) {
+    const combinedQuestions = {
+      'finance-rpa': [
+        'How do you currently handle invoice processing from receipt to payment?',
+        'What financial reconciliation processes could benefit from automation?'
+      ],
+      'finance-idp': [
+        'What types of financial documents require manual data extraction?',
+        'How do you process expense reports and receipts currently?'
+      ],
+      'hr-rpa': [
+        'What employee onboarding steps are repetitive across all hires?',
+        'How do you handle benefits enrollment and changes?'
+      ],
+      'hr-idp': [
+        'What HR documents require manual review and data entry?',
+        'How do you process resumes and job applications currently?'
+      ],
+      'it-agentic': [
+        'What IT incidents require intelligent analysis and routing?',
+        'Where could autonomous monitoring and response add value?'
+      ],
+      'operations-maestro': [
+        'What end-to-end operational processes span multiple systems?',
+        'How do you coordinate between different operational teams?'
+      ]
+    };
+    
+    return combinedQuestions[key] || [];
+  }
+
+  getSelectionSummary() {
+    const summary = {
+      lob: this.selectedLOB,
+      projectTypes: Array.from(this.selectedProjectTypes),
+      hasSelections: this.selectedLOB || this.selectedProjectTypes.size > 0
+    };
+    
+    return summary;
+  }
+}
+
+// Initialize managers when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     try {
       window.llmPromptBar = new LLMPromptBar();
-      console.log('LLM Prompt Bar initialized successfully');
+      window.dynamicDiscoveryManager = new DynamicDiscoveryManager();
+      console.log('LLM Prompt Bar and Dynamic Discovery Manager initialized successfully');
     } catch (error) {
-      console.error('Failed to initialize LLM Prompt Bar:', error);
+      console.error('Failed to initialize managers:', error);
     }
   }, 1000); // Delay to ensure other components are loaded
 });
