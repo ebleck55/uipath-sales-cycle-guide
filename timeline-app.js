@@ -2821,3 +2821,142 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// ==================== LLM PROMPT BAR ====================
+class LLMPromptBar {
+  constructor() {
+    this.isCollapsed = false;
+    this.initializeEventListeners();
+  }
+
+  initializeEventListeners() {
+    const promptInput = document.getElementById('llm-prompt-input');
+    const sendBtn = document.getElementById('llm-send-btn');
+    const toggleBtn = document.getElementById('llm-toggle-btn');
+    const quickBtns = document.querySelectorAll('.llm-quick-btn');
+
+    // Send button click
+    if (sendBtn) {
+      sendBtn.addEventListener('click', () => {
+        this.handlePromptSubmit();
+      });
+    }
+
+    // Enter key in input
+    if (promptInput) {
+      promptInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.handlePromptSubmit();
+        }
+      });
+    }
+
+    // Toggle button
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        this.togglePromptBar();
+      });
+    }
+
+    // Quick action buttons
+    quickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const prompt = btn.dataset.prompt;
+        if (promptInput) {
+          promptInput.value = prompt;
+          this.handlePromptSubmit();
+        }
+      });
+    });
+  }
+
+  handlePromptSubmit() {
+    const promptInput = document.getElementById('llm-prompt-input');
+    const prompt = promptInput?.value.trim();
+
+    if (!prompt) {
+      this.showNotification('Please enter a question or prompt', 'warning');
+      return;
+    }
+
+    // Check if the existing AI chatbot is available
+    if (window.chatbot && typeof window.chatbot.handleUserMessage === 'function') {
+      // Clear the input
+      if (promptInput) {
+        promptInput.value = '';
+      }
+      
+      // Show the chatbot and send the message
+      const chatModal = document.getElementById('ai-chat-modal');
+      
+      if (chatModal) {
+        // Open the chatbot modal
+        chatModal.classList.remove('hidden');
+        
+        // Send the message to the chatbot
+        setTimeout(() => {
+          window.chatbot.handleUserMessage(prompt);
+        }, 300);
+        
+        this.showNotification('Question sent to AI assistant!', 'success');
+      } else {
+        this.showNotification('AI chatbot is not available. Please try again later.', 'error');
+      }
+    } else {
+      this.showNotification('AI assistant is not available. Please check your settings.', 'error');
+    }
+  }
+
+  togglePromptBar() {
+    const promptBar = document.getElementById('llm-prompt-bar');
+    const toggleBtn = document.getElementById('llm-toggle-btn');
+    const chevron = toggleBtn?.querySelector('svg');
+
+    if (promptBar) {
+      this.isCollapsed = !this.isCollapsed;
+      
+      if (this.isCollapsed) {
+        // Collapse the bar
+        promptBar.style.height = '0';
+        promptBar.style.overflow = 'hidden';
+        promptBar.style.paddingTop = '0';
+        promptBar.style.paddingBottom = '0';
+        if (chevron) {
+          chevron.style.transform = 'rotate(180deg)';
+        }
+      } else {
+        // Expand the bar
+        promptBar.style.height = '';
+        promptBar.style.overflow = '';
+        promptBar.style.paddingTop = '';
+        promptBar.style.paddingBottom = '';
+        if (chevron) {
+          chevron.style.transform = 'rotate(0deg)';
+        }
+      }
+    }
+  }
+
+  showNotification(message, type = 'info') {
+    // Reuse the existing notification system if available
+    if (window.appInstance && window.appInstance.notificationManager) {
+      window.appInstance.notificationManager.showNotification(message, type);
+    } else {
+      // Fallback notification
+      console.log(`${type.toUpperCase()}: ${message}`);
+      alert(message);
+    }
+  }
+}
+
+// Initialize LLM Prompt Bar when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    try {
+      window.llmPromptBar = new LLMPromptBar();
+      console.log('LLM Prompt Bar initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize LLM Prompt Bar:', error);
+    }
+  }, 1000); // Delay to ensure other components are loaded
+});
