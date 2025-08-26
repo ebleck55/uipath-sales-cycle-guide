@@ -153,10 +153,198 @@ async function copyToClipboard(text) {
   }
 }
 
+// ==================== EDIT SYSTEM ====================
+class ContentEditor {
+  constructor() {
+    this.quillEditor = null;
+    this.currentEditData = null;
+  }
+
+  initializeQuill() {
+    if (this.quillEditor) return;
+    
+    this.quillEditor = new Quill('#editor', {
+      theme: 'snow',
+      placeholder: 'Enter your content here...',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['link'],
+          ['clean']
+        ]
+      }
+    });
+  }
+
+  openEditor(type, data, element) {
+    this.currentEditData = { type, data, element };
+    
+    const modal = document.getElementById('edit-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const editorContainer = document.getElementById('editor-container');
+    const textarea = document.getElementById('modal-textarea');
+    
+    // Set title based on content type
+    const titles = {
+      'persona-field': 'Edit Persona Field',
+      'outcome': 'Edit Outcome',
+      'question': 'Edit Discovery Question',
+      'objection-question': 'Edit Objection',
+      'objection-answer': 'Edit Objection Response',
+      'resource': 'Edit Resource'
+    };
+    modalTitle.textContent = titles[type] || 'Edit Content';
+    
+    // Initialize Quill if not already done
+    this.initializeQuill();
+    
+    // Show editor and hide textarea
+    editorContainer.classList.remove('hidden');
+    textarea.classList.add('hidden');
+    
+    // Set content in editor
+    const currentContent = this.getCurrentContent(type, data, element);
+    this.quillEditor.root.innerHTML = currentContent;
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Focus editor
+    setTimeout(() => this.quillEditor.focus(), 100);
+  }
+
+  getCurrentContent(type, data, element) {
+    switch (type) {
+      case 'persona-field':
+        return data.content || '';
+      case 'outcome':
+      case 'question':
+        return data.text || '';
+      case 'objection-question':
+        return data.question || '';
+      case 'objection-answer':
+        return data.answer || '';
+      case 'resource':
+        return data.name || '';
+      default:
+        return element.textContent || '';
+    }
+  }
+
+  saveContent() {
+    if (!this.currentEditData || !this.quillEditor) return;
+    
+    const content = this.quillEditor.root.innerHTML;
+    const { type, data, element } = this.currentEditData;
+    
+    // Update the data structure
+    this.updateData(type, data, content);
+    
+    // Update the UI element
+    this.updateUIElement(type, element, content);
+    
+    // Save to localStorage for persistence
+    this.saveToStorage();
+    
+    // Close modal
+    this.closeEditor();
+    
+    // Show success notification
+    this.showNotification('Content updated successfully!', 'success');
+  }
+
+  updateData(type, data, content) {
+    switch (type) {
+      case 'persona-field':
+        if (data.field === 'title') data.persona.title = this.htmlToText(content);
+        else if (data.field === 'world') data.persona.world = content;
+        else if (data.field === 'cares') data.persona.cares = content;
+        else if (data.field === 'help') data.persona.help = content;
+        break;
+      case 'outcome':
+        data.outcome = this.htmlToText(content);
+        break;
+      case 'question':
+        data.question = content;
+        break;
+      case 'objection-question':
+        data.objection.q = this.htmlToText(content);
+        break;
+      case 'objection-answer':
+        data.objection.a = content;
+        break;
+      case 'resource':
+        data.resource.name = this.htmlToText(content);
+        break;
+    }
+  }
+
+  updateUIElement(type, element, content) {
+    if (type === 'persona-field' && ['title'].includes(this.currentEditData.data.field)) {
+      element.innerHTML = this.htmlToText(content);
+    } else {
+      element.innerHTML = content;
+    }
+  }
+
+  htmlToText(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  }
+
+  saveToStorage() {
+    try {
+      localStorage.setItem('sales_cycle_data_edits', JSON.stringify(SALES_CYCLE_DATA));
+    } catch (error) {
+      console.warn('Could not save to localStorage:', error);
+    }
+  }
+
+  closeEditor() {
+    const modal = document.getElementById('edit-modal');
+    modal.classList.add('hidden');
+    this.currentEditData = null;
+  }
+
+  showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm ${
+      type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
+      type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' :
+      'bg-blue-100 text-blue-800 border border-blue-200'
+    }`;
+    
+    notification.innerHTML = `
+      <div class="flex items-center">
+        <span>${message}</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-500 hover:text-gray-700">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.remove();
+      }
+    }, 3000);
+  }
+}
+
 // ==================== MAIN APPLICATION ====================
 class TimelineUiPathApp {
   constructor() {
     this.initialized = false;
+    this.contentEditor = new ContentEditor();
     
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.initialize());
@@ -242,9 +430,25 @@ class TimelineUiPathApp {
       }
       
       // Handle admin mode toggle
-      if (e.target.closest('#admin-mode-btn') || e.target.closest('#mobile-admin-btn')) {
+      if (e.target.closest('#admin-mode-btn')) {
         e.preventDefault();
         this.toggleAdminMode();
+      }
+
+      // Handle edit button clicks
+      if (e.target.closest('.edit-btn')) {
+        e.preventDefault();
+        this.handleEditClick(e.target.closest('.edit-btn'));
+      }
+
+      // Handle modal save/cancel
+      if (e.target.closest('#modal-save')) {
+        e.preventDefault();
+        this.contentEditor.saveContent();
+      }
+      if (e.target.closest('#modal-cancel') || e.target.closest('.modal-close')) {
+        e.preventDefault();
+        this.contentEditor.closeEditor();
       }
       
       // Handle industry switcher
@@ -423,31 +627,63 @@ class TimelineUiPathApp {
     const currentIndustry = appState.get('currentIndustry');
     const personas = SALES_CYCLE_DATA.personas[currentIndustry] || [];
     
-    const personasHTML = personas.map(persona => `
+    const personasHTML = personas.map((persona, index) => `
       <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
         <div class="collapsible-header p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-section="persona-card">
           <div class="flex justify-between items-center">
-            <h3 class="text-lg font-semibold text-blue-700 flex items-center">
+            <div class="flex items-center flex-1">
               <svg class="chevron-icon w-4 h-4 mr-2 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
-              ${sanitizer.renderSafeHTML(persona.title)}
-            </h3>
+              <h3 class="text-lg font-semibold text-blue-700" data-editable>
+                ${sanitizer.renderSafeHTML(persona.title)}
+              </h3>
+              <button class="edit-btn hidden ml-2 p-1 text-gray-400 hover:text-blue-600 transition-colors" 
+                      data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="title">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
         <div class="collapsible-content hidden px-4 pb-4">
           <div class="space-y-2 pt-2 border-t border-gray-100">
-            <div>
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.renderSafeHTML(persona.world || '')}</p>
+            <div class="relative">
+              <div class="flex items-start justify-between">
+                <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
+                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors" 
+                        data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="world">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                  </svg>
+                </button>
+              </div>
+              <p class="text-xs text-gray-600 leading-relaxed" data-editable>${sanitizer.renderSafeHTML(persona.world || '')}</p>
             </div>
-            <div>
-              <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.renderSafeHTML(persona.cares || '')}</p>
+            <div class="relative">
+              <div class="flex items-start justify-between">
+                <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
+                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors" 
+                        data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="cares">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                  </svg>
+                </button>
+              </div>
+              <p class="text-xs text-gray-600 leading-relaxed" data-editable>${sanitizer.renderSafeHTML(persona.cares || '')}</p>
             </div>
-            <div>
-              <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.renderSafeHTML(persona.help || '')}</p>
+            <div class="relative">
+              <div class="flex items-start justify-between">
+                <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
+                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors" 
+                        data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="help">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                  </svg>
+                </button>
+              </div>
+              <p class="text-xs text-gray-600 leading-relaxed" data-editable>${sanitizer.renderSafeHTML(persona.help || '')}</p>
             </div>
           </div>
         </div>
@@ -603,11 +839,19 @@ class TimelineUiPathApp {
           </h3>
           <div class="space-y-3">
             ${(stage.outcomes || []).map((outcome, i) => `
-              <label class="flex items-start cursor-pointer group">
-                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-orange-600 rounded focus:ring-orange-500" 
-                       data-id="stage-${stageIndex}-outcome-${i}">
-                <span class="text-gray-700 group-hover:text-gray-900">${sanitizer.renderSafeHTML(outcome)}</span>
-              </label>
+              <div class="flex items-start justify-between group">
+                <label class="flex items-start cursor-pointer group flex-1">
+                  <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-orange-600 rounded focus:ring-orange-500" 
+                         data-id="stage-${stageIndex}-outcome-${i}">
+                  <span class="text-gray-700 group-hover:text-gray-900" data-editable>${sanitizer.renderSafeHTML(outcome)}</span>
+                </label>
+                <button class="edit-btn hidden p-1 text-gray-400 hover:text-orange-600 transition-colors ml-2" 
+                        data-edit-type="outcome" data-edit-id="${stageIndex}-${i}">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                  </svg>
+                </button>
+              </div>
             `).join('')}
           </div>
         </div>
@@ -679,8 +923,14 @@ class TimelineUiPathApp {
                     const noteId = `stage-${stageIndex}-q-${category.replace(/\s+/g, '-')}-${i}`;
                     return `
                       <details class="bg-white rounded border border-gray-200 question-details">
-                        <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm">
-                          ${sanitizer.renderSafeHTML(q)}
+                        <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm flex items-center justify-between">
+                          <span data-editable>${sanitizer.renderSafeHTML(q)}</span>
+                          <button class="edit-btn hidden p-1 text-gray-400 hover:text-purple-600 transition-colors ml-2" 
+                                  data-edit-type="question" data-edit-id="${stageIndex}-${category}-${i}">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                            </svg>
+                          </button>
                         </summary>
                         <div class="p-3 pt-0 space-y-3">
                           <div>
@@ -734,18 +984,32 @@ class TimelineUiPathApp {
               return `
                 <div class="bg-gray-50 p-4 rounded-lg">
                   <details class="bg-white rounded border border-gray-200 objection-details">
-                    <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm">
-                      ${sanitizer.renderSafeHTML(objection.q)}
+                    <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm flex items-center justify-between">
+                      <span data-editable>${sanitizer.renderSafeHTML(objection.q)}</span>
+                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-red-600 transition-colors ml-2" 
+                              data-edit-type="objection-question" data-edit-id="${stageIndex}-${i}">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                        </svg>
+                      </button>
                     </summary>
                     <div class="p-3 pt-0 space-y-3">
-                      <div class="bg-green-50 p-3 rounded-lg border border-green-100">
-                        <h5 class="text-sm font-semibold text-green-700 mb-2 flex items-center">
-                          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          </svg>
-                          Suggested Response:
-                        </h5>
-                        <p class="text-sm text-gray-700">${sanitizer.renderSafeHTML(objection.a)}</p>
+                      <div class="bg-green-50 p-3 rounded-lg border border-green-100 relative">
+                        <div class="flex items-start justify-between">
+                          <h5 class="text-sm font-semibold text-green-700 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Suggested Response:
+                          </h5>
+                          <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
+                                  data-edit-type="objection-answer" data-edit-id="${stageIndex}-${i}">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="text-sm text-gray-700" data-editable>${sanitizer.renderSafeHTML(objection.a)}</p>
                       </div>
                       <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1">Your Custom Response & Notes:</label>
@@ -855,7 +1119,6 @@ class TimelineUiPathApp {
 
   updateAdminUI(enabled) {
     const adminBtn = $('#admin-mode-btn');
-    const mobileAdminBtn = $('#mobile-admin-btn');
     const adminStatus = $('#admin-status');
     
     if (adminBtn) {
@@ -864,13 +1127,103 @@ class TimelineUiPathApp {
       adminBtn.classList.toggle('text-white', enabled);
     }
     
-    if (mobileAdminBtn) {
-      mobileAdminBtn.textContent = enabled ? 'Exit Edit Mode' : 'Enter Edit Mode';
-    }
-    
     if (adminStatus) {
       adminStatus.classList.toggle('hidden', !enabled);
     }
+
+    // Show/hide all edit buttons
+    $$('.edit-btn').forEach(btn => {
+      btn.classList.toggle('hidden', !enabled);
+    });
+  }
+
+  handleEditClick(button) {
+    const editType = button.dataset.editType;
+    const editId = button.dataset.editId;
+    const editField = button.dataset.editField;
+    
+    // Find the content element and data
+    const contentElement = button.parentElement.querySelector('[data-editable]') || 
+                          button.previousElementSibling ||
+                          button.nextElementSibling;
+    
+    if (!contentElement) {
+      console.error('Could not find content element for editing');
+      return;
+    }
+
+    // Prepare edit data based on type
+    let editData = {};
+    
+    switch (editType) {
+      case 'persona-field':
+        editData = this.getPersonaEditData(editId, editField);
+        break;
+      case 'outcome':
+        editData = this.getOutcomeEditData(editId);
+        break;
+      case 'question':
+        editData = this.getQuestionEditData(editId);
+        break;
+      case 'objection-question':
+      case 'objection-answer':
+        editData = this.getObjectionEditData(editId, editType);
+        break;
+      case 'resource':
+        editData = this.getResourceEditData(editId);
+        break;
+    }
+
+    // Open editor
+    this.contentEditor.openEditor(editType, editData, contentElement);
+  }
+
+  getPersonaEditData(personaIndex, field) {
+    const currentIndustry = appState.get('currentIndustry');
+    const persona = SALES_CYCLE_DATA.personas[currentIndustry][personaIndex];
+    return {
+      persona,
+      field,
+      content: persona[field]
+    };
+  }
+
+  getOutcomeEditData(outcomeId) {
+    const [stageIndex, outcomeIndex] = outcomeId.split('-').map(Number);
+    const outcome = SALES_CYCLE_DATA.stages[stageIndex].outcomes[outcomeIndex];
+    return {
+      outcome,
+      text: outcome
+    };
+  }
+
+  getQuestionEditData(questionId) {
+    const [stageIndex, category, questionIndex] = questionId.split('-');
+    const question = SALES_CYCLE_DATA.stages[stageIndex].questions[category][questionIndex];
+    return {
+      question,
+      text: question
+    };
+  }
+
+  getObjectionEditData(objectionId, type) {
+    const [stageIndex, objectionIndex] = objectionId.split('-').map(Number);
+    const objection = SALES_CYCLE_DATA.stages[stageIndex].objections[objectionIndex];
+    return {
+      objection,
+      question: objection.q,
+      answer: objection.a
+    };
+  }
+
+  getResourceEditData(resourceId) {
+    const [stageIndex, resourceIndex] = resourceId.split('-').map(Number);
+    const currentIndustry = appState.get('currentIndustry');
+    const resource = SALES_CYCLE_DATA.stages[stageIndex].resources[currentIndustry][resourceIndex];
+    return {
+      resource,
+      name: resource.name
+    };
   }
 
   updateIndustryUI(industry) {

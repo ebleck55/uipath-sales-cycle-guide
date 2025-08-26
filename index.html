@@ -16,6 +16,10 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/styles.css">
   
@@ -92,10 +96,6 @@
             </button>
           </div>
 
-          <!-- Admin Mode Toggle -->
-          <button id="admin-mode-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-            Enter Edit Mode
-          </button>
 
           <!-- PWA Install Button (hidden by default) -->
           <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
@@ -125,10 +125,6 @@
           </button>
         </div>
         
-        <!-- Mobile Admin Toggle -->
-        <button id="mobile-admin-btn" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
-          Enter Edit Mode
-        </button>
       </div>
     </div>
   </header>
@@ -226,7 +222,7 @@
 
   <!-- Edit Modal -->
   <div id="edit-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white modal-content">
+    <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white modal-content">
       <div class="flex justify-between items-center mb-4">
         <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900">Edit Content</h3>
         <button class="modal-close text-gray-400 hover:text-gray-600">
@@ -235,8 +231,13 @@
           </svg>
         </button>
       </div>
-      <div id="modal-content-area" class="mt-2 px-2 py-3 max-h-[70vh] overflow-y-auto">
-        <!-- Modal content will be inserted here -->
+      <div id="modal-content-area" class="mt-2 px-2 py-3">
+        <!-- Rich Text Editor -->
+        <div id="editor-container" class="hidden">
+          <div id="editor" class="bg-white" style="height: 300px;"></div>
+        </div>
+        <!-- Fallback textarea for basic editing -->
+        <textarea id="modal-textarea" class="hidden w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" rows="10" placeholder="Enter your content here..."></textarea>
       </div>
       <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
         <button id="modal-cancel" class="modal-close px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
@@ -268,6 +269,10 @@
           <span id="connection-status" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
             Online
           </span>
+          <!-- Edit Mode Toggle -->
+          <button id="admin-mode-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Enter Edit Mode
+          </button>
         </div>
       </div>
     </div>
