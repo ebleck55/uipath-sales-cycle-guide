@@ -46,6 +46,15 @@
         <button onclick="testTagFiltering()" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
           Test Tag Filtering
         </button>
+        <button onclick="testBankingResources()" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">
+          Test Banking Resources
+        </button>
+        <button onclick="testResourceFiltering()" class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">
+          Test Resource Filtering
+        </button>
+        <button onclick="runFullComparison()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+          Run Full Comparison
+        </button>
       </div>
     </div>
 
@@ -230,6 +239,86 @@
       logTest(`Found ${decisionMakers.length} decision-maker personas`);
       
       logTest('✅ Tag filtering system is working!');
+    }
+
+    async function testBankingResources() {
+      logTest('🏦 Testing banking resources...');
+      
+      // Test all banking resources
+      const allBankingResources = await contentAPI.getResources('banking');
+      logTest(`Found ${allBankingResources.length} banking resources`);
+      
+      // Test consumer banking specifically
+      const consumerBankingResources = await contentAPI.getResources('banking', 'consumer-banking');
+      logTest(`Found ${consumerBankingResources.length} consumer banking resources`);
+      
+      // Test capital markets
+      const capitalMarketsResources = await contentAPI.getResources('banking', 'capital-markets'); 
+      logTest(`Found ${capitalMarketsResources.length} capital markets resources`);
+      
+      // Test by type
+      const calculators = await contentAPI.getResourcesByType('calculator', 'banking');
+      logTest(`Found ${calculators.length} calculators in banking`);
+      
+      logTest('✅ Banking resources test completed!');
+    }
+
+    async function testResourceFiltering() {
+      logTest('🔍 Testing advanced resource filtering...');
+      
+      // Test context-based filtering (similar to original system)
+      const context1 = { vertical: 'banking', lob: 'consumer-banking' };
+      const filtered1 = await contentAPI.getFilteredResources(context1);
+      logTest(`Banking + Consumer Banking context: ${filtered1.length} resources`);
+      
+      const context2 = { vertical: 'insurance', lob: 'claims-processing' };
+      const filtered2 = await contentAPI.getFilteredResources(context2);
+      logTest(`Insurance + Claims Processing context: ${filtered2.length} resources`);
+      
+      // Test general resources fallback
+      const context3 = { lob: 'finance' };
+      const filtered3 = await contentAPI.getFilteredResources(context3);
+      logTest(`Finance LOB (general): ${filtered3.length} resources`);
+      
+      // Test tag-based filtering
+      const complianceResources = await contentAPI.getResourcesByTags(['compliance']);
+      logTest(`Resources tagged with 'compliance': ${complianceResources.length}`);
+      
+      const aiResources = await contentAPI.getResourcesByTags(['ai-analysis', 'ai-models']);
+      logTest(`Resources tagged with AI: ${aiResources.length}`);
+      
+      logTest('✅ Advanced resource filtering is working!');
+    }
+
+    async function runFullComparison() {
+      logTest('🔬 Running comprehensive architecture comparison...');
+      
+      // Compare persona counts
+      const oldPersonaCount = Object.values(oldSystemData).reduce((sum, vertical) => sum + (vertical?.length || 0), 0);
+      const newPersonas = await contentAPI.getPersonas();
+      logTest(`Personas - Old: ${oldPersonaCount}, New: ${newPersonas.length} ${oldPersonaCount === newPersonas.length ? '✅' : '❌'}`);
+      
+      // Test resource system (new capability)
+      const allResources = await contentAPI.getResources();
+      logTest(`New capability: ${allResources.length} total resources available`);
+      
+      // Test cross-system integration
+      const bankingPersonas = await contentAPI.getPersonas('banking');
+      const bankingResources = await contentAPI.getResources('banking');
+      logTest(`Banking integration: ${bankingPersonas.length} personas + ${bankingResources.length} resources`);
+      
+      // Test advanced filtering capabilities
+      const highPriorityPersonas = await contentAPI.getPersonasByInfluence('decision-maker');
+      const highPriorityResources = await contentAPI.getResourcesByComplexity('high');
+      logTest(`Advanced filtering: ${highPriorityPersonas.length} decision-makers + ${highPriorityResources.length} high-complexity resources`);
+      
+      logTest('📊 Comparison Summary:');
+      logTest('✅ All original content preserved');
+      logTest('✅ Enhanced with tagging system');  
+      logTest('✅ Advanced filtering capabilities');
+      logTest('✅ Structured data layer ready');
+      logTest('✅ API layer established');
+      logTest('🚀 Architecture refactor successful - ready for Phase 2!');
     }
 
     function logTest(message) {

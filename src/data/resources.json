@@ -1,0 +1,499 @@
+{
+  "version": "1.0",
+  "lastModified": "2025-08-26",
+  "resources": {
+    "banking": {
+      "consumer-banking": [
+        {
+          "id": "consumer-banking-roi-calculator",
+          "name": "Consumer Banking ROI Calculator",
+          "type": "calculator",
+          "vertical": "banking",
+          "lob": ["consumer-banking"],
+          "overview": "Calculate ROI for consumer banking automation initiatives including account opening, loan processing, and customer service.",
+          "why": "Quantify the business impact of automating high-volume consumer banking processes.",
+          "link": "#consumer-banking-roi",
+          "relevance": ["cost-reduction", "process-efficiency", "customer-experience"],
+          "deploymentContext": {
+            "automation-cloud": "Includes cloud scaling benefits for high-volume processing",
+            "on-prem": "Focuses on data security and compliance for sensitive financial data"
+          },
+          "tags": {
+            "primary": ["roi-analysis", "consumer-banking", "business-case"],
+            "secondary": ["cost-reduction", "process-efficiency", "customer-experience"],
+            "use_cases": ["account-opening", "loan-processing", "customer-service"],
+            "outcomes": ["cost-quantification", "business-impact", "automation-value"]
+          },
+          "priority": "high",
+          "complexity": "low",
+          "timeToValue": "immediate"
+        },
+        {
+          "id": "loan-automation-playbook",
+          "name": "Loan Origination Automation Playbook",
+          "type": "playbook",
+          "vertical": "banking",
+          "lob": ["consumer-banking", "commercial-banking"],
+          "overview": "Step-by-step guide for automating loan application processing, underwriting workflows, and compliance checks.",
+          "why": "Reduce loan processing time from days to hours while ensuring regulatory compliance.",
+          "link": "#loan-automation",
+          "relevance": ["process-automation", "compliance", "risk-management"],
+          "customerContext": {
+            "existing": "Advanced strategies for expanding automation to complex loan products",
+            "new-logo": "Foundational approach starting with standard loan types"
+          },
+          "tags": {
+            "primary": ["loan-origination", "underwriting", "compliance"],
+            "secondary": ["process-automation", "risk-management", "regulatory"],
+            "use_cases": ["application-processing", "credit-analysis", "compliance-checks"],
+            "outcomes": ["faster-approvals", "regulatory-compliance", "risk-control"]
+          },
+          "priority": "high",
+          "complexity": "medium",
+          "timeToValue": "4-6 weeks"
+        },
+        {
+          "id": "customer-onboarding-template",
+          "name": "Digital Customer Onboarding Templates",
+          "type": "template",
+          "vertical": "banking",
+          "lob": ["consumer-banking"],
+          "overview": "Pre-built automation templates for KYC, account setup, and welcome workflows.",
+          "why": "Accelerate customer onboarding while improving data accuracy and compliance.",
+          "link": "#onboarding-templates",
+          "relevance": ["customer-experience", "compliance", "efficiency"],
+          "tags": {
+            "primary": ["customer-onboarding", "kyc", "account-setup"],
+            "secondary": ["customer-experience", "compliance", "efficiency"],
+            "use_cases": ["kyc-processing", "account-creation", "welcome-automation"],
+            "outcomes": ["faster-onboarding", "improved-accuracy", "compliance-assurance"]
+          },
+          "priority": "high",
+          "complexity": "low",
+          "timeToValue": "2-4 weeks"
+        }
+      ],
+      "capital-markets": [
+        {
+          "id": "trade-settlement-automation",
+          "name": "Trade Settlement Automation Guide",
+          "type": "guide",
+          "vertical": "banking",
+          "lob": ["capital-markets"],
+          "overview": "Comprehensive automation strategies for trade settlement, reconciliation, and exception handling.",
+          "why": "Minimize settlement risk and reduce manual intervention in trade processing.",
+          "link": "#trade-settlement",
+          "relevance": ["risk-reduction", "operational-efficiency", "compliance"],
+          "deploymentContext": {
+            "automation-cloud": "Real-time processing capabilities with cloud infrastructure",
+            "automation-suite": "Hybrid deployment for sensitive trading data"
+          },
+          "tags": {
+            "primary": ["trade-settlement", "reconciliation", "risk-management"],
+            "secondary": ["operational-efficiency", "compliance", "exception-handling"],
+            "use_cases": ["settlement-processing", "trade-reconciliation", "exception-management"],
+            "outcomes": ["reduced-settlement-risk", "operational-efficiency", "compliance-adherence"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "8-12 weeks"
+        },
+        {
+          "id": "regulatory-reporting-accelerator",
+          "name": "Regulatory Reporting Accelerator",
+          "type": "accelerator",
+          "vertical": "banking",
+          "lob": ["capital-markets"],
+          "overview": "Pre-configured automation for regulatory reports including CFTC, SEC, and Basel III requirements.",
+          "why": "Ensure timely and accurate regulatory submissions while reducing compliance costs.",
+          "link": "#regulatory-reporting",
+          "relevance": ["compliance", "reporting", "risk-management"],
+          "tags": {
+            "primary": ["regulatory-reporting", "compliance", "basel-iii"],
+            "secondary": ["cftc-reporting", "sec-compliance", "risk-management"],
+            "use_cases": ["regulatory-submissions", "compliance-reporting", "audit-trails"],
+            "outcomes": ["timely-submissions", "reduced-compliance-costs", "audit-readiness"]
+          },
+          "priority": "high",
+          "complexity": "medium",
+          "timeToValue": "6-8 weeks"
+        },
+        {
+          "id": "client-onboarding-capital-markets",
+          "name": "Institutional Client Onboarding Kit",
+          "type": "kit",
+          "vertical": "banking",
+          "lob": ["capital-markets"],
+          "overview": "Automated workflows for prime brokerage and institutional client setup including documentation and approvals.",
+          "why": "Accelerate revenue generation through faster client onboarding.",
+          "link": "#institutional-onboarding",
+          "relevance": ["client-service", "revenue-growth", "efficiency"],
+          "tags": {
+            "primary": ["institutional-onboarding", "prime-brokerage", "client-setup"],
+            "secondary": ["revenue-growth", "client-service", "efficiency"],
+            "use_cases": ["client-documentation", "approval-workflows", "account-provisioning"],
+            "outcomes": ["faster-onboarding", "revenue-acceleration", "improved-client-service"]
+          },
+          "priority": "medium",
+          "complexity": "medium",
+          "timeToValue": "6-10 weeks"
+        }
+      ],
+      "commercial-banking": [
+        {
+          "id": "commercial-credit-automation",
+          "name": "Commercial Credit Assessment Automation",
+          "type": "solution",
+          "vertical": "banking",
+          "lob": ["commercial-banking"],
+          "overview": "AI-powered credit analysis and risk assessment for commercial lending portfolios.",
+          "why": "Improve credit decision speed and accuracy while maintaining risk discipline.",
+          "link": "#commercial-credit",
+          "relevance": ["risk-assessment", "decision-speed", "portfolio-quality"],
+          "tags": {
+            "primary": ["commercial-credit", "risk-assessment", "ai-analysis"],
+            "secondary": ["decision-speed", "portfolio-quality", "credit-analysis"],
+            "use_cases": ["credit-scoring", "risk-modeling", "portfolio-analysis"],
+            "outcomes": ["faster-decisions", "improved-accuracy", "risk-discipline"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "10-16 weeks"
+        }
+      ],
+      "wealth-management": [
+        {
+          "id": "portfolio-rebalancing-automation",
+          "name": "Portfolio Rebalancing Automation",
+          "type": "solution",
+          "vertical": "banking",
+          "lob": ["wealth-management"],
+          "overview": "Automated portfolio rebalancing based on client objectives and market conditions.",
+          "why": "Improve client outcomes through timely portfolio adjustments.",
+          "link": "#portfolio-automation",
+          "relevance": ["client-outcomes", "advisor-productivity", "efficiency"],
+          "tags": {
+            "primary": ["portfolio-management", "rebalancing", "client-outcomes"],
+            "secondary": ["advisor-productivity", "efficiency", "market-responsiveness"],
+            "use_cases": ["portfolio-analysis", "rebalancing-execution", "client-reporting"],
+            "outcomes": ["improved-returns", "advisor-efficiency", "client-satisfaction"]
+          },
+          "priority": "medium",
+          "complexity": "medium",
+          "timeToValue": "8-12 weeks"
+        }
+      ]
+    },
+    "insurance": {
+      "property-casualty": [
+        {
+          "id": "claims-processing-accelerator",
+          "name": "P&C Claims Processing Accelerator",
+          "type": "accelerator",
+          "vertical": "insurance",
+          "lob": ["property-casualty"],
+          "overview": "End-to-end claims automation including intake, assessment, approval, and payment processing.",
+          "why": "Reduce claims processing time and improve customer satisfaction.",
+          "link": "#claims-accelerator",
+          "relevance": ["customer-satisfaction", "processing-speed", "cost-reduction"],
+          "tags": {
+            "primary": ["claims-processing", "property-casualty", "end-to-end-automation"],
+            "secondary": ["customer-satisfaction", "processing-speed", "cost-reduction"],
+            "use_cases": ["claims-intake", "damage-assessment", "payment-processing"],
+            "outcomes": ["faster-claims", "improved-satisfaction", "cost-efficiency"]
+          },
+          "priority": "high",
+          "complexity": "medium",
+          "timeToValue": "6-10 weeks"
+        },
+        {
+          "id": "fraud-detection-ai",
+          "name": "AI-Powered Fraud Detection Suite",
+          "type": "ai-solution",
+          "vertical": "insurance",
+          "lob": ["property-casualty", "claims-processing"],
+          "overview": "Machine learning models for identifying suspicious claims and preventing fraud.",
+          "why": "Protect against fraudulent claims while maintaining legitimate claim processing speed.",
+          "link": "#fraud-detection",
+          "relevance": ["fraud-prevention", "cost-protection", "risk-management"],
+          "tags": {
+            "primary": ["fraud-detection", "ai-models", "claims-protection"],
+            "secondary": ["cost-protection", "risk-management", "ml-analytics"],
+            "use_cases": ["suspicious-claim-detection", "fraud-analytics", "risk-scoring"],
+            "outcomes": ["reduced-fraud-losses", "protected-margins", "improved-detection"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "12-16 weeks"
+        }
+      ],
+      "life-annuities": [
+        {
+          "id": "policy-administration-automation",
+          "name": "Life Insurance Policy Administration Automation",
+          "type": "platform",
+          "vertical": "insurance",
+          "lob": ["life-annuities"],
+          "overview": "Comprehensive automation for policy issuance, changes, claims, and beneficiary management.",
+          "why": "Reduce administrative costs and improve policy holder experience.",
+          "link": "#policy-admin",
+          "relevance": ["cost-reduction", "customer-experience", "efficiency"],
+          "tags": {
+            "primary": ["policy-administration", "life-insurance", "comprehensive-automation"],
+            "secondary": ["cost-reduction", "customer-experience", "efficiency"],
+            "use_cases": ["policy-issuance", "policy-changes", "beneficiary-management"],
+            "outcomes": ["reduced-admin-costs", "improved-experience", "operational-efficiency"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "12-18 weeks"
+        }
+      ],
+      "claims-processing": [
+        {
+          "id": "intelligent-claims-triage",
+          "name": "Intelligent Claims Triage System",
+          "type": "ai-solution",
+          "vertical": "insurance",
+          "lob": ["claims-processing"],
+          "overview": "AI-powered system for automatically routing claims to appropriate handlers based on complexity and type.",
+          "why": "Optimize resource allocation and reduce processing time for routine claims.",
+          "link": "#claims-triage",
+          "relevance": ["resource-optimization", "processing-efficiency", "cost-management"],
+          "tags": {
+            "primary": ["claims-triage", "intelligent-routing", "resource-optimization"],
+            "secondary": ["processing-efficiency", "cost-management", "ai-routing"],
+            "use_cases": ["claim-classification", "handler-assignment", "workload-balancing"],
+            "outcomes": ["optimized-allocation", "faster-processing", "cost-efficiency"]
+          },
+          "priority": "high",
+          "complexity": "medium",
+          "timeToValue": "6-8 weeks"
+        },
+        {
+          "id": "claims-investigation-toolkit",
+          "name": "Claims Investigation Automation Toolkit",
+          "type": "toolkit",
+          "vertical": "insurance",
+          "lob": ["claims-processing"],
+          "overview": "Automated investigation workflows including data gathering, verification, and documentation.",
+          "why": "Improve investigation thoroughness while reducing time to resolution.",
+          "link": "#investigation-toolkit",
+          "relevance": ["investigation-quality", "time-reduction", "compliance"],
+          "tags": {
+            "primary": ["claims-investigation", "automated-workflows", "data-gathering"],
+            "secondary": ["investigation-quality", "time-reduction", "compliance"],
+            "use_cases": ["data-collection", "verification-processes", "documentation-automation"],
+            "outcomes": ["thorough-investigations", "faster-resolution", "compliance-assurance"]
+          },
+          "priority": "medium",
+          "complexity": "medium",
+          "timeToValue": "8-10 weeks"
+        }
+      ],
+      "underwriting": [
+        {
+          "id": "automated-underwriting-engine",
+          "name": "Automated Underwriting Engine",
+          "type": "platform",
+          "vertical": "insurance",
+          "lob": ["underwriting"],
+          "overview": "AI-driven underwriting decisions for standard policies with straight-through processing capability.",
+          "why": "Accelerate policy issuance while maintaining risk quality standards.",
+          "link": "#underwriting-engine",
+          "relevance": ["decision-speed", "risk-accuracy", "straight-through-processing"],
+          "tags": {
+            "primary": ["automated-underwriting", "ai-decisions", "stp-processing"],
+            "secondary": ["decision-speed", "risk-accuracy", "policy-issuance"],
+            "use_cases": ["risk-assessment", "decision-automation", "policy-processing"],
+            "outcomes": ["faster-issuance", "maintained-quality", "stp-capability"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "14-20 weeks"
+        },
+        {
+          "id": "risk-assessment-models",
+          "name": "Advanced Risk Assessment Models",
+          "type": "ai-models",
+          "vertical": "insurance",
+          "lob": ["underwriting"],
+          "overview": "Predictive models for assessing risk across different insurance product lines.",
+          "why": "Improve underwriting accuracy and competitive positioning.",
+          "link": "#risk-models",
+          "relevance": ["risk-precision", "competitive-advantage", "profitability"],
+          "tags": {
+            "primary": ["risk-modeling", "predictive-analytics", "underwriting-accuracy"],
+            "secondary": ["competitive-advantage", "profitability", "ai-models"],
+            "use_cases": ["risk-prediction", "pricing-optimization", "portfolio-analysis"],
+            "outcomes": ["improved-accuracy", "competitive-edge", "enhanced-profitability"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "16-24 weeks"
+        }
+      ]
+    },
+    "general": {
+      "finance": [
+        {
+          "id": "month-end-close-automation",
+          "name": "Month-End Close Automation Suite",
+          "type": "suite",
+          "vertical": "general",
+          "lob": ["finance"],
+          "overview": "Complete automation of financial close processes including reconciliations, journal entries, and reporting.",
+          "why": "Reduce close time from weeks to days while improving accuracy.",
+          "link": "#month-end-close",
+          "relevance": ["time-reduction", "accuracy", "audit-readiness"],
+          "tags": {
+            "primary": ["month-end-close", "financial-automation", "reconciliation"],
+            "secondary": ["time-reduction", "accuracy", "audit-readiness"],
+            "use_cases": ["account-reconciliation", "journal-entries", "financial-reporting"],
+            "outcomes": ["faster-close", "improved-accuracy", "audit-preparation"]
+          },
+          "priority": "high",
+          "complexity": "medium",
+          "timeToValue": "8-12 weeks"
+        },
+        {
+          "id": "ap-automation-platform",
+          "name": "Accounts Payable Automation Platform",
+          "type": "platform",
+          "vertical": "general",
+          "lob": ["finance"],
+          "overview": "Invoice processing, approval workflows, and payment automation with vendor integration.",
+          "why": "Eliminate manual invoice processing and reduce payment errors.",
+          "link": "#ap-automation",
+          "relevance": ["process-elimination", "error-reduction", "vendor-relations"],
+          "tags": {
+            "primary": ["accounts-payable", "invoice-automation", "payment-processing"],
+            "secondary": ["process-elimination", "error-reduction", "vendor-relations"],
+            "use_cases": ["invoice-processing", "approval-workflows", "payment-execution"],
+            "outcomes": ["eliminated-manual-work", "reduced-errors", "improved-vendor-relations"]
+          },
+          "priority": "high",
+          "complexity": "medium",
+          "timeToValue": "6-10 weeks"
+        },
+        {
+          "id": "financial-reporting-accelerator",
+          "name": "Financial Reporting Accelerator",
+          "type": "accelerator",
+          "vertical": "general",
+          "lob": ["finance"],
+          "overview": "Automated report generation for management, regulatory, and stakeholder reporting.",
+          "why": "Ensure timely and consistent financial reporting across all stakeholders.",
+          "link": "#financial-reporting",
+          "relevance": ["reporting-timeliness", "consistency", "stakeholder-satisfaction"],
+          "tags": {
+            "primary": ["financial-reporting", "report-automation", "stakeholder-reporting"],
+            "secondary": ["reporting-timeliness", "consistency", "stakeholder-satisfaction"],
+            "use_cases": ["management-reporting", "regulatory-reporting", "stakeholder-communication"],
+            "outcomes": ["timely-reports", "consistent-formatting", "satisfied-stakeholders"]
+          },
+          "priority": "medium",
+          "complexity": "medium",
+          "timeToValue": "6-8 weeks"
+        }
+      ],
+      "hr": [
+        {
+          "id": "employee-onboarding-automation",
+          "name": "Employee Onboarding Automation",
+          "type": "workflow",
+          "vertical": "general",
+          "lob": ["hr"],
+          "overview": "End-to-end employee onboarding including documentation, system setup, and orientation scheduling.",
+          "why": "Provide consistent onboarding experience while reducing HR administrative burden.",
+          "link": "#hr-onboarding",
+          "relevance": ["employee-experience", "consistency", "hr-efficiency"],
+          "tags": {
+            "primary": ["employee-onboarding", "hr-automation", "documentation-processing"],
+            "secondary": ["employee-experience", "consistency", "hr-efficiency"],
+            "use_cases": ["new-hire-processing", "system-provisioning", "orientation-scheduling"],
+            "outcomes": ["consistent-experience", "reduced-admin-burden", "faster-productivity"]
+          },
+          "priority": "medium",
+          "complexity": "low",
+          "timeToValue": "4-6 weeks"
+        },
+        {
+          "id": "benefits-administration-suite",
+          "name": "Benefits Administration Automation Suite",
+          "type": "suite",
+          "vertical": "general",
+          "lob": ["hr"],
+          "overview": "Automated benefits enrollment, changes, and COBRA processing.",
+          "why": "Reduce benefits administration complexity and improve employee self-service.",
+          "link": "#benefits-admin",
+          "relevance": ["administrative-efficiency", "employee-self-service", "compliance"],
+          "tags": {
+            "primary": ["benefits-administration", "enrollment-automation", "cobra-processing"],
+            "secondary": ["administrative-efficiency", "employee-self-service", "compliance"],
+            "use_cases": ["benefits-enrollment", "life-event-processing", "cobra-administration"],
+            "outcomes": ["reduced-complexity", "improved-self-service", "compliance-assurance"]
+          },
+          "priority": "low",
+          "complexity": "medium",
+          "timeToValue": "8-12 weeks"
+        }
+      ],
+      "it": [
+        {
+          "id": "it-service-management-automation",
+          "name": "IT Service Management Automation",
+          "type": "platform",
+          "vertical": "general",
+          "lob": ["it"],
+          "overview": "Automated ticket routing, resolution, and user provisioning across IT systems.",
+          "why": "Improve IT service delivery while reducing response times.",
+          "link": "#itsm-automation",
+          "relevance": ["service-delivery", "response-time", "user-satisfaction"],
+          "tags": {
+            "primary": ["itsm", "ticket-automation", "user-provisioning"],
+            "secondary": ["service-delivery", "response-time", "user-satisfaction"],
+            "use_cases": ["ticket-routing", "incident-resolution", "user-account-management"],
+            "outcomes": ["improved-service-delivery", "faster-response", "higher-satisfaction"]
+          },
+          "priority": "medium",
+          "complexity": "medium",
+          "timeToValue": "8-12 weeks"
+        },
+        {
+          "id": "security-compliance-automation",
+          "name": "Security Compliance Automation",
+          "type": "security-suite",
+          "vertical": "general",
+          "lob": ["it", "compliance"],
+          "overview": "Automated security monitoring, compliance reporting, and incident response workflows.",
+          "why": "Maintain security posture while reducing manual compliance overhead.",
+          "link": "#security-compliance",
+          "relevance": ["security-posture", "compliance-automation", "incident-response"],
+          "tags": {
+            "primary": ["security-automation", "compliance-monitoring", "incident-response"],
+            "secondary": ["security-posture", "compliance-automation", "threat-detection"],
+            "use_cases": ["security-monitoring", "compliance-reporting", "incident-management"],
+            "outcomes": ["maintained-security", "reduced-compliance-overhead", "faster-response"]
+          },
+          "priority": "high",
+          "complexity": "high",
+          "timeToValue": "12-16 weeks"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "types": ["calculator", "playbook", "template", "guide", "accelerator", "kit", "solution", "platform", "ai-solution", "ai-models", "suite", "workflow", "toolkit", "security-suite"],
+    "verticals": ["banking", "insurance", "general"],
+    "priority_levels": ["high", "medium", "low"],
+    "complexity_levels": ["low", "medium", "high"],
+    "time_to_value": ["immediate", "2-4 weeks", "4-6 weeks", "6-8 weeks", "6-10 weeks", "8-10 weeks", "8-12 weeks", "10-16 weeks", "12-16 weeks", "12-18 weeks", "14-20 weeks", "16-24 weeks"],
+    "tags": {
+      "primary": ["roi-analysis", "consumer-banking", "loan-origination", "trade-settlement", "claims-processing", "underwriting", "financial-reporting"],
+      "secondary": ["cost-reduction", "process-efficiency", "customer-experience", "compliance", "risk-management"],
+      "use_cases": ["account-opening", "loan-processing", "trade-reconciliation", "claims-intake", "policy-administration"],
+      "outcomes": ["cost-quantification", "faster-approvals", "reduced-risk", "improved-satisfaction", "operational-efficiency"]
+    }
+  }
+}

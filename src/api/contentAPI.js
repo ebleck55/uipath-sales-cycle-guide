@@ -96,6 +96,148 @@ class ContentAPI {
   }
 
   /**
+   * Get all resources for a specific vertical
+   */
+  async getResources(vertical = null, lob = null) {
+    const data = await this.loadData('resources.json');
+    if (!data) return [];
+
+    if (vertical && lob) {
+      // Get resources for specific vertical and LOB
+      return data.resources[vertical]?.[lob] || [];
+    } else if (vertical) {
+      // Get all resources from the vertical
+      const verticalResources = data.resources[vertical];
+      if (!verticalResources) return [];
+      return Object.values(verticalResources).flat();
+    }
+
+    // Return all resources from all verticals
+    return Object.values(data.resources).flatMap(vertical => 
+      Object.values(vertical).flat()
+    );
+  }
+
+  /**
+   * Get resources filtered by tags
+   */
+  async getResourcesByTags(tags = [], vertical = null) {
+    const resources = await this.getResources(vertical);
+    
+    if (!tags.length) return resources;
+
+    return resources.filter(resource => {
+      const resourceTags = [
+        ...(resource.tags.primary || []),
+        ...(resource.tags.secondary || []),
+        ...(resource.tags.use_cases || []),
+        ...(resource.tags.outcomes || [])
+      ];
+      
+      return tags.some(tag => resourceTags.includes(tag));
+    });
+  }
+
+  /**
+   * Get resources by type (calculator, playbook, etc.)
+   */
+  async getResourcesByType(type, vertical = null) {
+    const resources = await this.getResources(vertical);
+    
+    return resources.filter(resource => resource.type === type);
+  }
+
+  /**
+   * Get resources by complexity level
+   */
+  async getResourcesByComplexity(complexity, vertical = null) {
+    const resources = await this.getResources(vertical);
+    
+    return resources.filter(resource => resource.complexity === complexity);
+  }
+
+  /**
+   * Get resources by time to value
+   */
+  async getResourcesByTimeToValue(timeToValue, vertical = null) {
+    const resources = await this.getResources(vertical);
+    
+    return resources.filter(resource => resource.timeToValue === timeToValue);
+  }
+
+  /**
+   * Get filtered resources using advanced criteria (similar to original filtering logic)
+   */
+  async getFilteredResources(context = {}) {
+    let resources = [];
+    
+    // Start with exact matches first (highest priority)
+    if (context.lob && context.vertical) {
+      const exactMatch = await this.getResources(context.vertical, context.lob);
+      resources.push(...exactMatch);
+    }
+    
+    // Add all resources from the selected vertical (if any)
+    if (context.vertical) {
+      const allVerticalResources = await this.getResources(context.vertical);
+      // Add resources that aren't already included
+      allVerticalResources.forEach(resource => {
+        if (!resources.some(r => r.id === resource.id)) {
+          resources.push(resource);
+        }
+      });
+    }
+    
+    // Add general resources based on LOB (if selected)
+    if (context.lob) {
+      const generalLOBResources = await this.getResources('general', context.lob);
+      generalLOBResources.forEach(resource => {
+        if (!resources.some(r => r.id === resource.id)) {
+          resources.push(resource);
+        }
+      });
+    }
+    
+    // If we still don't have many resources, add more general resources
+    if (resources.length < 3) {
+      const generalResources = await this.getResources('general');
+      // Add finance, IT, HR resources as they're generally applicable
+      const broadResources = generalResources.filter(r => 
+        ['finance', 'it', 'hr'].some(lob => r.lob.includes(lob))
+      );
+      
+      broadResources.forEach(resource => {
+        if (!resources.some(r => r.id === resource.id)) {
+          resources.push(resource);
+        }
+      });
+    }
+    
+    return this.applyContextualFilters(resources, context);
+  }
+
+  /**
+   * Apply contextual filters for deployment and customer type
+   */
+  applyContextualFilters(resources, context) {
+    return resources.map(resource => {
+      const enhanced = { ...resource };
+      
+      // Add deployment context if available
+      if (context.deployment && resource.deploymentContext) {
+        enhanced.currentDeploymentContext = resource.deploymentContext[context.deployment];
+      }
+      
+      // Add customer context if available  
+      if (context.customerType && resource.customerContext) {
+        enhanced.currentCustomerContext = resource.customerContext[context.customerType];
+      }
+      
+      return enhanced;
+    });
+  }
+
+  /**
    * Clear cache (useful for testing)
    */
   clearCache() {
