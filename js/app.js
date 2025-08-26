@@ -338,182 +338,14 @@ async function callClaude(prompt){
 
 // ---------- AI FUNCTIONALITY ----------
 function initAIIntegration() {
-  // Initialize AI integration
+  // Initialize AI integration with hardcoded configuration
   if (typeof initializeAI === 'function') {
     aiIntegration = initializeAI();
   }
 
-  // AI Settings button handlers
-  const aiSettingsBtn = $('#ai-settings-btn');
-  const aiSettingsBtnMobile = $('#ai-settings-btn-mobile');
-  
-  const showAISettings = () => {
-    const modal = $('#ai-modal');
-    if (modal) {
-      loadAISettings();
-      modal.classList.remove('hidden');
-    }
-  };
-
-  if (aiSettingsBtn) aiSettingsBtn.addEventListener('click', showAISettings);
-  if (aiSettingsBtnMobile) aiSettingsBtnMobile.addEventListener('click', showAISettings);
-
-  // AI Modal handlers
-  const aiModal = $('#ai-modal');
-  const aiModalCancel = $('#ai-modal-cancel');
-  const aiModalSave = $('#ai-modal-save');
-
-  if (aiModalCancel) {
-    aiModalCancel.addEventListener('click', () => {
-      if (aiModal) aiModal.classList.add('hidden');
-    });
-  }
-
-  if (aiModalSave) {
-    aiModalSave.addEventListener('click', saveAISettings);
-  }
-
-  // Temperature slider
-  const temperatureSlider = $('#ai-temperature');
-  const temperatureValue = $('#temperature-value');
-  if (temperatureSlider && temperatureValue) {
-    temperatureSlider.addEventListener('input', (e) => {
-      temperatureValue.textContent = e.target.value;
-    });
-  }
-
-  // Test connection button
-  const testBtn = $('#test-ai-connection');
-  if (testBtn) {
-    testBtn.addEventListener('click', testAIConnection);
-  }
-
-  // Provider selection
-  $$('input[name="ai-provider"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      if (aiIntegration && radio.checked) {
-        aiIntegration.switchProvider(radio.value);
-      }
-    });
-  });
-
   initAIButtons();
 }
 
-function loadAISettings() {
-  if (!aiIntegration) return;
-
-  const config = aiIntegration.config;
-
-  // Load provider selection
-  const providerRadio = $(`#provider-${config.selectedProvider}`);
-  if (providerRadio) {
-    providerRadio.checked = true;
-    providerRadio.closest('.ai-provider-option').querySelector('label').classList.add('border-purple-500', 'bg-purple-50');
-  }
-
-  // Load API keys (masked)
-  Object.entries(config.apiKeys).forEach(([provider, key]) => {
-    const input = $(`#${provider}-api-key`);
-    if (input && key) {
-      input.value = '*'.repeat(key.length);
-      input.dataset.hasKey = 'true';
-    }
-  });
-
-  // Load advanced settings
-  const tempSlider = $('#ai-temperature');
-  const tempValue = $('#temperature-value');
-  const maxTokens = $('#ai-max-tokens');
-
-  if (tempSlider) {
-    tempSlider.value = config.temperature;
-    if (tempValue) tempValue.textContent = config.temperature;
-  }
-
-  if (maxTokens) {
-    maxTokens.value = config.maxTokens;
-  }
-}
-
-function saveAISettings() {
-  if (!aiIntegration) return;
-
-  // Get selected provider
-  const selectedProvider = $$('input[name="ai-provider"]:checked')[0]?.value;
-  if (selectedProvider) {
-    aiIntegration.switchProvider(selectedProvider);
-  }
-
-  // Save API keys (only if they've been modified)
-  ['claude'].forEach(provider => {
-    const input = $(`#${provider}-api-key`);
-    if (input && input.value && !input.value.startsWith('*')) {
-      aiIntegration.setApiKey(provider, input.value);
-    }
-  });
-
-  // Save advanced settings
-  const tempSlider = $('#ai-temperature');
-  const maxTokens = $('#ai-max-tokens');
-
-  if (tempSlider) {
-    aiIntegration.config.temperature = parseFloat(tempSlider.value);
-  }
-
-  if (maxTokens) {
-    aiIntegration.config.maxTokens = parseInt(maxTokens.value);
-  }
-
-  aiIntegration.saveConfig();
-
-  // Close modal
-  const modal = $('#ai-modal');
-  if (modal) modal.classList.add('hidden');
-
-  showMessage('AI settings saved successfully!', 'success');
-}
-
-async function testAIConnection() {
-  if (!aiIntegration) {
-    showMessage('AI integration not available', 'error');
-    return;
-  }
-
-  const testBtn = $('#test-ai-connection');
-  const resultDiv = $('#ai-test-result');
-
-  if (testBtn) {
-    testBtn.disabled = true;
-    testBtn.textContent = 'Testing...';
-  }
-
-  try {
-    const result = await aiIntegration.testConnection();
-    
-    if (resultDiv) {
-      resultDiv.classList.remove('hidden');
-      if (result.success) {
-        resultDiv.className = 'mt-2 text-sm text-green-600';
-        resultDiv.textContent = `✅ Connection successful with ${result.provider}`;
-      } else {
-        resultDiv.className = 'mt-2 text-sm text-red-600';
-        resultDiv.textContent = `❌ Connection failed: ${result.error}`;
-      }
-    }
-  } catch (error) {
-    if (resultDiv) {
-      resultDiv.classList.remove('hidden');
-      resultDiv.className = 'mt-2 text-sm text-red-600';
-      resultDiv.textContent = `❌ Test failed: ${error.message}`;
-    }
-  }
-
-  if (testBtn) {
-    testBtn.disabled = false;
-    testBtn.textContent = 'Test Connection';
-  }
-}
 
 function initAIButtons() {
   // Follow-up questions generation
@@ -536,7 +368,7 @@ function initAIButtons() {
 
 async function generateFollowUpQuestions(stageId) {
   if (!aiIntegration) {
-    showMessage('Please configure AI settings first', 'error');
+    showMessage('AI integration not available', 'error');
     return;
   }
 
@@ -596,7 +428,7 @@ async function generateFollowUpQuestions(stageId) {
 
 async function generateObjectionResponse(button) {
   if (!aiIntegration) {
-    showMessage('Please configure AI settings first', 'error');
+    showMessage('AI integration not available', 'error');
     return;
   }
 

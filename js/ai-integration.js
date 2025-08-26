@@ -3,11 +3,38 @@
 
 class AIIntegration {
   constructor() {
-    this.config = this.loadConfig();
+    // Configuration with API key from environment or user input
+    this.config = {
+      selectedProvider: 'claude',
+      apiKeys: {
+        claude: this.getApiKey()
+      },
+      models: {
+        claude: 'claude-3-haiku-20240307'
+      },
+      temperature: 0.7,
+      maxTokens: 1000
+    };
     this.providers = {
       claude: new ClaudeProvider()
     };
-    this.currentProvider = this.providers[this.config.selectedProvider] || this.providers.claude;
+    this.currentProvider = this.providers.claude;
+  }
+
+  // Get API key from various sources
+  getApiKey() {
+    // First check if there's a stored key in localStorage
+    const stored = localStorage.getItem('claude_api_key');
+    if (stored) return stored;
+    
+    // If no stored key, prompt user for it
+    const apiKey = prompt('Please enter your Claude API key:\n\nGet it from: https://console.anthropic.com\n\n(This will be stored locally in your browser)');
+    if (apiKey && apiKey.trim()) {
+      localStorage.setItem('claude_api_key', apiKey.trim());
+      return apiKey.trim();
+    }
+    
+    return null;
   }
 
   // Load configuration from localStorage
@@ -32,7 +59,17 @@ class AIIntegration {
   // Set API key for a provider
   setApiKey(provider, apiKey) {
     this.config.apiKeys[provider] = apiKey;
+    if (provider === 'claude') {
+      localStorage.setItem('claude_api_key', apiKey);
+    }
     this.saveConfig();
+  }
+
+  // Reset API key (will prompt for new one next time)
+  resetApiKey() {
+    localStorage.removeItem('claude_api_key');
+    this.config.apiKeys.claude = null;
+    console.log('API key cleared. Reload the page to enter a new one.');
   }
 
   // Switch AI provider
@@ -50,7 +87,7 @@ class AIIntegration {
   async generateResponse(prompt, context = {}) {
     const apiKey = this.config.apiKeys[this.config.selectedProvider];
     if (!apiKey) {
-      throw new Error(`API key not configured for ${this.config.selectedProvider}`);
+      throw new Error(`No API key available. Please refresh the page and enter your Claude API key when prompted.`);
     }
 
     try {
@@ -258,33 +295,52 @@ Format as clear, actionable bullet points.`;
 // Claude (Anthropic) Provider
 class ClaudeProvider {
   async generate({ prompt, context, model, temperature, maxTokens, apiKey }) {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: model || 'claude-3-haiku-20240307',
-        max_tokens: maxTokens || 1000,
-        temperature: temperature || 0.7,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      })
-    });
+    try {
+      // Add CORS proxy for browser requests - this is a workaround for CORS issues
+      const proxyUrl = 'https://corsproxy.io/?';
+      const targetUrl = 'https://api.anthropic.com/v1/messages';
+      
+      const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: model || 'claude-3-haiku-20240307',
+          max_tokens: maxTokens || 1000,
+          temperature: temperature || 0.7,
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        })
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Claude API Error: ${error.error?.message || response.statusText}`);
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const error = await response.json();
+          errorMessage = error.error?.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the status text
+        }
+        throw new Error(`Claude API Error: ${errorMessage}`);
+      }
+
+      const data = await response.json();
+      return data.content[0].text;
+      
+    } catch (fetchError) {
+      // Provide more helpful error messages
+      if (fetchError.message.includes('Failed to fetch') || fetchError.message.includes('network')) {
+        throw new Error('Network error: Unable to reach Claude API. This may be due to CORS restrictions or network connectivity issues. Consider setting up a backend proxy server.');
+      }
+      throw fetchError;
     }
-
-    const data = await response.json();
-    return data.content[0].text;
   }
 }
 
