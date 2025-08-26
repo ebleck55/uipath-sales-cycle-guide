@@ -84,10 +84,19 @@
           </div>
         </div>
 
-        <!-- PWA Install Button (hidden by default) -->
-        <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
-          Install App
-        </button>
+        <!-- Admin and App Buttons -->
+        <div class="flex items-center space-x-3">
+          <!-- Admin Access Button -->
+          <a href="src/admin/admin.html" target="_blank" 
+             class="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center">
+            ⚙️ Admin
+          </a>
+          
+          <!-- PWA Install Button (hidden by default) -->
+          <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
+            Install App
+          </button>
+        </div>
 
         <!-- Mobile Menu Button -->
         <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
