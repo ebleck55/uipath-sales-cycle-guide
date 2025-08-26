@@ -3220,7 +3220,10 @@ class DynamicDiscoveryManager {
   constructor() {
     this.selectedLOB = '';
     this.selectedProjectTypes = new Set();
+    this.selectedCustomerType = '';
+    this.selectedDeploymentType = '';
     this.initializeEventListeners();
+    this.initializeProfileCompletion();
   }
 
   initializeEventListeners() {
@@ -3249,7 +3252,44 @@ class DynamicDiscoveryManager {
       if (e.target.matches('.project-type-btn')) {
         this.handleProjectTypeToggle(e.target);
       }
+      // Customer type button handlers
+      if (e.target.matches('.customer-type-btn')) {
+        this.handleCustomerTypeToggle(e.target);
+      }
     });
+
+    // Deployment type selector handlers
+    const deploymentSelector = document.getElementById('deployment-type');
+    const mobileDeploymentSelector = document.getElementById('mobile-deployment-type');
+    
+    if (deploymentSelector) {
+      deploymentSelector.addEventListener('change', (e) => {
+        this.selectedDeploymentType = e.target.value;
+        if (mobileDeploymentSelector) mobileDeploymentSelector.value = e.target.value;
+        this.updateProfileCompletion();
+        this.updateDiscoveryQuestions();
+      });
+    }
+    if (mobileDeploymentSelector) {
+      mobileDeploymentSelector.addEventListener('change', (e) => {
+        this.selectedDeploymentType = e.target.value;
+        if (deploymentSelector) deploymentSelector.value = e.target.value;
+        this.updateProfileCompletion();
+        this.updateDiscoveryQuestions();
+      });
+    }
+
+    // Profile completion bar dismiss
+    const dismissBtn = document.getElementById('dismiss-profile-bar');
+    if (dismissBtn) {
+      dismissBtn.addEventListener('click', () => {
+        const profileBar = document.getElementById('profile-completion-bar');
+        if (profileBar) {
+          profileBar.style.display = 'none';
+          localStorage.setItem('profile-bar-dismissed', 'true');
+        }
+      });
+    }
   }
 
   handleProjectTypeToggle(button) {
@@ -3319,6 +3359,162 @@ class DynamicDiscoveryManager {
     // Re-render the stage content to show updated questions and objections
     if (window.appInstance) {
       window.appInstance.renderStageContent(currentStage);
+    }
+    
+    // Update profile completion
+    this.updateProfileCompletion();
+  }
+
+  handleCustomerTypeToggle(button) {
+    const type = button.dataset.type;
+    
+    // Update all customer type buttons
+    document.querySelectorAll('.customer-type-btn').forEach(btn => {
+      if (btn.dataset.type === type) {
+        btn.classList.add('bg-orange-600', 'text-white');
+        btn.classList.remove('text-gray-700', 'bg-gray-100');
+      } else {
+        btn.classList.remove('bg-orange-600', 'text-white');
+        btn.classList.add('text-gray-700', 'bg-gray-100');
+      }
+    });
+
+    this.selectedCustomerType = type;
+    
+    // Show/hide deployment selector based on customer type
+    const deploymentSelector = document.getElementById('deployment-selector');
+    const mobileDeploymentSelector = document.getElementById('mobile-deployment-selector');
+    
+    if (type === 'existing') {
+      if (deploymentSelector) deploymentSelector.classList.remove('hidden');
+      if (mobileDeploymentSelector) mobileDeploymentSelector.classList.remove('hidden');
+    } else {
+      if (deploymentSelector) deploymentSelector.classList.add('hidden');
+      if (mobileDeploymentSelector) mobileDeploymentSelector.classList.add('hidden');
+      
+      // Reset deployment selection when hiding
+      this.selectedDeploymentType = '';
+      const deploymentTypeSelect = document.getElementById('deployment-type');
+      const mobileDeploymentTypeSelect = document.getElementById('mobile-deployment-type');
+      if (deploymentTypeSelect) deploymentTypeSelect.value = '';
+      if (mobileDeploymentTypeSelect) mobileDeploymentTypeSelect.value = '';
+    }
+
+    this.updateProfileCompletion();
+    this.updateDiscoveryQuestions();
+  }
+
+  initializeProfileCompletion() {
+    // Check if profile bar was previously dismissed
+    const dismissed = localStorage.getItem('profile-bar-dismissed');
+    if (dismissed === 'true') {
+      const profileBar = document.getElementById('profile-completion-bar');
+      if (profileBar) {
+        profileBar.style.display = 'none';
+      }
+    }
+    
+    // Initial profile completion update
+    setTimeout(() => {
+      this.updateProfileCompletion();
+    }, 500);
+  }
+
+  updateProfileCompletion() {
+    const profileBar = document.getElementById('profile-completion-bar');
+    if (!profileBar || profileBar.style.display === 'none') return;
+
+    // Calculate completion
+    const totalFields = 4; // Industry, LOB, Project Type, Customer Type
+    let completedFields = 1; // Industry is always set (banking/insurance)
+    
+    const missingItems = [];
+    
+    // Check LOB
+    if (this.selectedLOB) {
+      completedFields++;
+    } else {
+      missingItems.push('📋 LOB');
+    }
+    
+    // Check Project Type
+    if (this.selectedProjectTypes.size > 0) {
+      completedFields++;
+    } else {
+      missingItems.push('⚙️ Project Type');
+    }
+    
+    // Check Customer Type
+    if (this.selectedCustomerType) {
+      completedFields++;
+      
+      // If existing customer, also check deployment (optional but recommended)
+      if (this.selectedCustomerType === 'existing') {
+        if (this.selectedDeploymentType) {
+          // Bonus completion for deployment
+          completedFields += 0.5;
+        } else {
+          missingItems.push('☁️ Deployment');
+        }
+      }
+    } else {
+      missingItems.push('🏢 Customer Type');
+    }
+    
+    // Calculate percentage (max 100%)
+    const maxPossible = this.selectedCustomerType === 'existing' ? 4.5 : 4;
+    const percentage = Math.round((completedFields / maxPossible) * 100);
+    
+    // Update progress bar
+    const progressBar = document.getElementById('profile-progress');
+    const percentageText = document.getElementById('profile-percentage');
+    
+    if (progressBar) {
+      progressBar.style.width = `${percentage}%`;
+    }
+    if (percentageText) {
+      percentageText.textContent = `${percentage}%`;
+    }
+    
+    // Update missing items
+    const missingItemsContainer = document.getElementById('missing-items');
+    if (missingItemsContainer) {
+      if (missingItems.length === 0) {
+        missingItemsContainer.innerHTML = '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">🎉 Profile Complete!</span>';
+      } else {
+        missingItemsContainer.innerHTML = missingItems.map(item => 
+          `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 cursor-pointer hover:bg-gray-200">${item}</span>`
+        ).join('');
+      }
+    }
+    
+    // Update AI prompt placeholder with contextual information
+    this.updatePromptPlaceholder();
+  }
+
+  updatePromptPlaceholder() {
+    const promptInput = document.getElementById('llm-prompt-input');
+    if (!promptInput) return;
+    
+    let context = [];
+    if (this.selectedCustomerType) {
+      context.push(this.selectedCustomerType === 'new-logo' ? 'new customer' : 'existing customer');
+    }
+    if (this.selectedLOB) {
+      const lobName = this.selectedLOB.replace('-', ' ');
+      context.push(lobName);
+    }
+    if (this.selectedProjectTypes.size > 0) {
+      context.push(Array.from(this.selectedProjectTypes).join('/'));
+    }
+    if (this.selectedDeploymentType) {
+      context.push(this.selectedDeploymentType.replace('-', ' '));
+    }
+    
+    if (context.length > 0) {
+      promptInput.placeholder = `Ask AI about ${context.join(' ')} strategies, objections, or processes...`;
+    } else {
+      promptInput.placeholder = 'Ask AI about sales strategies, objections, personas, or anything else...';
     }
   }
 

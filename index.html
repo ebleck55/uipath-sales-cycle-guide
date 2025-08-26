@@ -128,6 +128,30 @@
             </div>
           </div>
 
+          <!-- Customer Type Selector -->
+          <div class="flex flex-col">
+            <label class="text-xs text-gray-500 mb-1">Customer Type</label>
+            <div class="flex bg-gray-100 rounded-lg p-1">
+              <button class="customer-type-btn px-3 py-1 text-xs font-medium rounded transition-colors" data-type="new-logo">
+                🆕 New Logo
+              </button>
+              <button class="customer-type-btn px-3 py-1 text-xs font-medium rounded transition-colors" data-type="existing">
+                🏢 Existing
+              </button>
+            </div>
+          </div>
+
+          <!-- Deployment Type Selector (hidden by default) -->
+          <div id="deployment-selector" class="flex flex-col hidden">
+            <label class="text-xs text-gray-500 mb-1">Deployment</label>
+            <select id="deployment-type" class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">Select Deployment</option>
+              <option value="on-prem">On-Premises</option>
+              <option value="automation-suite">Automation Suite</option>
+              <option value="automation-cloud">Automation Cloud</option>
+            </select>
+          </div>
+
           <!-- PWA Install Button (hidden by default) -->
           <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
             Install App
@@ -186,6 +210,30 @@
               Maestro
             </button>
           </div>
+        </div>
+
+        <!-- Mobile Customer Type Selector -->
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Customer Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="customer-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="new-logo">
+              🆕 New Logo
+            </button>
+            <button class="customer-type-btn px-3 py-2 text-sm font-medium text-center border rounded-md" data-type="existing">
+              🏢 Existing
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Deployment Type Selector (hidden by default) -->
+        <div id="mobile-deployment-selector" class="hidden">
+          <label class="block text-xs text-gray-500 mb-1">Deployment</label>
+          <select id="mobile-deployment-type" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md">
+            <option value="">Select Deployment</option>
+            <option value="on-prem">On-Premises</option>
+            <option value="automation-suite">Automation Suite</option>
+            <option value="automation-cloud">Automation Cloud</option>
+          </select>
         </div>
         
       </div>
@@ -269,6 +317,56 @@
       </div>
       <div class="text-sm text-orange-700">
         Click pencil icons to edit content
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Profile Completion Bar -->
+  <div id="profile-completion-bar" class="bg-white border-b border-gray-200 shadow-sm sticky top-[120px] z-20 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+      <div class="flex items-center justify-between">
+        <!-- Progress Section -->
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Customer Profile</span>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="flex-1 max-w-xs">
+            <div class="flex items-center space-x-2">
+              <div class="flex-1 bg-gray-200 rounded-full h-2">
+                <div id="profile-progress" class="bg-gradient-to-r from-orange-500 to-blue-600 h-2 rounded-full transition-all duration-500" style="width: 20%"></div>
+              </div>
+              <span id="profile-percentage" class="text-xs font-medium text-gray-600 min-w-[30px]">20%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Missing Items -->
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-gray-500">Complete your profile for better AI recommendations:</span>
+          <div id="missing-items" class="flex items-center space-x-1">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              🏢 Customer Type
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              📋 LOB
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              ⚙️ Project Type
+            </span>
+          </div>
+          <button id="dismiss-profile-bar" class="p-1 text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
