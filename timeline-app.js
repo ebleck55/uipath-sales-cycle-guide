@@ -79,6 +79,1513 @@ const LOB_OPTIONS = {
   ]
 };
 
+// ==================== COMPREHENSIVE PERSONAS DATABASE ====================
+const PERSONAS_DATABASE = {
+  // Banking Industry Personas
+  banking: {
+    'consumer-banking': [
+      {
+        id: 'coo-consumer-banking',
+        title: 'Chief Operating Officer',
+        description: 'Focused on cost-per-account reduction and digital experience transformation',
+        priorities: ['Cost reduction', 'Customer satisfaction', 'Digital transformation', 'Operational efficiency'],
+        painPoints: ['High cost per account', 'Manual processes', 'Customer complaints', 'Regulatory compliance'],
+        interests: ['Process automation', 'Customer experience', 'Cost optimization', 'Scalability'],
+        vertical: 'banking',
+        lob: 'consumer-banking',
+        level: 'executive'
+      },
+      {
+        id: 'head-lending-ops',
+        title: 'Head of Lending Operations',
+        description: 'Driving loan origination speed and approval automation',
+        priorities: ['Loan processing speed', 'Approval accuracy', 'Risk management', 'Compliance'],
+        painPoints: ['Slow loan processing', 'Manual underwriting', 'Documentation errors', 'Regulatory requirements'],
+        interests: ['Process automation', 'Risk assessment', 'Customer onboarding', 'Compliance automation'],
+        vertical: 'banking',
+        lob: 'consumer-banking',
+        level: 'director'
+      },
+      {
+        id: 'head-contact-center',
+        title: 'Head of Contact Center',
+        description: 'Improving customer experience and agent productivity',
+        priorities: ['Customer satisfaction', 'Agent efficiency', 'Call resolution', 'Service quality'],
+        painPoints: ['Long wait times', 'Repetitive inquiries', 'Agent turnover', 'Customer complaints'],
+        interests: ['Customer service automation', 'Self-service options', 'Agent tools', 'Response time'],
+        vertical: 'banking',
+        lob: 'consumer-banking',
+        level: 'director'
+      }
+    ],
+    'capital-markets': [
+      {
+        id: 'head-trading-ops',
+        title: 'Head of Trading Operations',
+        description: 'Managing settlement risk and operational efficiency in trading operations',
+        priorities: ['Settlement accuracy', 'Trade processing speed', 'Risk management', 'Compliance'],
+        painPoints: ['Settlement failures', 'Manual reconciliation', 'Trade breaks', 'Regulatory reporting'],
+        interests: ['Trade automation', 'Risk monitoring', 'Straight-through processing', 'Real-time reporting'],
+        vertical: 'banking',
+        lob: 'capital-markets',
+        level: 'director'
+      },
+      {
+        id: 'coo-capital-markets',
+        title: 'COO Capital Markets',
+        description: 'Focused on regulatory compliance and operational cost control',
+        priorities: ['Regulatory compliance', 'Cost control', 'Operational risk', 'Process efficiency'],
+        painPoints: ['Regulatory changes', 'Manual reporting', 'Operational costs', 'Risk exposure'],
+        interests: ['Compliance automation', 'Process optimization', 'Risk reduction', 'Cost management'],
+        vertical: 'banking',
+        lob: 'capital-markets',
+        level: 'executive'
+      },
+      {
+        id: 'head-prime-services',
+        title: 'Head of Prime Services',
+        description: 'Managing client onboarding and servicing efficiency',
+        priorities: ['Client onboarding speed', 'Service quality', 'Relationship management', 'Revenue growth'],
+        painPoints: ['Slow onboarding', 'Manual processes', 'Client complaints', 'Competition'],
+        interests: ['Client automation', 'Service efficiency', 'Digital transformation', 'Customer experience'],
+        vertical: 'banking',
+        lob: 'capital-markets',
+        level: 'director'
+      }
+    ],
+    'commercial-banking': [
+      {
+        id: 'head-commercial-lending',
+        title: 'Head of Commercial Lending',
+        description: 'Managing complex commercial loan portfolios and relationship banking',
+        priorities: ['Loan portfolio quality', 'Risk assessment', 'Client relationships', 'Profitability'],
+        painPoints: ['Complex underwriting', 'Manual credit analysis', 'Relationship management', 'Regulatory requirements'],
+        interests: ['Credit automation', 'Risk analytics', 'Client management', 'Process efficiency'],
+        vertical: 'banking',
+        lob: 'commercial-banking',
+        level: 'director'
+      }
+    ],
+    'wealth-management': [
+      {
+        id: 'head-wealth-ops',
+        title: 'Head of Wealth Operations',
+        description: 'Managing client onboarding, portfolio administration, and service delivery',
+        priorities: ['Client experience', 'Portfolio accuracy', 'Service quality', 'Advisor productivity'],
+        painPoints: ['Complex onboarding', 'Manual reporting', 'Client expectations', 'Advisor efficiency'],
+        interests: ['Client automation', 'Portfolio management', 'Advisor tools', 'Service optimization'],
+        vertical: 'banking',
+        lob: 'wealth-management',
+        level: 'director'
+      }
+    ]
+  },
+  
+  // Insurance Industry Personas
+  insurance: {
+    'property-casualty': [
+      {
+        id: 'head-pc-claims',
+        title: 'Head of P&C Claims',
+        description: 'Managing property and casualty claims processing and customer satisfaction',
+        priorities: ['Claims processing speed', 'Fraud detection', 'Customer satisfaction', 'Cost control'],
+        painPoints: ['Claim backlogs', 'Fraudulent claims', 'Manual processing', 'Customer complaints'],
+        interests: ['Claims automation', 'Fraud detection', 'Process efficiency', 'Customer experience'],
+        vertical: 'insurance',
+        lob: 'property-casualty',
+        level: 'director'
+      }
+    ],
+    'life-annuities': [
+      {
+        id: 'head-life-ops',
+        title: 'Head of Life Operations',
+        description: 'Managing life insurance and annuity operations',
+        priorities: ['Policy administration', 'Regulatory compliance', 'Customer service', 'Operational efficiency'],
+        painPoints: ['Complex regulations', 'Manual processes', 'Customer inquiries', 'System integration'],
+        interests: ['Policy automation', 'Compliance management', 'Customer self-service', 'Process optimization'],
+        vertical: 'insurance',
+        lob: 'life-annuities',
+        level: 'director'
+      }
+    ],
+    'claims-processing': [
+      {
+        id: 'head-claims-ops',
+        title: 'Head of Claims Operations',
+        description: 'Overseeing end-to-end claims processing across all lines of business',
+        priorities: ['Claims accuracy', 'Processing speed', 'Cost management', 'Customer satisfaction'],
+        painPoints: ['Claims complexity', 'Manual reviews', 'Adjuster productivity', 'Fraud detection'],
+        interests: ['Claims automation', 'AI-powered decisions', 'Workflow optimization', 'Predictive analytics'],
+        vertical: 'insurance',
+        lob: 'claims-processing',
+        level: 'director'
+      }
+    ],
+    'underwriting': [
+      {
+        id: 'chief-underwriter',
+        title: 'Chief Underwriting Officer',
+        description: 'Setting underwriting standards and managing risk assessment processes',
+        priorities: ['Risk assessment accuracy', 'Underwriting speed', 'Portfolio profitability', 'Competitive advantage'],
+        painPoints: ['Manual underwriting', 'Risk evaluation complexity', 'Market competition', 'Regulatory changes'],
+        interests: ['Automated underwriting', 'Risk analytics', 'Decision support', 'Process acceleration'],
+        vertical: 'insurance',
+        lob: 'underwriting',
+        level: 'executive'
+      }
+    ]
+  },
+  
+  // General Industry Personas
+  general: {
+    'finance': [
+      {
+        id: 'cfo-general',
+        title: 'Chief Financial Officer',
+        description: 'Focused on financial accuracy, reporting speed, and cost management',
+        priorities: ['Financial accuracy', 'Reporting timeliness', 'Cost control', 'Audit readiness'],
+        painPoints: ['Month-end delays', 'Manual reconciliation', 'Reporting errors', 'Audit preparation'],
+        interests: ['Financial automation', 'Real-time reporting', 'Process efficiency', 'Cost reduction'],
+        vertical: 'general',
+        lob: 'finance',
+        level: 'executive'
+      }
+    ],
+    'hr': [
+      {
+        id: 'head-hr-ops',
+        title: 'Head of HR Operations',
+        description: 'Managing employee lifecycle processes and HR service delivery',
+        priorities: ['Employee experience', 'Process efficiency', 'Compliance', 'Cost management'],
+        painPoints: ['Manual onboarding', 'Benefits administration', 'Compliance tracking', 'Employee inquiries'],
+        interests: ['HR automation', 'Employee self-service', 'Process standardization', 'Compliance management'],
+        vertical: 'general',
+        lob: 'hr',
+        level: 'director'
+      }
+    ],
+    'it': [
+      {
+        id: 'cio-general',
+        title: 'Chief Information Officer',
+        description: 'Balancing innovation velocity with operational stability and security',
+        priorities: ['System reliability', 'Security', 'Innovation', 'Cost optimization'],
+        painPoints: ['Legacy systems', 'Security threats', 'Technical debt', 'Resource constraints'],
+        interests: ['IT automation', 'System modernization', 'Security enhancement', 'Operational efficiency'],
+        vertical: 'general',
+        lob: 'it',
+        level: 'executive'
+      }
+    ]
+  }
+};
+
+// ==================== COMPREHENSIVE RESOURCES DATABASE ====================
+const RESOURCES_DATABASE = {
+  // Banking Industry Resources
+  banking: {
+    'consumer-banking': [
+      {
+        id: 'consumer-banking-roi-calculator',
+        name: 'Consumer Banking ROI Calculator',
+        type: 'calculator',
+        overview: 'Calculate ROI for consumer banking automation initiatives including account opening, loan processing, and customer service.',
+        why: 'Quantify the business impact of automating high-volume consumer banking processes.',
+        link: '#consumer-banking-roi',
+        relevance: ['cost-reduction', 'process-efficiency', 'customer-experience'],
+        deploymentContext: {
+          'automation-cloud': 'Includes cloud scaling benefits for high-volume processing',
+          'on-prem': 'Focuses on data security and compliance for sensitive financial data'
+        }
+      },
+      {
+        id: 'loan-automation-playbook',
+        name: 'Loan Origination Automation Playbook',
+        type: 'playbook',
+        overview: 'Step-by-step guide for automating loan application processing, underwriting workflows, and compliance checks.',
+        why: 'Reduce loan processing time from days to hours while ensuring regulatory compliance.',
+        link: '#loan-automation',
+        relevance: ['process-automation', 'compliance', 'risk-management'],
+        customerContext: {
+          'existing': 'Advanced strategies for expanding automation to complex loan products',
+          'new-logo': 'Foundational approach starting with standard loan types'
+        }
+      },
+      {
+        id: 'customer-onboarding-template',
+        name: 'Digital Customer Onboarding Templates',
+        type: 'template',
+        overview: 'Pre-built automation templates for KYC, account setup, and welcome workflows.',
+        why: 'Accelerate customer onboarding while improving data accuracy and compliance.',
+        link: '#onboarding-templates',
+        relevance: ['customer-experience', 'compliance', 'efficiency']
+      }
+    ],
+    'capital-markets': [
+      {
+        id: 'trade-settlement-automation',
+        name: 'Trade Settlement Automation Guide',
+        type: 'guide',
+        overview: 'Comprehensive automation strategies for trade settlement, reconciliation, and exception handling.',
+        why: 'Minimize settlement risk and reduce manual intervention in trade processing.',
+        link: '#trade-settlement',
+        relevance: ['risk-reduction', 'operational-efficiency', 'compliance'],
+        deploymentContext: {
+          'automation-cloud': 'Real-time processing capabilities with cloud infrastructure',
+          'automation-suite': 'Hybrid deployment for sensitive trading data'
+        }
+      },
+      {
+        id: 'regulatory-reporting-accelerator',
+        name: 'Regulatory Reporting Accelerator',
+        type: 'accelerator',
+        overview: 'Pre-configured automation for regulatory reports including CFTC, SEC, and Basel III requirements.',
+        why: 'Ensure timely and accurate regulatory submissions while reducing compliance costs.',
+        link: '#regulatory-reporting',
+        relevance: ['compliance', 'reporting', 'risk-management']
+      },
+      {
+        id: 'client-onboarding-capital-markets',
+        name: 'Institutional Client Onboarding Kit',
+        type: 'kit',
+        overview: 'Automated workflows for prime brokerage and institutional client setup including documentation and approvals.',
+        why: 'Accelerate revenue generation through faster client onboarding.',
+        link: '#institutional-onboarding',
+        relevance: ['client-service', 'revenue-growth', 'efficiency']
+      }
+    ],
+    'commercial-banking': [
+      {
+        id: 'commercial-credit-automation',
+        name: 'Commercial Credit Assessment Automation',
+        type: 'solution',
+        overview: 'AI-powered credit analysis and risk assessment for commercial lending portfolios.',
+        why: 'Improve credit decision speed and accuracy while maintaining risk discipline.',
+        link: '#commercial-credit',
+        relevance: ['risk-assessment', 'decision-speed', 'portfolio-quality']
+      }
+    ],
+    'wealth-management': [
+      {
+        id: 'portfolio-rebalancing-automation',
+        name: 'Portfolio Rebalancing Automation',
+        type: 'solution',
+        overview: 'Automated portfolio rebalancing based on client objectives and market conditions.',
+        why: 'Improve client outcomes through timely portfolio adjustments.',
+        link: '#portfolio-automation',
+        relevance: ['client-outcomes', 'advisor-productivity', 'efficiency']
+      }
+    ]
+  },
+
+  // Insurance Industry Resources  
+  insurance: {
+    'property-casualty': [
+      {
+        id: 'claims-processing-accelerator',
+        name: 'P&C Claims Processing Accelerator',
+        type: 'accelerator',
+        overview: 'End-to-end claims automation including intake, assessment, approval, and payment processing.',
+        why: 'Reduce claims processing time and improve customer satisfaction.',
+        link: '#claims-accelerator',
+        relevance: ['customer-satisfaction', 'processing-speed', 'cost-reduction']
+      },
+      {
+        id: 'fraud-detection-ai',
+        name: 'AI-Powered Fraud Detection Suite',
+        type: 'ai-solution',
+        overview: 'Machine learning models for identifying suspicious claims and preventing fraud.',
+        why: 'Protect against fraudulent claims while maintaining legitimate claim processing speed.',
+        link: '#fraud-detection',
+        relevance: ['fraud-prevention', 'cost-protection', 'risk-management']
+      }
+    ],
+    'life-annuities': [
+      {
+        id: 'policy-administration-automation',
+        name: 'Life Insurance Policy Administration Automation',
+        type: 'platform',
+        overview: 'Comprehensive automation for policy issuance, changes, claims, and beneficiary management.',
+        why: 'Reduce administrative costs and improve policy holder experience.',
+        link: '#policy-admin',
+        relevance: ['cost-reduction', 'customer-experience', 'efficiency']
+      }
+    ],
+    'claims-processing': [
+      {
+        id: 'intelligent-claims-triage',
+        name: 'Intelligent Claims Triage System',
+        type: 'ai-solution',
+        overview: 'AI-powered system for automatically routing claims to appropriate handlers based on complexity and type.',
+        why: 'Optimize resource allocation and reduce processing time for routine claims.',
+        link: '#claims-triage',
+        relevance: ['resource-optimization', 'processing-efficiency', 'cost-management']
+      },
+      {
+        id: 'claims-investigation-toolkit',
+        name: 'Claims Investigation Automation Toolkit',
+        type: 'toolkit',
+        overview: 'Automated investigation workflows including data gathering, verification, and documentation.',
+        why: 'Improve investigation thoroughness while reducing time to resolution.',
+        link: '#investigation-toolkit',
+        relevance: ['investigation-quality', 'time-reduction', 'compliance']
+      }
+    ],
+    'underwriting': [
+      {
+        id: 'automated-underwriting-engine',
+        name: 'Automated Underwriting Engine',
+        type: 'platform',
+        overview: 'AI-driven underwriting decisions for standard policies with straight-through processing capability.',
+        why: 'Accelerate policy issuance while maintaining risk quality standards.',
+        link: '#underwriting-engine',
+        relevance: ['decision-speed', 'risk-accuracy', 'straight-through-processing']
+      },
+      {
+        id: 'risk-assessment-models',
+        name: 'Advanced Risk Assessment Models',
+        type: 'ai-models',
+        overview: 'Predictive models for assessing risk across different insurance product lines.',
+        why: 'Improve underwriting accuracy and competitive positioning.',
+        link: '#risk-models',
+        relevance: ['risk-precision', 'competitive-advantage', 'profitability']
+      }
+    ]
+  },
+
+  // General Industry Resources
+  general: {
+    'finance': [
+      {
+        id: 'month-end-close-automation',
+        name: 'Month-End Close Automation Suite',
+        type: 'suite',
+        overview: 'Complete automation of financial close processes including reconciliations, journal entries, and reporting.',
+        why: 'Reduce close time from weeks to days while improving accuracy.',
+        link: '#month-end-close',
+        relevance: ['time-reduction', 'accuracy', 'audit-readiness']
+      },
+      {
+        id: 'ap-automation-platform',
+        name: 'Accounts Payable Automation Platform',
+        type: 'platform',
+        overview: 'Invoice processing, approval workflows, and payment automation with vendor integration.',
+        why: 'Eliminate manual invoice processing and reduce payment errors.',
+        link: '#ap-automation',
+        relevance: ['process-elimination', 'error-reduction', 'vendor-relations']
+      },
+      {
+        id: 'financial-reporting-accelerator',
+        name: 'Financial Reporting Accelerator',
+        type: 'accelerator',
+        overview: 'Automated report generation for management, regulatory, and stakeholder reporting.',
+        why: 'Ensure timely and consistent financial reporting across all stakeholders.',
+        link: '#financial-reporting',
+        relevance: ['reporting-timeliness', 'consistency', 'stakeholder-satisfaction']
+      }
+    ],
+    'hr': [
+      {
+        id: 'employee-onboarding-automation',
+        name: 'Employee Onboarding Automation',
+        type: 'workflow',
+        overview: 'End-to-end employee onboarding including documentation, system setup, and orientation scheduling.',
+        why: 'Provide consistent onboarding experience while reducing HR administrative burden.',
+        link: '#hr-onboarding',
+        relevance: ['employee-experience', 'consistency', 'hr-efficiency']
+      },
+      {
+        id: 'benefits-administration-suite',
+        name: 'Benefits Administration Automation Suite',
+        type: 'suite',
+        overview: 'Automated benefits enrollment, changes, and COBRA processing.',
+        why: 'Reduce benefits administration complexity and improve employee self-service.',
+        link: '#benefits-admin',
+        relevance: ['administrative-efficiency', 'employee-self-service', 'compliance']
+      }
+    ],
+    'it': [
+      {
+        id: 'it-service-management-automation',
+        name: 'IT Service Management Automation',
+        type: 'platform',
+        overview: 'Automated ticket routing, resolution, and user provisioning across IT systems.',
+        why: 'Improve IT service delivery while reducing response times.',
+        link: '#itsm-automation',
+        relevance: ['service-delivery', 'response-time', 'user-satisfaction']
+      },
+      {
+        id: 'security-compliance-automation',
+        name: 'Security Compliance Automation',
+        type: 'security-suite',
+        overview: 'Automated security monitoring, compliance reporting, and incident response workflows.',
+        why: 'Maintain security posture while reducing manual compliance overhead.',
+        link: '#security-compliance',
+        relevance: ['security-posture', 'compliance-automation', 'incident-response']
+      }
+    ]
+  }
+};
+
+// ==================== COMPREHENSIVE USE CASES DATABASE ====================
+const USE_CASES_DATABASE = {
+  // Banking Industry Use Cases
+  banking: {
+    'consumer-banking': [
+      {
+        id: 'consumer-account-opening',
+        name: 'Account Opening Automation',
+        category: 'RPA',
+        description: 'Automated customer data entry, document processing, and account setup workflows',
+        businessValue: 'Reduce account opening time from 2 days to 2 hours while improving accuracy',
+        complexity: 'Medium',
+        timeToValue: '4-6 weeks',
+        processes: ['Customer data entry', 'Document verification', 'System provisioning', 'Welcome communications'],
+        page: 10,
+        vertical: 'banking',
+        lob: 'consumer-banking'
+      },
+      {
+        id: 'consumer-loan-processing',
+        name: 'Loan Application Processing',
+        category: 'IDP + Agentic',
+        description: 'AI-powered document extraction, credit analysis, and automated decision workflows',
+        businessValue: 'Accelerate loan approvals by 70% while maintaining risk standards',
+        complexity: 'High',
+        timeToValue: '8-12 weeks',
+        processes: ['Application intake', 'Document extraction', 'Credit scoring', 'Underwriting decisions'],
+        page: 15,
+        vertical: 'banking',
+        lob: 'consumer-banking'
+      },
+      {
+        id: 'consumer-customer-service',
+        name: 'Customer Service Automation',
+        category: 'Agentic',
+        description: 'Intelligent ticket routing, automated responses, and escalation management',
+        businessValue: 'Handle 60% more inquiries with same staff while improving satisfaction',
+        complexity: 'Medium',
+        timeToValue: '6-8 weeks',
+        processes: ['Inquiry classification', 'Automated responses', 'Escalation routing', 'Follow-up tracking'],
+        page: 20,
+        vertical: 'banking',
+        lob: 'consumer-banking'
+      }
+    ],
+    'capital-markets': [
+      {
+        id: 'capital-trade-settlement',
+        name: 'Trade Settlement Automation',
+        category: 'RPA + Agentic',
+        description: 'Automated trade matching, settlement processing, and exception handling',
+        businessValue: 'Reduce settlement failures by 80% and processing time by 60%',
+        complexity: 'High',
+        timeToValue: '10-14 weeks',
+        processes: ['Trade matching', 'Settlement processing', 'Exception handling', 'Reconciliation'],
+        page: 30,
+        vertical: 'banking',
+        lob: 'capital-markets'
+      },
+      {
+        id: 'capital-regulatory-reporting',
+        name: 'Regulatory Reporting Automation',
+        category: 'RPA + IDP',
+        description: 'Automated data collection, validation, and regulatory report generation',
+        businessValue: 'Ensure 100% timely submissions while reducing manual effort by 90%',
+        complexity: 'High',
+        timeToValue: '8-12 weeks',
+        processes: ['Data aggregation', 'Validation checks', 'Report generation', 'Submission tracking'],
+        page: 35,
+        vertical: 'banking',
+        lob: 'capital-markets'
+      },
+      {
+        id: 'capital-client-onboarding',
+        name: 'Institutional Client Onboarding',
+        category: 'Maestro',
+        description: 'End-to-end client setup including KYC, documentation, and account activation',
+        businessValue: 'Reduce onboarding time from 4 weeks to 3 days while improving compliance',
+        complexity: 'High',
+        timeToValue: '12-16 weeks',
+        processes: ['KYC verification', 'Documentation review', 'Account setup', 'Service activation'],
+        page: 40,
+        vertical: 'banking',
+        lob: 'capital-markets'
+      }
+    ],
+    'commercial-banking': [
+      {
+        id: 'commercial-credit-analysis',
+        name: 'Commercial Credit Assessment',
+        category: 'Agentic + IDP',
+        description: 'AI-powered financial analysis, risk assessment, and credit decision support',
+        businessValue: 'Improve decision speed by 50% while maintaining portfolio quality',
+        complexity: 'High',
+        timeToValue: '10-14 weeks',
+        processes: ['Financial analysis', 'Risk scoring', 'Decision support', 'Documentation'],
+        page: 25,
+        vertical: 'banking',
+        lob: 'commercial-banking'
+      }
+    ],
+    'wealth-management': [
+      {
+        id: 'wealth-portfolio-rebalancing',
+        name: 'Portfolio Rebalancing Automation',
+        category: 'Agentic',
+        description: 'Automated portfolio analysis, rebalancing recommendations, and execution',
+        businessValue: 'Increase advisor productivity by 40% while improving client outcomes',
+        complexity: 'High',
+        timeToValue: '8-12 weeks',
+        processes: ['Portfolio analysis', 'Rebalancing logic', 'Client approval', 'Trade execution'],
+        page: 45,
+        vertical: 'banking',
+        lob: 'wealth-management'
+      }
+    ]
+  },
+
+  // Insurance Industry Use Cases
+  insurance: {
+    'property-casualty': [
+      {
+        id: 'pc-claims-processing',
+        name: 'Property & Casualty Claims Processing',
+        category: 'IDP + Agentic',
+        description: 'Automated claims intake, damage assessment, and settlement processing',
+        businessValue: 'Reduce claim processing time by 65% while improving customer satisfaction',
+        complexity: 'High',
+        timeToValue: '8-12 weeks',
+        processes: ['Claims intake', 'Damage assessment', 'Coverage verification', 'Settlement processing'],
+        page: 50,
+        vertical: 'insurance',
+        lob: 'property-casualty'
+      },
+      {
+        id: 'pc-fraud-detection',
+        name: 'Fraud Detection Automation',
+        category: 'Agentic',
+        description: 'AI-powered fraud pattern recognition and investigation workflow automation',
+        businessValue: 'Detect 95% of fraudulent claims while reducing false positives by 40%',
+        complexity: 'High',
+        timeToValue: '10-14 weeks',
+        processes: ['Pattern analysis', 'Risk scoring', 'Investigation triggers', 'Escalation workflows'],
+        page: 52,
+        vertical: 'insurance',
+        lob: 'property-casualty'
+      }
+    ],
+    'life-annuities': [
+      {
+        id: 'life-policy-administration',
+        name: 'Life Insurance Policy Administration',
+        category: 'RPA + IDP',
+        description: 'Automated policy changes, beneficiary updates, and claims processing',
+        businessValue: 'Reduce administrative costs by 50% while improving policy holder experience',
+        complexity: 'Medium',
+        timeToValue: '6-10 weeks',
+        processes: ['Policy updates', 'Beneficiary management', 'Premium processing', 'Claims handling'],
+        page: 54,
+        vertical: 'insurance',
+        lob: 'life-annuities'
+      }
+    ],
+    'claims-processing': [
+      {
+        id: 'claims-intelligent-triage',
+        name: 'Intelligent Claims Triage',
+        category: 'Agentic',
+        description: 'AI-powered claim complexity assessment and automated routing to appropriate handlers',
+        businessValue: 'Optimize resource allocation and reduce processing time by 45%',
+        complexity: 'Medium',
+        timeToValue: '6-8 weeks',
+        processes: ['Complexity assessment', 'Handler matching', 'Workload balancing', 'Priority routing'],
+        page: 56,
+        vertical: 'insurance',
+        lob: 'claims-processing'
+      },
+      {
+        id: 'claims-investigation',
+        name: 'Claims Investigation Automation',
+        category: 'RPA + Agentic',
+        description: 'Automated evidence gathering, verification workflows, and investigation documentation',
+        businessValue: 'Improve investigation thoroughness while reducing time by 60%',
+        complexity: 'High',
+        timeToValue: '8-12 weeks',
+        processes: ['Evidence collection', 'Verification checks', 'Documentation', 'Decision support'],
+        page: 58,
+        vertical: 'insurance',
+        lob: 'claims-processing'
+      }
+    ],
+    'underwriting': [
+      {
+        id: 'underwriting-automation',
+        name: 'Automated Underwriting Engine',
+        category: 'Agentic + IDP',
+        description: 'AI-driven risk assessment and automated underwriting decisions',
+        businessValue: 'Increase underwriting capacity by 70% while maintaining quality standards',
+        complexity: 'High',
+        timeToValue: '10-16 weeks',
+        processes: ['Risk assessment', 'Policy pricing', 'Decision logic', 'Quality controls'],
+        page: 60,
+        vertical: 'insurance',
+        lob: 'underwriting'
+      },
+      {
+        id: 'underwriting-risk-models',
+        name: 'Advanced Risk Modeling',
+        category: 'Agentic',
+        description: 'Predictive models for risk assessment across different insurance product lines',
+        businessValue: 'Improve risk accuracy by 35% while reducing manual reviews by 80%',
+        complexity: 'High',
+        timeToValue: '12-18 weeks',
+        processes: ['Data modeling', 'Risk scoring', 'Predictive analytics', 'Model validation'],
+        page: 62,
+        vertical: 'insurance',
+        lob: 'underwriting'
+      }
+    ]
+  },
+
+  // General Industry Use Cases
+  general: {
+    'finance': [
+      {
+        id: 'finance-month-end-close',
+        name: 'Month-End Close Automation',
+        category: 'RPA + Maestro',
+        description: 'End-to-end financial close process automation including reconciliations and reporting',
+        businessValue: 'Reduce close time from 10 days to 3 days while improving accuracy',
+        complexity: 'High',
+        timeToValue: '8-12 weeks',
+        processes: ['Data reconciliation', 'Journal entries', 'Report generation', 'Approval workflows'],
+        page: 70,
+        vertical: 'general',
+        lob: 'finance'
+      },
+      {
+        id: 'finance-accounts-payable',
+        name: 'Accounts Payable Automation',
+        category: 'IDP + RPA',
+        description: 'Invoice processing, approval routing, and payment automation',
+        businessValue: 'Process 90% of invoices without manual intervention while reducing errors',
+        complexity: 'Medium',
+        timeToValue: '4-8 weeks',
+        processes: ['Invoice extraction', 'Approval routing', 'Payment processing', 'Vendor management'],
+        page: 72,
+        vertical: 'general',
+        lob: 'finance'
+      }
+    ],
+    'hr': [
+      {
+        id: 'hr-employee-onboarding',
+        name: 'Employee Onboarding Automation',
+        category: 'RPA + Maestro',
+        description: 'Complete new hire process from offer acceptance to first day setup',
+        businessValue: 'Reduce onboarding time by 60% while ensuring consistent experience',
+        complexity: 'Medium',
+        timeToValue: '6-10 weeks',
+        processes: ['Documentation collection', 'System provisioning', 'Training scheduling', 'Equipment setup'],
+        page: 74,
+        vertical: 'general',
+        lob: 'hr'
+      }
+    ],
+    'it': [
+      {
+        id: 'it-service-management',
+        name: 'IT Service Management Automation',
+        category: 'RPA + Agentic',
+        description: 'Automated ticket routing, resolution, and user provisioning workflows',
+        businessValue: 'Improve IT service delivery while reducing response times by 50%',
+        complexity: 'Medium',
+        timeToValue: '6-8 weeks',
+        processes: ['Ticket classification', 'Automated resolution', 'User provisioning', 'Service requests'],
+        page: 76,
+        vertical: 'general',
+        lob: 'it'
+      }
+    ]
+  }
+};
+
+// ==================== USE CASE FILTERING AND STORAGE SYSTEM ====================
+class UseCaseManager {
+  constructor() {
+    this.selectedUseCases = new Set();
+    this.filteredUseCases = [];
+    this.useCaseStorage = this.initializeStorage();
+  }
+
+  initializeStorage() {
+    const saved = localStorage.getItem('uipath-selected-use-cases');
+    return saved ? JSON.parse(saved) : {};
+  }
+
+  saveSelectedUseCases() {
+    localStorage.setItem('uipath-selected-use-cases', JSON.stringify(this.useCaseStorage));
+  }
+
+  getFilteredUseCases(vertical = '', lob = '', customerType = '', deployment = '') {
+    console.log('UseCaseManager: Filtering use cases with criteria:', {
+      vertical, lob, customerType, deployment
+    });
+
+    let allUseCases = [];
+
+    // Determine which vertical database to use
+    if (vertical && USE_CASES_DATABASE[vertical]) {
+      // If specific vertical is selected
+      if (lob && USE_CASES_DATABASE[vertical][lob]) {
+        // Specific LOB within vertical
+        allUseCases = [...USE_CASES_DATABASE[vertical][lob]];
+      } else {
+        // All LOBs within vertical
+        Object.values(USE_CASES_DATABASE[vertical]).forEach(lobUseCases => {
+          if (Array.isArray(lobUseCases)) {
+            allUseCases.push(...lobUseCases);
+          }
+        });
+      }
+    } else if (lob) {
+      // No vertical specified but LOB is selected - search across all verticals
+      Object.values(USE_CASES_DATABASE).forEach(verticalData => {
+        if (verticalData[lob] && Array.isArray(verticalData[lob])) {
+          allUseCases.push(...verticalData[lob]);
+        }
+      });
+    } else {
+      // No specific criteria - show general use cases as default
+      if (USE_CASES_DATABASE.general) {
+        Object.values(USE_CASES_DATABASE.general).forEach(lobUseCases => {
+          if (Array.isArray(lobUseCases)) {
+            allUseCases.push(...lobUseCases);
+          }
+        });
+      }
+    }
+
+    // Additional context-based filtering can be added here
+    // For now, we'll focus on the primary vertical/LOB filtering
+
+    this.filteredUseCases = allUseCases;
+    console.log(`UseCaseManager: Found ${allUseCases.length} filtered use cases`);
+    
+    return allUseCases;
+  }
+
+  toggleUseCaseSelection(useCaseId) {
+    if (this.selectedUseCases.has(useCaseId)) {
+      this.selectedUseCases.delete(useCaseId);
+      delete this.useCaseStorage[useCaseId];
+    } else {
+      this.selectedUseCases.add(useCaseId);
+      const useCase = this.findUseCaseById(useCaseId);
+      if (useCase) {
+        this.useCaseStorage[useCaseId] = {
+          id: useCase.id,
+          name: useCase.name,
+          category: useCase.category,
+          selectedAt: new Date().toISOString()
+        };
+      }
+    }
+    this.saveSelectedUseCases();
+    this.renderUseCaseCards();
+  }
+
+  findUseCaseById(useCaseId) {
+    for (const verticalData of Object.values(USE_CASES_DATABASE)) {
+      for (const lobUseCases of Object.values(verticalData)) {
+        if (Array.isArray(lobUseCases)) {
+          const useCase = lobUseCases.find(uc => uc.id === useCaseId);
+          if (useCase) return useCase;
+        }
+      }
+    }
+    return null;
+  }
+
+  renderUseCaseCards() {
+    const container = document.getElementById('use-cases-container');
+    if (!container) {
+      console.log('UseCaseManager: Use cases container not found');
+      return;
+    }
+
+    if (this.filteredUseCases.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center py-8">Select customer criteria to see relevant use cases...</p>';
+      return;
+    }
+
+    const useCaseCards = this.filteredUseCases.map(useCase => {
+      const isSelected = this.selectedUseCases.has(useCase.id);
+      
+      return `
+        <div class="use-case-card bg-white p-6 rounded-lg border hover:border-orange-300 transition-colors ${isSelected ? 'ring-2 ring-orange-500 border-orange-500' : 'border-gray-200'}">
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">${useCase.name}</h3>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
+                  ${useCase.category}
+                </span>
+                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                  ${useCase.complexity}
+                </span>
+                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                  ${useCase.timeToValue}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button 
+                class="use-case-select-btn px-3 py-1 text-xs font-medium rounded transition-colors ${isSelected ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
+                data-use-case-id="${useCase.id}">
+                ${isSelected ? '✓ Selected' : 'Select'}
+              </button>
+            </div>
+          </div>
+          
+          <p class="text-gray-600 text-sm mb-4">${useCase.description}</p>
+          
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Business Value:</h4>
+            <p class="text-green-700 text-sm font-medium">${useCase.businessValue}</p>
+          </div>
+
+          <div class="mb-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Key Processes:</h4>
+            <div class="flex flex-wrap gap-1">
+              ${useCase.processes.map(process => 
+                `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${process}</span>`
+              ).join('')}
+            </div>
+          </div>
+
+          ${useCase.page ? `
+          <div class="border-t pt-4">
+            <button class="lob-use-case-link w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium rounded hover:from-orange-600 hover:to-red-600 transition-all" 
+                    data-page="${useCase.page}">
+              📊 View Detailed Slide (Page ${useCase.page})
+            </button>
+          </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="mb-4 flex justify-between items-center">
+        <h3 class="text-lg font-semibold">Relevant Use Cases (${this.filteredUseCases.length})</h3>
+        <div class="text-sm text-gray-600">
+          Selected: <span class="font-medium text-orange-600">${this.selectedUseCases.size}</span>
+        </div>
+      </div>
+      <div class="grid gap-6">
+        ${useCaseCards}
+      </div>
+    `;
+
+    // Add event listeners for selection buttons
+    container.addEventListener('click', (e) => {
+      if (e.target.matches('.use-case-select-btn')) {
+        const useCaseId = e.target.dataset.useCaseId;
+        this.toggleUseCaseSelection(useCaseId);
+      }
+    });
+  }
+
+  getSelectedUseCases() {
+    return Array.from(this.selectedUseCases).map(id => {
+      const useCase = this.findUseCaseById(id);
+      return useCase ? {
+        ...useCase,
+        ...(this.useCaseStorage[id] || {})
+      } : null;
+    }).filter(Boolean);
+  }
+
+  clearSelections() {
+    this.selectedUseCases.clear();
+    this.useCaseStorage = {};
+    this.saveSelectedUseCases();
+    this.renderUseCaseCards();
+  }
+
+  loadStoredSelections() {
+    Object.keys(this.useCaseStorage).forEach(useCaseId => {
+      this.selectedUseCases.add(useCaseId);
+    });
+  }
+}
+
+// ==================== PERSONA FILTERING AND STORAGE SYSTEM ====================
+class PersonaManager {
+  constructor() {
+    this.selectedPersonas = new Set();
+    this.filteredPersonas = [];
+    this.personaStorage = this.initializeStorage();
+  }
+
+  initializeStorage() {
+    const saved = localStorage.getItem('uipath-selected-personas');
+    return saved ? JSON.parse(saved) : {};
+  }
+
+  saveSelectedPersonas() {
+    localStorage.setItem('uipath-selected-personas', JSON.stringify(this.personaStorage));
+  }
+
+  getFilteredPersonas(context) {
+    // Determine the key for personas lookup
+    let personas = [];
+    
+    // If specific LOB is selected, get LOB-specific personas
+    if (context.lob && context.vertical) {
+      const verticalPersonas = PERSONAS_DATABASE[context.vertical];
+      if (verticalPersonas && verticalPersonas[context.lob]) {
+        personas = verticalPersonas[context.lob];
+      }
+    }
+    // If only vertical is selected, get all personas from that vertical
+    else if (context.vertical) {
+      const verticalPersonas = PERSONAS_DATABASE[context.vertical];
+      if (verticalPersonas) {
+        personas = Object.values(verticalPersonas).flat();
+      }
+    }
+    // If no vertical is selected, get general personas based on LOB
+    else if (context.lob) {
+      const generalPersonas = PERSONAS_DATABASE.general;
+      if (generalPersonas && generalPersonas[context.lob]) {
+        personas = generalPersonas[context.lob];
+      }
+    }
+    // Default fallback - show general executive personas
+    else {
+      personas = [
+        {
+          id: 'generic-executive',
+          title: 'Business Executive',
+          description: 'Focused on operational efficiency and business transformation',
+          priorities: ['Cost reduction', 'Process efficiency', 'Customer satisfaction', 'Digital transformation'],
+          painPoints: ['Manual processes', 'Operational costs', 'Resource constraints', 'Competitive pressure'],
+          interests: ['Process automation', 'Cost optimization', 'Innovation', 'Scalability'],
+          vertical: 'general',
+          lob: 'general',
+          level: 'executive'
+        }
+      ];
+    }
+
+    // Add context-specific filtering based on customer type and deployment
+    return this.applyAdditionalFilters(personas, context);
+  }
+
+  applyAdditionalFilters(personas, context) {
+    let filtered = [...personas];
+    
+    // Add deployment-specific considerations
+    if (context.deployment) {
+      filtered = filtered.map(persona => ({
+        ...persona,
+        deploymentContext: this.getDeploymentContext(context.deployment),
+        customerTypeContext: this.getCustomerTypeContext(context.customerType)
+      }));
+    }
+
+    return filtered;
+  }
+
+  getDeploymentContext(deployment) {
+    const contexts = {
+      'on-prem': 'Focused on on-premises infrastructure and security requirements',
+      'automation-suite': 'Interested in hybrid cloud deployment and platform consolidation',
+      'automation-cloud': 'Prioritizing cloud-first strategy and scalability'
+    };
+    return contexts[deployment] || '';
+  }
+
+  getCustomerTypeContext(customerType) {
+    const contexts = {
+      'new-logo': 'Evaluating automation platforms for first-time implementation',
+      'existing': 'Looking to expand or optimize current automation investments'
+    };
+    return contexts[customerType] || '';
+  }
+
+  renderPersonaCards(personas, containerId = 'personas-container') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (!personas || personas.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center py-8">No personas found for the selected criteria. Please select a vertical and/or line of business to see relevant decision makers.</p>';
+      return;
+    }
+
+    const personasHTML = personas.map(persona => `
+      <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow" data-persona-id="${persona.id}">
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">${sanitizer.escapeHtml(persona.title)}</h3>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${persona.level}</span>
+            <button class="persona-select-btn text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50" data-persona-id="${persona.id}">
+              ${this.selectedPersonas.has(persona.id) ? 'Selected' : 'Select'}
+            </button>
+          </div>
+        </div>
+        
+        <p class="text-sm text-gray-600 mb-4">${sanitizer.escapeHtml(persona.description)}</p>
+        
+        <div class="space-y-3">
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Key Priorities</h4>
+            <div class="flex flex-wrap gap-1">
+              ${persona.priorities.map(priority => 
+                `<span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">${sanitizer.escapeHtml(priority)}</span>`
+              ).join('')}
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Pain Points</h4>
+            <div class="flex flex-wrap gap-1">
+              ${persona.painPoints.map(pain => 
+                `<span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">${sanitizer.escapeHtml(pain)}</span>`
+              ).join('')}
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Interests</h4>
+            <div class="flex flex-wrap gap-1">
+              ${persona.interests.map(interest => 
+                `<span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${sanitizer.escapeHtml(interest)}</span>`
+              ).join('')}
+            </div>
+          </div>
+          
+          ${persona.deploymentContext ? `
+            <div class="pt-2 border-t border-gray-100">
+              <h4 class="text-sm font-medium text-orange-700 mb-1">Deployment Context</h4>
+              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(persona.deploymentContext)}</p>
+            </div>
+          ` : ''}
+          
+          ${persona.customerTypeContext ? `
+            <div class="pt-2 border-t border-gray-100">
+              <h4 class="text-sm font-medium text-purple-700 mb-1">Customer Context</h4>
+              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(persona.customerTypeContext)}</p>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    container.innerHTML = `
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">
+            Decision Makers & Personas 
+            ${personas.length > 0 ? `(${personas.length} found)` : ''}
+          </h3>
+          ${this.selectedPersonas.size > 0 ? `
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-600">${this.selectedPersonas.size} selected</span>
+              <button id="clear-personas-btn" class="text-sm text-red-600 hover:text-red-800">Clear All</button>
+            </div>
+          ` : ''}
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${personasHTML}
+        </div>
+      </div>
+    `;
+
+    // Add event listeners for persona selection
+    this.attachPersonaEventListeners();
+  }
+
+  attachPersonaEventListeners() {
+    // Handle persona selection
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.persona-select-btn')) {
+        e.preventDefault();
+        const personaId = e.target.dataset.personaId;
+        this.togglePersonaSelection(personaId);
+      }
+      
+      if (e.target.matches('#clear-personas-btn')) {
+        e.preventDefault();
+        this.clearAllPersonas();
+      }
+    });
+  }
+
+  togglePersonaSelection(personaId) {
+    const button = document.querySelector(`[data-persona-id="${personaId}"].persona-select-btn`);
+    
+    if (this.selectedPersonas.has(personaId)) {
+      this.selectedPersonas.delete(personaId);
+      button.textContent = 'Select';
+      button.classList.remove('bg-blue-600', 'text-white');
+      button.classList.add('border-gray-300', 'hover:bg-gray-50');
+    } else {
+      this.selectedPersonas.add(personaId);
+      button.textContent = 'Selected';
+      button.classList.add('bg-blue-600', 'text-white');
+      button.classList.remove('border-gray-300', 'hover:bg-gray-50');
+    }
+
+    // Store selection
+    this.storePersonaSelection(personaId);
+    
+    // Update selected count display
+    this.updateSelectedDisplay();
+  }
+
+  clearAllPersonas() {
+    this.selectedPersonas.clear();
+    document.querySelectorAll('.persona-select-btn').forEach(btn => {
+      btn.textContent = 'Select';
+      btn.classList.remove('bg-blue-600', 'text-white');
+      btn.classList.add('border-gray-300', 'hover:bg-gray-50');
+    });
+    
+    // Clear storage
+    this.personaStorage = {};
+    this.saveSelectedPersonas();
+    
+    // Update display
+    this.updateSelectedDisplay();
+  }
+
+  storePersonaSelection(personaId) {
+    const context = window.customerInfoManager ? window.customerInfoManager.getSelectionContext() : {};
+    const storageKey = `${context.vertical || 'general'}-${context.lob || 'all'}`;
+    
+    if (!this.personaStorage[storageKey]) {
+      this.personaStorage[storageKey] = [];
+    }
+    
+    if (this.selectedPersonas.has(personaId)) {
+      if (!this.personaStorage[storageKey].includes(personaId)) {
+        this.personaStorage[storageKey].push(personaId);
+      }
+    } else {
+      this.personaStorage[storageKey] = this.personaStorage[storageKey].filter(id => id !== personaId);
+    }
+    
+    this.saveSelectedPersonas();
+  }
+
+  loadStoredSelections(context) {
+    const storageKey = `${context.vertical || 'general'}-${context.lob || 'all'}`;
+    const stored = this.personaStorage[storageKey] || [];
+    
+    this.selectedPersonas.clear();
+    stored.forEach(personaId => this.selectedPersonas.add(personaId));
+  }
+
+  updateSelectedDisplay() {
+    const container = document.getElementById('personas-container');
+    if (container) {
+      const countElement = container.querySelector('.flex.justify-between .text-gray-600');
+      if (countElement && this.selectedPersonas.size > 0) {
+        countElement.textContent = `${this.selectedPersonas.size} selected`;
+      }
+    }
+  }
+
+  getSelectedPersonasData() {
+    const allPersonas = Object.values(PERSONAS_DATABASE).flatMap(vertical => 
+      Object.values(vertical).flat()
+    );
+    
+    return Array.from(this.selectedPersonas).map(id => 
+      allPersonas.find(persona => persona.id === id)
+    ).filter(Boolean);
+  }
+}
+
+// ==================== RESOURCE FILTERING AND STORAGE SYSTEM ====================
+class ResourceManager {
+  constructor() {
+    this.selectedResources = new Set();
+    this.filteredResources = [];
+    this.resourceStorage = this.initializeStorage();
+  }
+
+  initializeStorage() {
+    const saved = localStorage.getItem('uipath-selected-resources');
+    return saved ? JSON.parse(saved) : {};
+  }
+
+  saveSelectedResources() {
+    localStorage.setItem('uipath-selected-resources', JSON.stringify(this.resourceStorage));
+  }
+
+  getFilteredResources(context) {
+    // Determine the key for resources lookup
+    let resources = [];
+    
+    // If specific LOB is selected, get LOB-specific resources
+    if (context.lob && context.vertical) {
+      const verticalResources = RESOURCES_DATABASE[context.vertical];
+      if (verticalResources && verticalResources[context.lob]) {
+        resources = verticalResources[context.lob];
+      }
+    }
+    // If only vertical is selected, get all resources from that vertical
+    else if (context.vertical) {
+      const verticalResources = RESOURCES_DATABASE[context.vertical];
+      if (verticalResources) {
+        resources = Object.values(verticalResources).flat();
+      }
+    }
+    // If no vertical is selected, get general resources based on LOB
+    else if (context.lob) {
+      const generalResources = RESOURCES_DATABASE.general;
+      if (generalResources && generalResources[context.lob]) {
+        resources = generalResources[context.lob];
+      }
+    }
+    // Default fallback - show general resources
+    else {
+      resources = [
+        {
+          id: 'generic-automation-guide',
+          name: 'Business Process Automation Guide',
+          type: 'guide',
+          overview: 'Comprehensive guide to identifying and automating business processes across any industry.',
+          why: 'Start your automation journey with proven methodologies and best practices.',
+          link: '#automation-guide',
+          relevance: ['process-identification', 'automation-strategy', 'best-practices'],
+          vertical: 'general',
+          lob: 'general'
+        }
+      ];
+    }
+
+    // Add context-specific filtering based on customer type and deployment
+    return this.applyAdditionalFilters(resources, context);
+  }
+
+  applyAdditionalFilters(resources, context) {
+    let filtered = [...resources];
+    
+    // Add deployment-specific context
+    if (context.deployment) {
+      filtered = filtered.map(resource => {
+        const enrichedResource = { ...resource };
+        
+        if (resource.deploymentContext && resource.deploymentContext[context.deployment]) {
+          enrichedResource.deploymentNote = resource.deploymentContext[context.deployment];
+        }
+        
+        if (resource.customerContext && resource.customerContext[context.customerType]) {
+          enrichedResource.customerNote = resource.customerContext[context.customerType];
+        }
+        
+        return enrichedResource;
+      });
+    }
+
+    return filtered;
+  }
+
+  renderResourceCards(resources, containerId = 'resources-container') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (!resources || resources.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center py-8">No resources found for the selected criteria. Please select a vertical and/or line of business to see relevant resources.</p>';
+      return;
+    }
+
+    const resourcesHTML = resources.map(resource => `
+      <div class="resource-card bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow" data-resource-id="${resource.id}">
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <div class="flex items-center space-x-2 mb-2">
+              <h3 class="text-lg font-semibold text-gray-900">${sanitizer.escapeHtml(resource.name)}</h3>
+              <span class="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">${resource.type}</span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 ml-4">
+            <button class="resource-select-btn text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50" data-resource-id="${resource.id}">
+              ${this.selectedResources.has(resource.id) ? 'Selected' : 'Select'}
+            </button>
+            <a href="${resource.link}" class="text-sm px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700" target="_blank">
+              View
+            </a>
+          </div>
+        </div>
+        
+        <p class="text-sm text-gray-600 mb-3">${sanitizer.escapeHtml(resource.overview)}</p>
+        
+        <div class="mb-4">
+          <h4 class="text-sm font-medium text-orange-700 mb-2">Why This Matters</h4>
+          <p class="text-sm text-gray-700">${sanitizer.escapeHtml(resource.why)}</p>
+        </div>
+        
+        <div class="space-y-3">
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Relevance</h4>
+            <div class="flex flex-wrap gap-1">
+              ${resource.relevance.map(item => 
+                `<span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${sanitizer.escapeHtml(item)}</span>`
+              ).join('')}
+            </div>
+          </div>
+          
+          ${resource.deploymentNote ? `
+            <div class="pt-2 border-t border-gray-100">
+              <h4 class="text-sm font-medium text-orange-700 mb-1">Deployment Context</h4>
+              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(resource.deploymentNote)}</p>
+            </div>
+          ` : ''}
+          
+          ${resource.customerNote ? `
+            <div class="pt-2 border-t border-gray-100">
+              <h4 class="text-sm font-medium text-purple-700 mb-1">Customer Context</h4>
+              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(resource.customerNote)}</p>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    container.innerHTML = `
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">
+            Key Resources & Content
+            ${resources.length > 0 ? `(${resources.length} found)` : ''}
+          </h3>
+          ${this.selectedResources.size > 0 ? `
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-600">${this.selectedResources.size} selected</span>
+              <button id="clear-resources-btn" class="text-sm text-red-600 hover:text-red-800">Clear All</button>
+            </div>
+          ` : ''}
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${resourcesHTML}
+        </div>
+      </div>
+    `;
+
+    // Add event listeners for resource selection
+    this.attachResourceEventListeners();
+  }
+
+  attachResourceEventListeners() {
+    // Handle resource selection
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.resource-select-btn')) {
+        e.preventDefault();
+        const resourceId = e.target.dataset.resourceId;
+        this.toggleResourceSelection(resourceId);
+      }
+      
+      if (e.target.matches('#clear-resources-btn')) {
+        e.preventDefault();
+        this.clearAllResources();
+      }
+    });
+  }
+
+  toggleResourceSelection(resourceId) {
+    const button = document.querySelector(`[data-resource-id="${resourceId}"].resource-select-btn`);
+    
+    if (this.selectedResources.has(resourceId)) {
+      this.selectedResources.delete(resourceId);
+      button.textContent = 'Select';
+      button.classList.remove('bg-blue-600', 'text-white');
+      button.classList.add('border-gray-300', 'hover:bg-gray-50');
+    } else {
+      this.selectedResources.add(resourceId);
+      button.textContent = 'Selected';
+      button.classList.add('bg-blue-600', 'text-white');
+      button.classList.remove('border-gray-300', 'hover:bg-gray-50');
+    }
+
+    // Store selection
+    this.storeResourceSelection(resourceId);
+    
+    // Update selected count display
+    this.updateSelectedDisplay();
+  }
+
+  clearAllResources() {
+    this.selectedResources.clear();
+    document.querySelectorAll('.resource-select-btn').forEach(btn => {
+      btn.textContent = 'Select';
+      btn.classList.remove('bg-blue-600', 'text-white');
+      btn.classList.add('border-gray-300', 'hover:bg-gray-50');
+    });
+    
+    // Clear storage
+    this.resourceStorage = {};
+    this.saveSelectedResources();
+    
+    // Update display
+    this.updateSelectedDisplay();
+  }
+
+  storeResourceSelection(resourceId) {
+    const context = window.customerInfoManager ? window.customerInfoManager.getSelectionContext() : {};
+    const storageKey = `${context.vertical || 'general'}-${context.lob || 'all'}`;
+    
+    if (!this.resourceStorage[storageKey]) {
+      this.resourceStorage[storageKey] = [];
+    }
+    
+    if (this.selectedResources.has(resourceId)) {
+      if (!this.resourceStorage[storageKey].includes(resourceId)) {
+        this.resourceStorage[storageKey].push(resourceId);
+      }
+    } else {
+      this.resourceStorage[storageKey] = this.resourceStorage[storageKey].filter(id => id !== resourceId);
+    }
+    
+    this.saveSelectedResources();
+  }
+
+  loadStoredSelections(context) {
+    const storageKey = `${context.vertical || 'general'}-${context.lob || 'all'}`;
+    const stored = this.resourceStorage[storageKey] || [];
+    
+    this.selectedResources.clear();
+    stored.forEach(resourceId => this.selectedResources.add(resourceId));
+  }
+
+  updateSelectedDisplay() {
+    const container = document.getElementById('resources-container');
+    if (container) {
+      const countElement = container.querySelector('.flex.justify-between .text-gray-600');
+      if (countElement && this.selectedResources.size > 0) {
+        countElement.textContent = `${this.selectedResources.size} selected`;
+      }
+    }
+  }
+
+  getSelectedResourcesData() {
+    const allResources = Object.values(RESOURCES_DATABASE).flatMap(vertical => 
+      Object.values(vertical).flat()
+    );
+    
+    return Array.from(this.selectedResources).map(id => 
+      allResources.find(resource => resource.id === id)
+    ).filter(Boolean);
+  }
+}
+
 // ==================== CUSTOMER INFO MANAGEMENT ====================
 class CustomerInfoManager {
   constructor() {
@@ -87,13 +1594,34 @@ class CustomerInfoManager {
     this.selectedProjectTypes = new Set();
     this.selectedCustomerType = '';
     this.selectedDeployment = '';
+    this.personaManager = new PersonaManager();
+    this.resourceManager = new ResourceManager();
+    this.useCaseManager = new UseCaseManager();
     this.initializeEventListeners();
     this.initializeLOBSelector();
+    this.initializePersonasDisplay();
+    this.initializeResourcesDisplay();
+    this.initializeUseCasesDisplay();
   }
 
   initializeLOBSelector() {
     // Initialize with general LOB options when no vertical is selected
     this.updateLOBSelector('');
+  }
+
+  initializePersonasDisplay() {
+    // Initial personas display with generic personas
+    this.updatePersonasDisplay();
+  }
+
+  initializeResourcesDisplay() {
+    // Initial resources display with generic resources
+    this.updateResourcesDisplay();
+  }
+
+  initializeUseCasesDisplay() {
+    // Initial use cases display with generic use cases
+    this.updateUseCasesDisplay();
   }
 
   initializeEventListeners() {
@@ -115,6 +1643,10 @@ class CustomerInfoManager {
     if (lobSelector) {
       lobSelector.addEventListener('change', (e) => {
         this.selectedLOB = e.target.value;
+        // Update personas, resources, and use cases display when LOB changes
+        this.updatePersonasDisplay();
+        this.updateResourcesDisplay();
+        this.updateUseCasesDisplay();
       });
     }
 
@@ -123,6 +1655,10 @@ class CustomerInfoManager {
     if (deploymentSelector) {
       deploymentSelector.addEventListener('change', (e) => {
         this.selectedDeployment = e.target.value;
+        // Update personas, resources, and use cases display when deployment changes
+        this.updatePersonasDisplay();
+        this.updateResourcesDisplay();
+        this.updateUseCasesDisplay();
       });
     }
 
@@ -151,6 +1687,11 @@ class CustomerInfoManager {
     
     // Reset LOB selection when vertical changes
     this.selectedLOB = '';
+    
+    // Update personas, resources, and use cases display based on new context
+    this.updatePersonasDisplay();
+    this.updateResourcesDisplay();
+    this.updateUseCasesDisplay();
   }
 
   updateLOBSelector(vertical) {
@@ -197,6 +1738,10 @@ class CustomerInfoManager {
     
     this.selectedCustomerType = type;
     this.toggleDeploymentSelector(type);
+    
+    // Update personas and resources display when customer type changes
+    this.updatePersonasDisplay();
+    this.updateResourcesDisplay();
   }
 
   toggleDeploymentSelector(customerType) {
@@ -247,8 +1792,14 @@ class CustomerInfoManager {
   performContentUpdate() {
     const context = this.getSelectionContext();
     
-    // Update personas based on context
+    // Update personas based on context (old method for stage personas)
     this.updatePersonas(context);
+    
+    // Update main personas display (new method for Decision Makers section)
+    this.updatePersonasDisplay();
+    
+    // Update resources display (new method for Key Resources section)
+    this.updateResourcesDisplay();
     
     // Update discovery questions
     this.updateDiscoveryQuestions(context);
@@ -260,6 +1811,56 @@ class CustomerInfoManager {
     this.updateLOBUseCases(context);
     
     console.log('Content updated with context:', context);
+  }
+
+  updatePersonasDisplay() {
+    const context = this.getSelectionContext();
+    
+    // Load stored selections for this context
+    this.personaManager.loadStoredSelections(context);
+    
+    // Get filtered personas based on current context
+    const filteredPersonas = this.personaManager.getFilteredPersonas(context);
+    
+    // Render the personas in the main Decision Makers section
+    this.personaManager.renderPersonaCards(filteredPersonas, 'personas-container');
+    
+    console.log('Personas updated for context:', context, 'Found personas:', filteredPersonas.length);
+  }
+
+  updateResourcesDisplay() {
+    const context = this.getSelectionContext();
+    
+    // Load stored selections for this context
+    this.resourceManager.loadStoredSelections(context);
+    
+    // Get filtered resources based on current context
+    const filteredResources = this.resourceManager.getFilteredResources(context);
+    
+    // Render the resources in the main Key Resources section
+    this.resourceManager.renderResourceCards(filteredResources, 'resources-container');
+    
+    console.log('Resources updated for context:', context, 'Found resources:', filteredResources.length);
+  }
+
+  updateUseCasesDisplay() {
+    const context = this.getSelectionContext();
+    
+    // Load stored selections for this context
+    this.useCaseManager.loadStoredSelections();
+    
+    // Get filtered use cases based on current context
+    const filteredUseCases = this.useCaseManager.getFilteredUseCases(
+      context.vertical, 
+      context.lob, 
+      context.customerType, 
+      context.deployment
+    );
+    
+    // Render the use cases
+    this.useCaseManager.renderUseCaseCards();
+    
+    console.log('Use cases updated for context:', context, 'Found use cases:', filteredUseCases.length);
   }
 
   getSelectionContext() {
@@ -3254,9 +4855,14 @@ class UseCasePDFHandler {
   initializeEventListeners() {
     document.addEventListener('click', (e) => {
       const useCaseButton = e.target.closest('.use-case-link');
+      const lobUseCaseButton = e.target.closest('.lob-use-case-link');
+      
       if (useCaseButton) {
         e.preventDefault();
         this.handleUseCaseClick(useCaseButton);
+      } else if (lobUseCaseButton) {
+        e.preventDefault();
+        this.handleUseCaseClick(lobUseCaseButton);
       }
     });
   }
