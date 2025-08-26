@@ -3187,22 +3187,34 @@ class DynamicDiscoveryManager {
     
     if (!stageData) return;
 
-    // Generate dynamic questions based on selections
+    // Generate dynamic content based on selections
     const dynamicQuestions = this.generateContextualQuestions();
+    const dynamicObjections = this.generateContextualObjections();
     
-    // Store original questions if not already stored
+    // Store original content if not already stored
     if (!stageData.originalQuestions) {
       stageData.originalQuestions = JSON.parse(JSON.stringify(stageData.questions));
     }
+    if (!stageData.originalObjections) {
+      stageData.originalObjections = JSON.parse(JSON.stringify(stageData.objections));
+    }
 
-    // Replace or enhance questions
+    // Update questions
     if (this.selectedLOB || this.selectedProjectTypes.size > 0) {
       stageData.questions = { ...stageData.originalQuestions, ...dynamicQuestions };
     } else {
       stageData.questions = stageData.originalQuestions;
     }
+    
+    // Update objections
+    if (this.selectedLOB || this.selectedProjectTypes.size > 0) {
+      const combinedObjections = [...stageData.originalObjections, ...dynamicObjections];
+      stageData.objections = combinedObjections;
+    } else {
+      stageData.objections = stageData.originalObjections;
+    }
 
-    // Re-render the stage content to show updated questions
+    // Re-render the stage content to show updated questions and objections
     if (window.appInstance) {
       window.appInstance.renderStageContent(currentStage);
     }
@@ -3231,68 +3243,53 @@ class DynamicDiscoveryManager {
 
   getLOBQuestionCategory() {
     const lobCategories = {
-      'finance': 'Finance & Accounting Focus',
-      'hr': 'Human Resources Focus', 
-      'it': 'IT Operations Focus',
-      'operations': 'Business Operations Focus',
-      'customer-service': 'Customer Experience Focus',
-      'procurement': 'Procurement & Supply Chain Focus',
-      'legal': 'Legal & Compliance Focus',
-      'compliance': 'Risk & Compliance Focus'
+      'consumer-banking': 'Consumer Banking Focus',
+      'capital-markets': 'Capital Markets Focus',
+      'operations': 'Operations Focus',
+      'it-operations': 'IT Operations Focus',
+      'finance-operations': 'Finance & Operations Focus'
     };
     return lobCategories[this.selectedLOB] || 'Department-Specific Questions';
   }
 
   getLOBSpecificQuestions() {
     const lobQuestions = {
-      'finance': [
-        'What financial processes consume the most manual effort each month?',
-        'How do you currently handle month-end closing and reconciliation?',
-        'What regulatory reporting requirements create bottlenecks?',
-        'Where do you see the most errors in financial data processing?',
-        'How much time does your team spend on invoice processing and AP/AR?'
+      'consumer-banking': [
+        'What consumer banking operations require the most manual processing?',
+        'How do you currently handle account opening and KYC processes?',
+        'What compliance requirements must you maintain for consumer banking?',
+        'Where do you see delays in loan origination and processing?',
+        'How much time is spent on customer service and dispute resolution?',
+        'What manual processes exist in credit risk assessment?'
       ],
-      'hr': [
-        'What HR processes require the most manual data entry?',
-        'How do you currently handle employee onboarding and offboarding?',
-        'What compliance reporting do you need to maintain for HR?',
-        'Where do you see delays in your recruitment and hiring process?',
-        'How much time is spent on benefits administration and payroll?'
-      ],
-      'it': [
-        'What IT service requests consume the most support time?',
-        'How do you currently handle system monitoring and incident response?',
-        'What manual processes exist in your infrastructure management?',
-        'Where do you see bottlenecks in user provisioning and access management?',
-        'How much time is spent on routine maintenance and patching?'
+      'capital-markets': [
+        'What capital markets processes have the highest operational risk?',
+        'How do you currently handle trade settlement and reconciliation?',
+        'What manual workflows exist in your wealth management operations?',
+        'Where do you see bottlenecks in treasury operations?',
+        'How much time is spent on regulatory reporting for capital markets?',
+        'What challenges exist in portfolio management and rebalancing?'
       ],
       'operations': [
-        'What operational processes have the highest error rates?',
-        'How do you currently handle order processing and fulfillment?',
-        'What manual quality control processes could be improved?',
-        'Where do you see delays in your supply chain operations?',
-        'How much time is spent on data collection and reporting?'
+        'What operational processes have the highest error rates or rework?',
+        'How do you currently handle regulatory reporting and compliance?',
+        'What manual workflows exist in fraud detection and risk assessment?',
+        'Where do you see delays in operational risk management?',
+        'How much time is spent on data validation and exception handling?'
       ],
-      'customer-service': [
-        'What customer inquiries require the most manual research?',
-        'How do you currently handle case routing and escalation?',
-        'What processes slow down your first-call resolution rates?',
-        'Where do you see opportunities to improve customer response times?',
-        'How much time is spent on manual ticket updates and documentation?'
+      'it-operations': [
+        'What IT service requests consume the most support time?',
+        'How do you currently handle system monitoring and incident response?',
+        'What manual processes exist in ServiceNow integration and management?',
+        'Where do you see bottlenecks in system monitoring and maintenance?',
+        'How much time is spent on data migration and system integration?'
       ],
-      'procurement': [
-        'What procurement processes involve the most manual approvals?',
-        'How do you currently handle vendor onboarding and management?',
-        'What spend analysis and reporting is done manually?',
-        'Where do you see delays in your requisition-to-pay process?',
-        'How much time is spent on contract management and compliance?'
-      ],
-      'legal': [
-        'What legal document processes require extensive manual review?',
-        'How do you currently handle contract management and tracking?',
-        'What compliance monitoring is done manually?',
-        'Where do you see bottlenecks in legal request processing?',
-        'How much time is spent on regulatory filing and reporting?'
+      'finance-operations': [
+        'What finance processes require the most manual data entry and reconciliation?',
+        'How do you currently handle invoice processing and expense management?',
+        'What manual workflows exist in financial reconciliation?',
+        'Where do you see delays in accounts payable and receivable?',
+        'How much time is spent on financial reporting and month-end close?'
       ],
       'compliance': [
         'What compliance processes require the most manual oversight?',
@@ -3303,6 +3300,151 @@ class DynamicDiscoveryManager {
       ]
     };
     return lobQuestions[this.selectedLOB] || [];
+  }
+
+  generateContextualObjections() {
+    const objections = [];
+    
+    // LOB-specific objections
+    const lobObjections = this.getLOBSpecificObjections();
+    if (lobObjections.length > 0) {
+      objections.push(...lobObjections);
+    }
+    
+    // Project type-specific objections
+    const projectTypeObjections = this.getProjectTypeObjections();
+    if (projectTypeObjections.length > 0) {
+      objections.push(...projectTypeObjections);
+    }
+    
+    // Combined LOB + Project Type objections
+    const combinedObjections = this.getCombinedObjections();
+    if (combinedObjections.length > 0) {
+      objections.push(...combinedObjections);
+    }
+    
+    return objections;
+  }
+
+  getLOBSpecificObjections() {
+    const lobObjections = {
+      'consumer-banking': [
+        {
+          q: "We're focused on digital transformation, not automation.",
+          a: "UiPath agentic automation IS digital transformation—it's AI-powered, governs end-to-end processes, and provides the foundation for your digital banking strategy."
+        },
+        {
+          q: "Regulatory concerns about AI in banking decisions.",
+          a: "We provide full audit trails, explainable AI, and compliance-ready governance frameworks designed specifically for financial services regulations."
+        }
+      ],
+      'capital-markets': [
+        {
+          q: "Trading operations are too complex for automation.",
+          a: "Our platform handles complex, exception-based processes with intelligent decision-making—perfect for the sophisticated workflows in capital markets."
+        },
+        {
+          q: "Risk management concerns about automated trading processes.",
+          a: "We provide comprehensive risk controls, real-time monitoring, and emergency stop capabilities with full audit trails for regulatory compliance."
+        }
+      ],
+      'operations': [
+        {
+          q: "We tried RPA before and it didn't scale for operations.",
+          a: "Modern agentic automation goes beyond traditional RPA—it handles exceptions, makes intelligent decisions, and includes built-in governance for enterprise scale."
+        },
+        {
+          q: "Operational processes are too unpredictable.",
+          a: "That's exactly why we use AI—it adapts to variations, handles exceptions intelligently, and learns from your operational patterns."
+        }
+      ],
+      'it-operations': [
+        {
+          q: "IT security concerns about automation access.",
+          a: "We provide role-based access controls, encrypted communications, audit trails, and can run entirely on-premise or in private cloud environments."
+        },
+        {
+          q: "Integration complexity with existing IT systems.",
+          a: "UiPath has pre-built connectors for 500+ systems including ServiceNow, with API-first architecture designed for enterprise IT environments."
+        }
+      ],
+      'finance-operations': [
+        {
+          q: "Finance processes require too much human judgment.",
+          a: "Agentic automation provides AI-powered insights and recommendations while maintaining human oversight for final decisions—perfect for financial controls."
+        },
+        {
+          q: "Compliance and audit trail requirements are too strict.",
+          a: "We provide comprehensive audit logs, approval workflows, and compliance-ready documentation specifically designed for financial regulations."
+        }
+      ]
+    };
+    
+    return lobObjections[this.selectedLOB] || [];
+  }
+
+  getProjectTypeObjections() {
+    const projectTypeObjections = {
+      'RPA': [
+        {
+          q: "We've heard RPA is brittle and hard to maintain.",
+          a: "Modern RPA with AI resilience handles UI changes automatically and includes self-healing capabilities to minimize maintenance."
+        }
+      ],
+      'IDP': [
+        {
+          q: "Document processing accuracy concerns.",
+          a: "Our IDP achieves 99%+ accuracy with human-in-the-loop validation and continuous learning from corrections."
+        }
+      ],
+      'Agentic': [
+        {
+          q: "AI agents are too unpredictable for business processes.",
+          a: "Our agentic platform includes guardrails, approval workflows, and escalation paths to ensure controlled, predictable outcomes."
+        }
+      ],
+      'Maestro': [
+        {
+          q: "Orchestration sounds complex and risky.",
+          a: "Maestro provides visual workflow design, testing environments, and rollback capabilities—making complex orchestration safe and manageable."
+        }
+      ]
+    };
+    
+    const objections = [];
+    for (const projectType of this.selectedProjectTypes) {
+      if (projectTypeObjections[projectType]) {
+        objections.push(...projectTypeObjections[projectType]);
+      }
+    }
+    return objections;
+  }
+
+  getCombinedObjections() {
+    // Return combined objections based on specific LOB + Project Type combinations
+    const combinedKey = `${this.selectedLOB}-${Array.from(this.selectedProjectTypes).join('-')}`;
+    const combinedObjections = {
+      'consumer-banking-Agentic': [
+        {
+          q: "Customer data privacy concerns with AI agents.",
+          a: "We support private AI models, data residency controls, and PII redaction—ensuring customer data never leaves your secure environment."
+        }
+      ],
+      'capital-markets-RPA': [
+        {
+          q: "Market timing is critical—automation might be too slow.",
+          a: "Our platform processes at sub-second speeds with real-time monitoring and can handle high-frequency trading requirements."
+        }
+      ],
+      'operations-IDP-Agentic': [
+        {
+          q: "Combining document processing with AI decision-making seems risky.",
+          a: "This combination is powerful—IDP extracts data accurately, then agentic workflows make intelligent routing decisions with full audit trails."
+        }
+      ]
+    };
+    
+    return combinedObjections[combinedKey] || [];
   }
 
   getProjectTypeQuestions() {
