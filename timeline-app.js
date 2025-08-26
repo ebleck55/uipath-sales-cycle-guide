@@ -1211,59 +1211,87 @@ class PersonaManager {
             </div>
             ` : ''}
             
-            <!-- Their World -->
-            <div class="bg-blue-50 rounded-lg p-3">
-              <h4 class="text-sm font-semibold text-blue-800 mb-2 flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 0L9 9m0 0l3-3m-3 3l3 3"/>
+            <!-- Who They Are -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <h4 class="text-sm font-semibold text-blue-800 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
-                Their World
+                Who They Are
               </h4>
-              <p class="text-sm text-blue-700 leading-relaxed">${persona.description}</p>
+              <p class="text-sm text-blue-700 leading-relaxed mb-3">${persona.description}</p>
+              <div class="space-y-2">
+                <div>
+                  <span class="text-xs font-medium text-blue-600">Key Responsibilities:</span>
+                  <div class="flex flex-wrap gap-1 mt-1">
+                    ${persona.priorities.slice(0, 3).map(priority => 
+                      `<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${priority}</span>`
+                    ).join('')}
+                  </div>
+                </div>
+              </div>
             </div>
             
             <!-- What They Care About -->
-            <div class="bg-green-50 rounded-lg p-3">
-              <h4 class="text-sm font-semibold text-green-800 mb-2 flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-green-50 rounded-lg p-4">
+              <h4 class="text-sm font-semibold text-green-800 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
-                Key Priorities
+                What They Care About
               </h4>
-              <div class="flex flex-wrap gap-1">
-                ${persona.priorities.map(priority => 
-                  `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${priority}</span>`
-                ).join('')}
+              <div class="space-y-3">
+                <div>
+                  <span class="text-xs font-medium text-green-700">Top Priorities:</span>
+                  <ul class="mt-1 space-y-1">
+                    ${persona.priorities.map(priority => 
+                      `<li class="text-sm text-green-700 flex items-start">
+                         <span class="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                         ${priority}
+                       </li>`
+                    ).join('')}
+                  </ul>
+                </div>
+                <div>
+                  <span class="text-xs font-medium text-red-700">Pain Points:</span>
+                  <ul class="mt-1 space-y-1">
+                    ${persona.painPoints.map(pain => 
+                      `<li class="text-sm text-red-700 flex items-start">
+                         <span class="w-1.5 h-1.5 bg-red-600 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                         ${pain}
+                       </li>`
+                    ).join('')}
+                  </ul>
+                </div>
               </div>
             </div>
             
-            <!-- Pain Points -->
-            <div class="bg-red-50 rounded-lg p-3">
-              <h4 class="text-sm font-semibold text-red-800 mb-2 flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                </svg>
-                Pain Points
-              </h4>
-              <div class="flex flex-wrap gap-1">
-                ${persona.painPoints.map(pain => 
-                  `<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">${pain}</span>`
-                ).join('')}
-              </div>
-            </div>
-            
-            <!-- Interests -->
-            <div class="bg-purple-50 rounded-lg p-3">
-              <h4 class="text-sm font-semibold text-purple-800 mb-2 flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- How UiPath Can Help Them -->
+            <div class="bg-orange-50 rounded-lg p-4">
+              <h4 class="text-sm font-semibold text-orange-800 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                 </svg>
-                Key Interests
+                How UiPath Can Help Them
               </h4>
-              <div class="flex flex-wrap gap-1">
-                ${persona.interests.map(interest => 
-                  `<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">${interest}</span>`
-                ).join('')}
+              <div class="space-y-3">
+                <div>
+                  <span class="text-xs font-medium text-orange-700">Value Drivers:</span>
+                  <ul class="mt-1 space-y-1">
+                    ${persona.interests.map(interest => 
+                      `<li class="text-sm text-orange-700 flex items-start">
+                         <span class="w-1.5 h-1.5 bg-orange-600 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                         ${interest}
+                       </li>`
+                    ).join('')}
+                  </ul>
+                </div>
+                <div class="bg-orange-100 rounded-md p-3 mt-3">
+                  <span class="text-xs font-medium text-orange-800">UiPath Impact:</span>
+                  <p class="text-sm text-orange-800 mt-1 leading-relaxed">
+                    ${this.generateUiPathValue(persona)}
+                  </p>
+                </div>
               </div>
             </div>
             
@@ -1300,6 +1328,64 @@ class PersonaManager {
 
     // Add event listeners for collapsible functionality
     this.attachCollapsibleEventListeners(container);
+  }
+
+  generateUiPathValue(persona) {
+    // Generate context-aware UiPath value proposition based on persona data
+    const roleType = persona.title.toLowerCase();
+    const topPainPoint = persona.painPoints[0]?.toLowerCase() || '';
+    const topInterest = persona.interests[0]?.toLowerCase() || '';
+    
+    if (roleType.includes('cto') || roleType.includes('cio') || roleType.includes('chief technology')) {
+      return 'UiPath provides enterprise-grade automation platform with AI-powered capabilities to transform your technology landscape. Our solution offers centralized governance, scalable architecture, and comprehensive security to drive digital transformation initiatives while reducing technical debt and operational complexity.';
+    }
+    
+    if (roleType.includes('cfo') || roleType.includes('finance')) {
+      return 'UiPath delivers measurable ROI through process automation that reduces operational costs, eliminates errors, and accelerates financial processes. Our platform provides clear audit trails, compliance controls, and detailed analytics to optimize financial operations while ensuring regulatory adherence.';
+    }
+    
+    if (roleType.includes('operations') || roleType.includes('ops')) {
+      return 'UiPath streamlines operations by automating repetitive tasks, reducing processing times, and improving accuracy. Our intelligent automation handles high-volume transactions, integrates with existing systems, and scales with your business needs to drive operational excellence.';
+    }
+    
+    if (roleType.includes('customer') || roleType.includes('contact center')) {
+      return 'UiPath enhances customer experience by automating customer service processes, reducing response times, and providing agents with intelligent assistance. Our platform enables 24/7 service availability, consistent service quality, and personalized customer interactions.';
+    }
+    
+    if (roleType.includes('risk') || roleType.includes('compliance')) {
+      return 'UiPath strengthens risk management and compliance through automated monitoring, standardized processes, and comprehensive audit trails. Our platform ensures consistent policy enforcement, reduces human error, and provides real-time visibility into compliance status.';
+    }
+    
+    if (roleType.includes('trading') || roleType.includes('capital markets')) {
+      return 'UiPath accelerates trading operations with straight-through processing, automated reconciliation, and real-time risk monitoring. Our platform reduces settlement failures, ensures regulatory compliance, and enables faster response to market opportunities.';
+    }
+    
+    if (roleType.includes('claims') || roleType.includes('underwriting')) {
+      return 'UiPath transforms insurance operations through intelligent claims processing, automated underwriting, and fraud detection. Our platform accelerates claim resolution, improves accuracy, and enhances customer satisfaction while reducing operational costs.';
+    }
+    
+    // Generic value proposition based on interests and pain points
+    let value = 'UiPath automates your most time-consuming processes, ';
+    
+    if (topPainPoint.includes('manual') || topPainPoint.includes('slow')) {
+      value += 'eliminating manual work and accelerating processing times. ';
+    } else if (topPainPoint.includes('cost') || topPainPoint.includes('efficiency')) {
+      value += 'reducing operational costs and improving efficiency. ';
+    } else if (topPainPoint.includes('error') || topPainPoint.includes('accuracy')) {
+      value += 'improving accuracy and reducing errors. ';
+    } else {
+      value += 'driving operational excellence. ';
+    }
+    
+    if (topInterest.includes('automation')) {
+      value += 'Our intelligent automation platform integrates with your existing systems to deliver measurable business outcomes.';
+    } else if (topInterest.includes('digital transformation')) {
+      value += 'Our platform accelerates your digital transformation journey with enterprise-ready automation capabilities.';
+    } else {
+      value += 'Our comprehensive automation solution scales with your business needs and delivers rapid ROI.';
+    }
+    
+    return value;
   }
 
   attachCollapsibleEventListeners(container) {
