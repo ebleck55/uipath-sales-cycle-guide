@@ -1,0 +1,801 @@
+/**
+ * Timeline Navigation UiPath Sales Cycle Guide
+ * Modern timeline-based navigation with stage progression
+ */
+
+// ==================== SECURITY MODULE ====================
+class HTMLSanitizer {
+  constructor() {
+    this.allowedTags = {
+      basic: ['p', 'br', 'strong', 'em', 'span', 'div'],
+      links: ['a'],
+      lists: ['ul', 'ol', 'li']
+    };
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  sanitize(html, level = 'basic') {
+    if (typeof html !== 'string') return '';
+    return this.escapeHtml(html);
+  }
+}
+
+const sanitizer = new HTMLSanitizer();
+
+// ==================== STATE MANAGEMENT ====================
+class AppState {
+  constructor() {
+    this.state = {
+      currentIndustry: 'banking',
+      currentStage: 0,
+      adminMode: false,
+      checkboxes: new Map(),
+      notes: new Map(),
+      stageProgress: new Map()
+    };
+    this.listeners = new Map();
+  }
+
+  subscribe(key, callback) {
+    if (!this.listeners.has(key)) {
+      this.listeners.set(key, new Set());
+    }
+    this.listeners.get(key).add(callback);
+    return () => {
+      const callbacks = this.listeners.get(key);
+      if (callbacks) {
+        callbacks.delete(callback);
+      }
+    };
+  }
+
+  get(key) {
+    return this.state[key];
+  }
+
+  set(key, value) {
+    const oldValue = this.state[key];
+    this.state[key] = value;
+    this.notifyListeners(key, value, oldValue);
+  }
+
+  notifyListeners(key, newValue, oldValue) {
+    const callbacks = this.listeners.get(key);
+    if (callbacks) {
+      callbacks.forEach(callback => {
+        try {
+          callback(newValue, oldValue, key);
+        } catch (error) {
+          console.error('State listener error:', error);
+        }
+      });
+    }
+  }
+
+  toggleCheckbox(checkboxId, checked) {
+    const checkboxes = new Map(this.state.checkboxes);
+    if (checked) {
+      checkboxes.set(checkboxId, true);
+    } else {
+      checkboxes.delete(checkboxId);
+    }
+    this.set('checkboxes', checkboxes);
+    this.updateStageProgress();
+  }
+
+  updateNote(noteId, content) {
+    const notes = new Map(this.state.notes);
+    if (content && content.trim()) {
+      notes.set(noteId, content);
+    } else {
+      notes.delete(noteId);
+    }
+    this.set('notes', notes);
+  }
+
+  clearFormState() {
+    this.set('checkboxes', new Map());
+    this.set('notes', new Map());
+    this.set('stageProgress', new Map());
+  }
+
+  updateStageProgress() {
+    const progress = new Map();
+    
+    if (typeof SALES_CYCLE_DATA !== 'undefined' && SALES_CYCLE_DATA.stages) {
+      SALES_CYCLE_DATA.stages.forEach((stage, index) => {
+        const stageCheckboxes = Array.from(this.state.checkboxes.keys()).filter(key => 
+          key.startsWith(`stage-${index}-`)
+        );
+        
+        const checkedCount = stageCheckboxes.filter(key => this.state.checkboxes.get(key)).length;
+        const totalCount = stageCheckboxes.length || 1;
+        
+        progress.set(index, {
+          completed: checkedCount,
+          total: totalCount,
+          percentage: Math.round((checkedCount / totalCount) * 100)
+        });
+      });
+    }
+    
+    this.set('stageProgress', progress);
+  }
+
+  getStageStatus(stageIndex) {
+    const progress = this.state.stageProgress.get(stageIndex);
+    if (!progress) return 'not-started';
+    
+    if (progress.percentage === 100) return 'completed';
+    if (progress.percentage > 0) return 'in-progress';
+    return 'not-started';
+  }
+}
+
+const appState = new AppState();
+
+// ==================== DOM UTILITIES ====================
+function $(selector, context = document) {
+  return context.querySelector(selector);
+}
+
+function $$(selector, context = document) {
+  return context.querySelectorAll(selector);
+}
+
+async function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } else {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const result = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return result;
+    }
+  } catch (error) {
+    console.error('Failed to copy:', error);
+    return false;
+  }
+}
+
+// ==================== MAIN APPLICATION ====================
+class TimelineUiPathApp {
+  constructor() {
+    this.initialized = false;
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.initialize());
+    } else {
+      this.initialize();
+    }
+  }
+
+  async initialize() {
+    if (this.initialized) return;
+    
+    try {
+      console.log('Initializing Timeline UiPath Sales Guide...');
+      
+      // Initialize UI
+      this.initializeUI();
+      
+      // Initialize event listeners
+      this.initializeEventListeners();
+      
+      // Load and render data
+      this.loadData();
+      
+      this.initialized = true;
+      console.log('Application initialized successfully');
+      
+      // Hide loading indicator
+      const loading = $('#app-loading');
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      
+      // Dispatch ready event
+      document.dispatchEvent(new CustomEvent('app:ready'));
+      
+    } catch (error) {
+      console.error('Initialization failed:', error);
+      this.showError('Failed to initialize application. Please refresh and try again.');
+    }
+  }
+
+  initializeUI() {
+    // Subscribe to state changes
+    appState.subscribe('currentStage', (stageIndex) => {
+      this.renderStageContent(stageIndex);
+      this.updateTimelineUI(stageIndex);
+    });
+
+    appState.subscribe('currentIndustry', (industry) => {
+      this.updateIndustryUI(industry);
+      this.loadData();
+    });
+
+    appState.subscribe('adminMode', (enabled) => {
+      document.body.classList.toggle('admin-mode', enabled);
+      this.updateAdminUI(enabled);
+    });
+
+    appState.subscribe('stageProgress', () => {
+      this.updateTimelineProgress();
+    });
+  }
+
+  initializeEventListeners() {
+    // Global click handler
+    document.addEventListener('click', (e) => {
+      // Handle timeline dot clicks
+      if (e.target.closest('.timeline-dot')) {
+        e.preventDefault();
+        const dot = e.target.closest('.timeline-dot');
+        const stageIndex = parseInt(dot.dataset.stage);
+        if (!isNaN(stageIndex)) {
+          appState.set('currentStage', stageIndex);
+        }
+      }
+      
+      // Handle export notes
+      if (e.target.closest('.export-notes-btn')) {
+        e.preventDefault();
+        this.handleExportNotes();
+      }
+      
+      // Handle clear all
+      if (e.target.closest('.clear-all-btn')) {
+        e.preventDefault();
+        this.handleClearAll();
+      }
+      
+      // Handle admin mode toggle
+      if (e.target.closest('#admin-mode-btn') || e.target.closest('#mobile-admin-btn')) {
+        e.preventDefault();
+        this.toggleAdminMode();
+      }
+      
+      // Handle industry switcher
+      if (e.target.closest('.industry-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.industry-btn');
+        const industry = btn.dataset.industry;
+        if (industry) {
+          appState.set('currentIndustry', industry);
+        }
+      }
+      
+      // Handle mobile menu
+      if (e.target.closest('#mobile-menu-btn')) {
+        e.preventDefault();
+        const menu = $('#mobile-menu');
+        if (menu) {
+          menu.classList.toggle('hidden');
+        }
+      }
+
+      // Handle navigation arrows
+      if (e.target.closest('.nav-prev')) {
+        e.preventDefault();
+        this.navigateToPreviousStage();
+      }
+      
+      if (e.target.closest('.nav-next')) {
+        e.preventDefault();
+        this.navigateToNextStage();
+      }
+    });
+    
+    // Handle checkbox changes
+    document.addEventListener('change', (e) => {
+      if (e.target.type === 'checkbox') {
+        const checkboxId = e.target.dataset.id;
+        if (checkboxId) {
+          appState.toggleCheckbox(checkboxId, e.target.checked);
+          e.target.closest('label')?.classList.toggle('checked-item', e.target.checked);
+        }
+      }
+    });
+    
+    // Handle textarea input
+    document.addEventListener('input', (e) => {
+      if (e.target.classList.contains('note-textarea')) {
+        const noteId = e.target.dataset.noteId;
+        if (noteId) {
+          appState.updateNote(noteId, e.target.value);
+        }
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        this.navigateToPreviousStage();
+      } else if (e.key === 'ArrowRight') {
+        this.navigateToNextStage();
+      }
+    });
+  }
+
+  loadData() {
+    if (typeof SALES_CYCLE_DATA === 'undefined') {
+      console.error('Sales cycle data not loaded, waiting...');
+      setTimeout(() => {
+        if (typeof SALES_CYCLE_DATA === 'undefined') {
+          console.error('Sales cycle data still not loaded');
+          this.showError('Failed to load sales data. Please refresh the page.');
+          return;
+        }
+        this.loadData();
+      }, 500);
+      return;
+    }
+    
+    console.log('Loading data with', SALES_CYCLE_DATA.stages?.length, 'stages');
+    
+    // Render timeline
+    this.renderTimeline();
+    
+    // Render initial stage content
+    this.renderStageContent(appState.get('currentStage') || 0);
+    
+    // Update progress
+    appState.updateStageProgress();
+  }
+
+  renderTimeline() {
+    const container = $('#timeline-container');
+    if (!container || !SALES_CYCLE_DATA.stages) return;
+    
+    const stages = SALES_CYCLE_DATA.stages;
+    const currentStage = appState.get('currentStage') || 0;
+    
+    const timelineHTML = `
+      <div class="relative">
+        <!-- Progress Line -->
+        <div class="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full"></div>
+        <div class="absolute top-8 left-0 h-1 bg-gradient-to-r from-green-500 to-orange-500 rounded-full transition-all duration-500" 
+             style="width: ${((currentStage + 1) / stages.length) * 100}%"></div>
+        
+        <!-- Timeline Dots -->
+        <div class="relative flex justify-between items-start">
+          ${stages.map((stage, index) => {
+            const status = appState.getStageStatus(index);
+            const isActive = index === currentStage;
+            const isPast = index < currentStage;
+            
+            let dotColor = 'bg-gray-300';
+            let textColor = 'text-gray-500';
+            let statusText = 'Not Started';
+            
+            if (status === 'completed') {
+              dotColor = 'bg-green-500';
+              textColor = 'text-green-600';
+              statusText = 'Completed';
+            } else if (status === 'in-progress' || isActive) {
+              dotColor = 'bg-orange-500';
+              textColor = 'text-orange-600';
+              statusText = 'In Progress';
+            }
+            
+            return `
+              <div class="timeline-dot flex flex-col items-center cursor-pointer group transition-all duration-200 hover:scale-105"
+                   data-stage="${index}">
+                <div class="relative">
+                  <div class="w-16 h-16 rounded-full ${dotColor} flex items-center justify-center text-white font-bold text-lg mb-3 
+                              transition-all duration-300 group-hover:shadow-lg ${isActive ? 'ring-4 ring-orange-200 scale-110' : ''}">
+                    ${status === 'completed' ? 
+                      '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' : 
+                      (index + 1)
+                    }
+                  </div>
+                  ${isActive ? '<div class="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-25"></div>' : ''}
+                </div>
+                <div class="text-center">
+                  <div class="font-semibold text-sm ${textColor} mb-1">${sanitizer.escapeHtml(stage.title)}</div>
+                  <div class="text-xs ${textColor}">${statusText}</div>
+                  ${status === 'in-progress' ? 
+                    `<div class="text-xs font-bold ${textColor} mt-1">${appState.state.stageProgress.get(index)?.percentage || 0}%</div>` : 
+                    ''
+                  }
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    
+    container.innerHTML = timelineHTML;
+  }
+
+  renderStageContent(stageIndex) {
+    const container = $('#stage-content');
+    if (!container || !SALES_CYCLE_DATA.stages) return;
+    
+    const stage = SALES_CYCLE_DATA.stages[stageIndex];
+    if (!stage) return;
+    
+    const progress = appState.state.stageProgress.get(stageIndex) || { completed: 0, total: 0, percentage: 0 };
+    const currentIndustry = appState.get('currentIndustry');
+    
+    const contentHTML = `
+      <!-- Stage Header -->
+      <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">
+              Stage ${stageIndex + 1}: ${sanitizer.escapeHtml(stage.title)}
+            </h2>
+            <p class="text-gray-600">${sanitizer.escapeHtml(stage.description || 'Drive the sales process forward in this critical stage.')}</p>
+          </div>
+          <div class="text-right">
+            <div class="text-4xl font-bold ${progress.percentage === 100 ? 'text-green-600' : 'text-orange-600'}">
+              ${progress.percentage}%
+            </div>
+            <div class="text-sm text-gray-500">${progress.completed} of ${progress.total} tasks</div>
+          </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-3">
+          <div class="bg-gradient-to-r from-green-500 to-orange-500 h-3 rounded-full transition-all duration-500" 
+               style="width: ${progress.percentage}%"></div>
+        </div>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="grid lg:grid-cols-3 gap-6 mb-6">
+        <!-- Outcomes -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold mb-4 text-orange-600 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Verifiable Outcomes
+          </h3>
+          <div class="space-y-3">
+            ${(stage.outcomes || []).map((outcome, i) => `
+              <label class="flex items-start cursor-pointer group">
+                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-orange-600 rounded focus:ring-orange-500" 
+                       data-id="stage-${stageIndex}-outcome-${i}">
+                <span class="text-gray-700 group-hover:text-gray-900">${sanitizer.escapeHtml(outcome)}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Initial Personas -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold mb-4 text-blue-600 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            Key Personas
+          </h3>
+          <ul class="space-y-2">
+            ${(stage.initialPersonas || []).map(persona => `
+              <li class="flex items-start">
+                <span class="text-blue-500 mr-2">•</span>
+                <span class="text-gray-700">${sanitizer.escapeHtml(persona)}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <!-- Resources -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold mb-4 text-green-600 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Key Resources
+          </h3>
+          <ul class="space-y-2">
+            ${((stage.resources?.[currentIndustry] || []).slice(0, 5)).map(resource => `
+              <li>
+                <a href="${sanitizer.escapeHtml(resource.link)}" 
+                   class="text-blue-600 hover:underline text-sm" 
+                   target="_blank" rel="noopener noreferrer">
+                  → ${sanitizer.escapeHtml(resource.name)}
+                </a>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Discovery Questions -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Key Discovery Questions
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          ${Object.entries(stage.questions || {}).slice(0, 4).map(([category, questions]) => `
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.escapeHtml(category)}</h4>
+              <div class="space-y-3">
+                ${questions.slice(0, 2).map((q, i) => `
+                  <div class="bg-white p-3 rounded border border-gray-200">
+                    <p class="text-sm text-gray-700 mb-2">${sanitizer.escapeHtml(q)}</p>
+                    <textarea class="note-textarea w-full p-2 border border-gray-300 rounded text-sm resize-none" 
+                             rows="2" 
+                             placeholder="Customer response notes..."
+                             data-note-id="stage-${stageIndex}-q-${category}-${i}"></textarea>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-between items-center">
+        <button class="nav-prev px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors
+                       ${stageIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}">
+          ← Previous Stage
+        </button>
+        
+        <div class="flex gap-3">
+          <button class="export-notes-btn px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            Copy Notes
+          </button>
+          <button class="clear-all-btn px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors">
+            Clear All
+          </button>
+        </div>
+        
+        <button class="nav-next px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors
+                       ${stageIndex === SALES_CYCLE_DATA.stages.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+          Next Stage →
+        </button>
+      </div>
+    `;
+    
+    container.innerHTML = contentHTML;
+    
+    // Restore checkbox states
+    this.restoreFormState(stageIndex);
+  }
+
+  restoreFormState(stageIndex) {
+    // Restore checkboxes
+    appState.state.checkboxes.forEach((checked, checkboxId) => {
+      if (checkboxId.startsWith(`stage-${stageIndex}-`)) {
+        const checkbox = $(`[data-id="${checkboxId}"]`);
+        if (checkbox) {
+          checkbox.checked = checked;
+          checkbox.closest('label')?.classList.toggle('checked-item', checked);
+        }
+      }
+    });
+    
+    // Restore notes
+    appState.state.notes.forEach((content, noteId) => {
+      if (noteId.startsWith(`stage-${stageIndex}-`)) {
+        const textarea = $(`[data-note-id="${noteId}"]`);
+        if (textarea) {
+          textarea.value = content;
+        }
+      }
+    });
+  }
+
+  updateTimelineUI(stageIndex) {
+    // Update timeline dots
+    $$('.timeline-dot').forEach((dot, index) => {
+      const isActive = index === stageIndex;
+      const dotCircle = dot.querySelector('div > div');
+      
+      if (dotCircle) {
+        dotCircle.classList.toggle('ring-4', isActive);
+        dotCircle.classList.toggle('ring-orange-200', isActive);
+        dotCircle.classList.toggle('scale-110', isActive);
+      }
+    });
+    
+    // Update progress line
+    const progressLine = $('.absolute.bg-gradient-to-r');
+    if (progressLine && SALES_CYCLE_DATA.stages) {
+      progressLine.style.width = `${((stageIndex + 1) / SALES_CYCLE_DATA.stages.length) * 100}%`;
+    }
+  }
+
+  updateTimelineProgress() {
+    // Re-render timeline to show updated progress
+    this.renderTimeline();
+  }
+
+  navigateToPreviousStage() {
+    const currentStage = appState.get('currentStage') || 0;
+    if (currentStage > 0) {
+      appState.set('currentStage', currentStage - 1);
+    }
+  }
+
+  navigateToNextStage() {
+    const currentStage = appState.get('currentStage') || 0;
+    if (SALES_CYCLE_DATA.stages && currentStage < SALES_CYCLE_DATA.stages.length - 1) {
+      appState.set('currentStage', currentStage + 1);
+    }
+  }
+
+  toggleAdminMode() {
+    const currentMode = appState.get('adminMode');
+    appState.set('adminMode', !currentMode);
+  }
+
+  updateAdminUI(enabled) {
+    const adminBtn = $('#admin-mode-btn');
+    const mobileAdminBtn = $('#mobile-admin-btn');
+    const adminStatus = $('#admin-status');
+    
+    if (adminBtn) {
+      adminBtn.textContent = enabled ? 'Exit Edit Mode' : 'Enter Edit Mode';
+      adminBtn.classList.toggle('bg-orange-600', enabled);
+      adminBtn.classList.toggle('text-white', enabled);
+    }
+    
+    if (mobileAdminBtn) {
+      mobileAdminBtn.textContent = enabled ? 'Exit Edit Mode' : 'Enter Edit Mode';
+    }
+    
+    if (adminStatus) {
+      adminStatus.classList.toggle('hidden', !enabled);
+    }
+  }
+
+  updateIndustryUI(industry) {
+    $$('.industry-btn').forEach(btn => {
+      const isActive = btn.dataset.industry === industry;
+      btn.classList.toggle('bg-orange-600', isActive);
+      btn.classList.toggle('text-white', isActive);
+      btn.classList.toggle('bg-white', !isActive);
+      btn.classList.toggle('text-gray-700', !isActive);
+    });
+  }
+
+  async handleExportNotes() {
+    try {
+      const notes = this.collectAllNotes();
+      
+      if (!notes.trim()) {
+        this.showNotification('No notes to export', 'warning');
+        return;
+      }
+      
+      const success = await copyToClipboard(notes);
+      
+      if (success) {
+        this.showNotification('Notes copied to clipboard!', 'success');
+      } else {
+        throw new Error('Failed to copy to clipboard');
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      this.showError('Failed to copy notes. Please try selecting and copying manually.');
+    }
+  }
+
+  collectAllNotes() {
+    const notes = [];
+    const notesMap = appState.get('notes');
+    
+    SALES_CYCLE_DATA.stages.forEach((stage, index) => {
+      const stageNotes = [];
+      
+      notesMap.forEach((value, key) => {
+        if (key.startsWith(`stage-${index}-`) && value.trim()) {
+          stageNotes.push(`- ${value.trim()}`);
+        }
+      });
+      
+      if (stageNotes.length > 0) {
+        notes.push(`\n=== Stage ${index + 1}: ${stage.title} ===\n${stageNotes.join('\n')}`);
+      }
+    });
+    
+    return notes.join('\n\n').trim();
+  }
+
+  handleClearAll() {
+    if (confirm('Are you sure you want to clear all checkboxes and notes? This cannot be undone.')) {
+      appState.clearFormState();
+      
+      $$('input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+        cb.closest('label')?.classList.remove('checked-item');
+      });
+      
+      $$('.note-textarea').forEach(textarea => {
+        textarea.value = '';
+      });
+      
+      this.renderTimeline();
+      this.showNotification('All data cleared', 'success');
+    }
+  }
+
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-20 right-4 p-4 rounded-lg shadow-lg z-50 animate-slideIn ${
+      type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
+      type === 'warning' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+      type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' :
+      'bg-blue-100 text-blue-800 border border-blue-200'
+    }`;
+    
+    notification.innerHTML = `
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          ${type === 'success' ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>' :
+            type === 'warning' ? '<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>' :
+            type === 'error' ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>' :
+            '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>'
+          }
+        </svg>
+        <span>${message}</span>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-out';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  showError(message) {
+    this.showNotification(message, 'error');
+  }
+}
+
+// Initialize application
+const timelineApp = new TimelineUiPathApp();
+
+// Export for debugging
+if (typeof window !== 'undefined') {
+  window.TimelineApp = timelineApp;
+  window.appState = appState;
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+  .animate-slideIn { animation: slideIn 0.3s ease-out; }
+  @keyframes ping {
+    75%, 100% { transform: scale(2); opacity: 0; }
+  }
+  .animate-ping { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+`;
+document.head.appendChild(style);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UiPath Sales Cycle Guide - Hardened Edition (Beta)</title>
+  <title>UiPath Sales Cycle Guide - Timeline Edition</title>
   
   <!-- Preconnect to external domains for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -154,42 +154,20 @@
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Personas Section -->
-    <section id="personas-section" class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Key Decision Makers & Personas</h2>
-      <div id="personas-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Personas will be rendered here by JavaScript -->
+    <!-- Timeline Navigation -->
+    <section id="timeline-section" class="mb-8">
+      <div class="bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl p-8 shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Sales Cycle Journey</h2>
+        <div id="timeline-container">
+          <!-- Timeline will be rendered here by JavaScript -->
+        </div>
       </div>
     </section>
 
-    <!-- Sales Stages Section -->
-    <section id="stages-section">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Sales Cycle Stages</h2>
-      <div class="space-y-8">
-        <!-- Stage 1: Discovery -->
-        <div id="stage-1" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <!-- Stage content will be rendered here by JavaScript -->
-        </div>
-
-        <!-- Stage 2: Technical Evaluation -->
-        <div id="stage-2" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <!-- Stage content will be rendered here by JavaScript -->
-        </div>
-
-        <!-- Stage 3: Business Case -->
-        <div id="stage-3" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <!-- Stage content will be rendered here by JavaScript -->
-        </div>
-
-        <!-- Stage 4: Procurement -->
-        <div id="stage-4" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <!-- Stage content will be rendered here by JavaScript -->
-        </div>
-
-        <!-- Stage 5: Implementation Planning -->
-        <div id="stage-5" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <!-- Stage content will be rendered here by JavaScript -->
-        </div>
+    <!-- Stage Content Area -->
+    <section id="stage-content-section">
+      <div id="stage-content">
+        <!-- Stage content will be rendered here dynamically -->
       </div>
     </section>
   </main>
@@ -247,8 +225,8 @@
   <!-- Application Scripts -->
   <!-- Load data first -->
   <script src="js/data.js"></script>
-  <!-- Load hardened application -->
-  <script src="hardened-app.js"></script>
+  <!-- Load timeline application -->
+  <script src="timeline-app.js"></script>
 
   <!-- Hide loading indicator once app is ready -->
   <script>
