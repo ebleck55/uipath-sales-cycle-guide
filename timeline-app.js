@@ -347,6 +347,9 @@ class TimelineUiPathApp {
     
     console.log('Loading data with', SALES_CYCLE_DATA.stages?.length, 'stages');
     
+    // Render personas
+    this.renderPersonas();
+    
     // Render timeline
     this.renderTimeline();
     
@@ -421,6 +424,36 @@ class TimelineUiPathApp {
     `;
     
     container.innerHTML = timelineHTML;
+  }
+
+  renderPersonas() {
+    const container = $('#personas-container');
+    if (!container || !SALES_CYCLE_DATA.personas) return;
+    
+    const currentIndustry = appState.get('currentIndustry');
+    const personas = SALES_CYCLE_DATA.personas[currentIndustry] || [];
+    
+    const personasHTML = personas.map(persona => `
+      <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <h3 class="text-lg font-semibold mb-3 text-blue-700">${sanitizer.escapeHtml(persona.title)}</h3>
+        <div class="space-y-3">
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.world || '')}</p>
+          </div>
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.cares || '')}</p>
+          </div>
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">${sanitizer.escapeHtml(persona.help || '')}</p>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    
+    container.innerHTML = personasHTML || '<p class="text-gray-500 col-span-full text-center">No personas available for this industry.</p>';
   }
 
   renderStageContent(stageIndex) {
