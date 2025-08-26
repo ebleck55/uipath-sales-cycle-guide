@@ -965,81 +965,68 @@ class UseCaseManager {
       return;
     }
 
-    const useCaseCards = this.filteredUseCases.map(useCase => {
-      const isSelected = this.selectedUseCases.has(useCase.id);
-      
-      return `
-        <div class="use-case-card bg-white p-6 rounded-lg border hover:border-orange-300 transition-colors ${isSelected ? 'ring-2 ring-orange-500 border-orange-500' : 'border-gray-200'}">
-          <div class="flex justify-between items-start mb-3">
-            <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">${useCase.name}</h3>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
-                  ${useCase.category}
-                </span>
-                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
-                  ${useCase.complexity}
-                </span>
-                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
-                  ${useCase.timeToValue}
-                </span>
-              </div>
+    const useCaseCards = this.filteredUseCases.map(useCase => `
+      <div class="use-case-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div class="collapsible-header p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-section="use-case-card">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center flex-1">
+              <svg class="chevron-icon w-4 h-4 mr-2 text-orange-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+              <h3 class="text-lg font-semibold text-orange-700">${useCase.name}</h3>
             </div>
-            <div class="flex items-center gap-2">
-              <button 
-                class="use-case-select-btn px-3 py-1 text-xs font-medium rounded transition-colors ${isSelected ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
-                data-use-case-id="${useCase.id}">
-                ${isSelected ? '✓ Selected' : 'Select'}
+            <span class="text-sm text-gray-600">${useCase.category}</span>
+          </div>
+        </div>
+        <div class="collapsible-content hidden px-4 pb-4">
+          <div class="space-y-2 pt-2 border-t border-gray-100">
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Description:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${useCase.description}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Business Value:</h4>
+              <p class="text-xs text-green-700 leading-relaxed">${useCase.businessValue}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Key Processes:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${useCase.processes.join(', ')}</p>
+            </div>
+            ${useCase.page ? `
+            <div class="pt-2">
+              <button class="lob-use-case-link w-full px-3 py-1 bg-orange-600 text-white text-xs rounded hover:bg-orange-700 transition-colors" 
+                      data-page="${useCase.page}">
+                View Detailed Slide (Page ${useCase.page})
               </button>
             </div>
+            ` : ''}
           </div>
-          
-          <p class="text-gray-600 text-sm mb-4">${useCase.description}</p>
-          
-          <div class="mb-4">
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Business Value:</h4>
-            <p class="text-green-700 text-sm font-medium">${useCase.businessValue}</p>
-          </div>
-
-          <div class="mb-4">
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Key Processes:</h4>
-            <div class="flex flex-wrap gap-1">
-              ${useCase.processes.map(process => 
-                `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${process}</span>`
-              ).join('')}
-            </div>
-          </div>
-
-          ${useCase.page ? `
-          <div class="border-t pt-4">
-            <button class="lob-use-case-link w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium rounded hover:from-orange-600 hover:to-red-600 transition-all" 
-                    data-page="${useCase.page}">
-              📊 View Detailed Slide (Page ${useCase.page})
-            </button>
-          </div>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
-
-    container.innerHTML = `
-      <div class="mb-4 flex justify-between items-center">
-        <h3 class="text-lg font-semibold">Relevant Use Cases (${this.filteredUseCases.length})</h3>
-        <div class="text-sm text-gray-600">
-          Selected: <span class="font-medium text-orange-600">${this.selectedUseCases.size}</span>
         </div>
       </div>
-      <div class="grid gap-6">
-        ${useCaseCards}
-      </div>
-    `;
+    `).join('');
 
-    // Add event listeners for selection buttons
-    container.addEventListener('click', (e) => {
-      if (e.target.matches('.use-case-select-btn')) {
-        const useCaseId = e.target.dataset.useCaseId;
-        this.toggleUseCaseSelection(useCaseId);
-      }
+    container.innerHTML = useCaseCards;
+
+    // Add event listeners for collapsible functionality
+    this.attachCollapsibleEventListeners(container);
+  }
+
+  attachCollapsibleEventListeners(container) {
+    // Handle collapsible functionality
+    const headers = container.querySelectorAll('.collapsible-header');
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const chevron = header.querySelector('.chevron-icon');
+        
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          chevron.style.transform = 'rotate(90deg)';
+        } else {
+          content.classList.add('hidden');
+          chevron.style.transform = 'rotate(0deg)';
+        }
+      });
     });
   }
 
@@ -1191,87 +1178,66 @@ class PersonaManager {
       return;
     }
 
-    const personasHTML = personas.map(persona => `
-      <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow" data-persona-id="${persona.id}">
-        <div class="flex justify-between items-start mb-4">
-          <h3 class="text-lg font-semibold text-gray-900">${sanitizer.escapeHtml(persona.title)}</h3>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${persona.level}</span>
-            <button class="persona-select-btn text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50" data-persona-id="${persona.id}">
-              ${this.selectedPersonas.has(persona.id) ? 'Selected' : 'Select'}
-            </button>
+    const personasHTML = personas.map((persona, index) => `
+      <div class="persona-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div class="collapsible-header p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-section="persona-card">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center flex-1">
+              <svg class="chevron-icon w-4 h-4 mr-2 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+              <h3 class="text-lg font-semibold text-blue-700">
+                ${persona.title}
+              </h3>
+            </div>
           </div>
         </div>
-        
-        <p class="text-sm text-gray-600 mb-4">${sanitizer.escapeHtml(persona.description)}</p>
-        
-        <div class="space-y-3">
-          <div>
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Key Priorities</h4>
-            <div class="flex flex-wrap gap-1">
-              ${persona.priorities.map(priority => 
-                `<span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">${sanitizer.escapeHtml(priority)}</span>`
-              ).join('')}
+        <div class="collapsible-content hidden px-4 pb-4">
+          <div class="space-y-2 pt-2 border-t border-gray-100">
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${persona.description}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${persona.priorities.join(', ')}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Pain Points:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${persona.painPoints.join(', ')}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Interests:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${persona.interests.join(', ')}</p>
             </div>
           </div>
-          
-          <div>
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Pain Points</h4>
-            <div class="flex flex-wrap gap-1">
-              ${persona.painPoints.map(pain => 
-                `<span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">${sanitizer.escapeHtml(pain)}</span>`
-              ).join('')}
-            </div>
-          </div>
-          
-          <div>
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Interests</h4>
-            <div class="flex flex-wrap gap-1">
-              ${persona.interests.map(interest => 
-                `<span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${sanitizer.escapeHtml(interest)}</span>`
-              ).join('')}
-            </div>
-          </div>
-          
-          ${persona.deploymentContext ? `
-            <div class="pt-2 border-t border-gray-100">
-              <h4 class="text-sm font-medium text-orange-700 mb-1">Deployment Context</h4>
-              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(persona.deploymentContext)}</p>
-            </div>
-          ` : ''}
-          
-          ${persona.customerTypeContext ? `
-            <div class="pt-2 border-t border-gray-100">
-              <h4 class="text-sm font-medium text-purple-700 mb-1">Customer Context</h4>
-              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(persona.customerTypeContext)}</p>
-            </div>
-          ` : ''}
         </div>
       </div>
     `).join('');
 
-    container.innerHTML = `
-      <div class="mb-6">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold text-gray-900">
-            Decision Makers & Personas 
-            ${personas.length > 0 ? `(${personas.length} found)` : ''}
-          </h3>
-          ${this.selectedPersonas.size > 0 ? `
-            <div class="flex items-center space-x-2">
-              <span class="text-sm text-gray-600">${this.selectedPersonas.size} selected</span>
-              <button id="clear-personas-btn" class="text-sm text-red-600 hover:text-red-800">Clear All</button>
-            </div>
-          ` : ''}
-        </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          ${personasHTML}
-        </div>
-      </div>
-    `;
+    container.innerHTML = personasHTML;
 
-    // Add event listeners for persona selection
-    this.attachPersonaEventListeners();
+    // Add event listeners for collapsible functionality
+    this.attachCollapsibleEventListeners(container);
+  }
+
+  attachCollapsibleEventListeners(container) {
+    // Handle collapsible functionality
+    const headers = container.querySelectorAll('.collapsible-header');
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const chevron = header.querySelector('.chevron-icon');
+        
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          chevron.style.transform = 'rotate(90deg)';
+        } else {
+          content.classList.add('hidden');
+          chevron.style.transform = 'rotate(0deg)';
+        }
+      });
+    });
   }
 
   attachPersonaEventListeners() {
@@ -1472,80 +1438,65 @@ class ResourceManager {
     }
 
     const resourcesHTML = resources.map(resource => `
-      <div class="resource-card bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow" data-resource-id="${resource.id}">
-        <div class="flex justify-between items-start mb-4">
-          <div class="flex-1">
-            <div class="flex items-center space-x-2 mb-2">
-              <h3 class="text-lg font-semibold text-gray-900">${sanitizer.escapeHtml(resource.name)}</h3>
-              <span class="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">${resource.type}</span>
+      <div class="resource-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div class="collapsible-header p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-section="resource-card">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center flex-1">
+              <svg class="chevron-icon w-4 h-4 mr-2 text-green-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+              <h3 class="text-lg font-semibold text-green-700">${sanitizer.escapeHtml(resource.name)}</h3>
             </div>
-          </div>
-          <div class="flex items-center space-x-2 ml-4">
-            <button class="resource-select-btn text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50" data-resource-id="${resource.id}">
-              ${this.selectedResources.has(resource.id) ? 'Selected' : 'Select'}
-            </button>
-            <a href="${resource.link}" class="text-sm px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700" target="_blank">
-              View
-            </a>
+            <span class="text-sm text-gray-600">${resource.type}</span>
           </div>
         </div>
-        
-        <p class="text-sm text-gray-600 mb-3">${sanitizer.escapeHtml(resource.overview)}</p>
-        
-        <div class="mb-4">
-          <h4 class="text-sm font-medium text-orange-700 mb-2">Why This Matters</h4>
-          <p class="text-sm text-gray-700">${sanitizer.escapeHtml(resource.why)}</p>
-        </div>
-        
-        <div class="space-y-3">
-          <div>
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Relevance</h4>
-            <div class="flex flex-wrap gap-1">
-              ${resource.relevance.map(item => 
-                `<span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${sanitizer.escapeHtml(item)}</span>`
-              ).join('')}
+        <div class="collapsible-content hidden px-4 pb-4">
+          <div class="space-y-2 pt-2 border-t border-gray-100">
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Overview:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${sanitizer.escapeHtml(resource.overview)}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Why This Matters:</h4>
+              <p class="text-xs text-orange-700 leading-relaxed">${sanitizer.escapeHtml(resource.why)}</p>
+            </div>
+            <div class="relative">
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Relevance:</h4>
+              <p class="text-xs text-gray-600 leading-relaxed">${resource.relevance.join(', ')}</p>
+            </div>
+            <div class="pt-2">
+              <a href="${resource.link}" class="w-full inline-block px-3 py-1 bg-green-600 text-white text-xs text-center rounded hover:bg-green-700 transition-colors" target="_blank">
+                View Resource
+              </a>
             </div>
           </div>
-          
-          ${resource.deploymentNote ? `
-            <div class="pt-2 border-t border-gray-100">
-              <h4 class="text-sm font-medium text-orange-700 mb-1">Deployment Context</h4>
-              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(resource.deploymentNote)}</p>
-            </div>
-          ` : ''}
-          
-          ${resource.customerNote ? `
-            <div class="pt-2 border-t border-gray-100">
-              <h4 class="text-sm font-medium text-purple-700 mb-1">Customer Context</h4>
-              <p class="text-xs text-gray-600">${sanitizer.escapeHtml(resource.customerNote)}</p>
-            </div>
-          ` : ''}
         </div>
       </div>
     `).join('');
 
-    container.innerHTML = `
-      <div class="mb-6">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold text-gray-900">
-            Key Resources & Content
-            ${resources.length > 0 ? `(${resources.length} found)` : ''}
-          </h3>
-          ${this.selectedResources.size > 0 ? `
-            <div class="flex items-center space-x-2">
-              <span class="text-sm text-gray-600">${this.selectedResources.size} selected</span>
-              <button id="clear-resources-btn" class="text-sm text-red-600 hover:text-red-800">Clear All</button>
-            </div>
-          ` : ''}
-        </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          ${resourcesHTML}
-        </div>
-      </div>
-    `;
+    container.innerHTML = resourcesHTML;
 
-    // Add event listeners for resource selection
-    this.attachResourceEventListeners();
+    // Add event listeners for collapsible functionality
+    this.attachCollapsibleEventListeners(container);
+  }
+
+  attachCollapsibleEventListeners(container) {
+    // Handle collapsible functionality
+    const headers = container.querySelectorAll('.collapsible-header');
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const chevron = header.querySelector('.chevron-icon');
+        
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          chevron.style.transform = 'rotate(90deg)';
+        } else {
+          content.classList.add('hidden');
+          chevron.style.transform = 'rotate(0deg)';
+        }
+      });
+    });
   }
 
   attachResourceEventListeners() {
