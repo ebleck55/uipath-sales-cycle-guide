@@ -1193,23 +1193,101 @@ class PersonaManager {
           </div>
         </div>
         <div class="collapsible-content hidden px-4 pb-4">
-          <div class="space-y-2 pt-2 border-t border-gray-100">
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${persona.description}</p>
+          <div class="space-y-4 pt-4 border-t border-gray-100">
+            <!-- Persona Level Badge -->
+            ${persona.level ? `
+            <div class="flex items-center space-x-2 mb-3">
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                ${persona.level.charAt(0).toUpperCase() + persona.level.slice(1)} Level
+              </span>
+              ${persona.vertical && persona.lob ? `
+              <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                ${persona.vertical} - ${persona.lob}
+              </span>
+              ` : ''}
             </div>
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${persona.priorities.join(', ')}</p>
+            ` : ''}
+            
+            <!-- Their World -->
+            <div class="bg-blue-50 rounded-lg p-3">
+              <h4 class="text-sm font-semibold text-blue-800 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 0L9 9m0 0l3-3m-3 3l3 3"/>
+                </svg>
+                Their World
+              </h4>
+              <p class="text-sm text-blue-700 leading-relaxed">${persona.description}</p>
             </div>
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Pain Points:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${persona.painPoints.join(', ')}</p>
+            
+            <!-- What They Care About -->
+            <div class="bg-green-50 rounded-lg p-3">
+              <h4 class="text-sm font-semibold text-green-800 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+                Key Priorities
+              </h4>
+              <div class="flex flex-wrap gap-1">
+                ${persona.priorities.map(priority => 
+                  `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${priority}</span>`
+                ).join('')}
+              </div>
             </div>
-            <div class="relative">
-              <h4 class="text-sm font-medium text-gray-700 mb-1">Interests:</h4>
-              <p class="text-xs text-gray-600 leading-relaxed">${persona.interests.join(', ')}</p>
+            
+            <!-- Pain Points -->
+            <div class="bg-red-50 rounded-lg p-3">
+              <h4 class="text-sm font-semibold text-red-800 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>
+                Pain Points
+              </h4>
+              <div class="flex flex-wrap gap-1">
+                ${persona.painPoints.map(pain => 
+                  `<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">${pain}</span>`
+                ).join('')}
+              </div>
             </div>
+            
+            <!-- Interests -->
+            <div class="bg-purple-50 rounded-lg p-3">
+              <h4 class="text-sm font-semibold text-purple-800 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Key Interests
+              </h4>
+              <div class="flex flex-wrap gap-1">
+                ${persona.interests.map(interest => 
+                  `<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">${interest}</span>`
+                ).join('')}
+              </div>
+            </div>
+            
+            <!-- Context-specific information -->
+            ${persona.deploymentContext ? `
+            <div class="bg-orange-50 rounded-lg p-3">
+              <h4 class="text-sm font-semibold text-orange-800 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                Deployment Context
+              </h4>
+              <p class="text-sm text-orange-700">${persona.deploymentContext}</p>
+            </div>
+            ` : ''}
+            
+            ${persona.customerTypeContext ? `
+            <div class="bg-indigo-50 rounded-lg p-3">
+              <h4 class="text-sm font-semibold text-indigo-800 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20a3 3 0 01-3-3v-2a3 3 0 01-3-3V9a3 3 0 013-3h3a3 3 0 013 3v3a3 3 0 01-3 3v2a3 3 0 01-3 3z"/>
+                </svg>
+                Customer Context
+              </h4>
+              <p class="text-sm text-indigo-700">${persona.customerTypeContext}</p>
+            </div>
+            ` : ''}
           </div>
         </div>
       </div>
