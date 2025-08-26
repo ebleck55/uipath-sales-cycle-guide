@@ -27,13 +27,13 @@ function renderPersonas(){
     host.innerHTML = '';
     APP_STATE.personas[ind].forEach((p,i)=>{
       host.innerHTML += `
-        <div class="bg-gray-50 p-5 rounded-lg shadow relative editable-card" id="persona-${ind}-${i}">
-          <h3 class="text-lg font-semibold uipath-robotic-orange flex justify-between items-center">
+        <div class="persona-card editable-card" id="persona-${ind}-${i}">
+          <h3 class="flex justify-between items-center">
             <span>${p.title}</span>
-            <svg class="edit-icon w-5 h-5 text-gray-500 hover:text-orange-600" data-target="persona-${ind}-${i}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
+            <svg class="edit-icon w-5 h-5 text-gray-400 hover:text-orange-600 transition-colors" data-target="persona-${ind}-${i}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/></svg>
           </h3>
           <div class="editable-content">
-            <ul class="space-y-2">
+            <ul class="space-y-3">
               <li><strong>Their world:</strong> ${p.world}</li>
               <li><strong>What they care about:</strong> ${p.cares}</li>
               <li><strong>How UiPath helps:</strong> ${p.help}</li>
