@@ -47,19 +47,6 @@
           <button id="insurance" class="px-3 py-1 text-sm font-semibold rounded-md" role="tab" aria-selected="false">Insurance</button>
         </div>
         
-        <!-- Admin Toggle -->
-        <div class="hidden md:flex items-center ml-4">
-          <div class="flex items-center">
-            <span class="text-sm font-medium text-gray-700 mr-2">Admin Mode</span>
-            <label for="admin-toggle" class="flex items-center cursor-pointer">
-              <div class="relative">
-                <input type="checkbox" id="admin-toggle" class="sr-only"/>
-                <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
-                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
-              </div>
-            </label>
-          </div>
-        </div>
       </div>
       
       <!-- Mobile Menu Button -->
@@ -89,18 +76,6 @@
         <a href="#lob-use-cases" class="block py-2 text-gray-700 font-semibold">LOB Use Cases</a>
       </nav>
       
-      <div class="mt-4">
-        <div class="flex items-center">
-          <span class="text-sm font-medium text-gray-700 mr-2">Admin Mode</span>
-          <label for="admin-toggle-mobile" class="flex items-center cursor-pointer">
-            <div class="relative">
-              <input type="checkbox" id="admin-toggle-mobile" class="sr-only"/>
-              <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
-              <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
-            </div>
-          </label>
-        </div>
-      </div>
     </div>
   </header>
 
@@ -176,19 +151,11 @@
       </section>
     </div>
     
-    <!-- Admin Controls (Bottom of Page) -->
-    <div class="admin-mode-controls hidden mt-8 p-6 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
-      <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-        <h3 class="text-lg font-semibold text-gray-800 mb-2 md:mb-0">Admin Controls</h3>
-        <div class="flex flex-col md:flex-row gap-3">
-          <button id="bulk-admin-btn" class="px-4 py-2 text-white rounded-md font-semibold text-sm transition-all duration-200 hover:scale-105 hover:shadow-lg" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
-            📝 Bulk Edit Content
-          </button>
-          <button id="bulk-admin-btn-mobile" class="px-4 py-2 text-white rounded-md font-semibold text-sm md:hidden transition-all duration-200 hover:scale-105 hover:shadow-lg" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">
-            📝 Bulk Edit Content
-          </button>
-        </div>
-      </div>
+    <!-- Edit Link (Bottom of Page) -->
+    <div class="mt-12 text-center">
+      <button id="bulk-admin-btn" class="text-gray-500 hover:text-uipath-orange transition-colors duration-200 text-sm font-medium underline">
+        Edit
+      </button>
     </div>
   </main>
 

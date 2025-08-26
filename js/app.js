@@ -925,45 +925,6 @@ function showMessage(message, type = 'info') {
   }
 }
 
-// ---------- ADMIN MODE TOGGLE ----------
-function initAdminMode() {
-  const adminToggle = $('#admin-toggle');
-  const adminToggleMobile = $('#admin-toggle-mobile');
-  const adminControls = $('.admin-mode-controls');
-  const bodyElement = document.body;
-  
-  function toggleAdminMode(isAdmin) {
-    if (isAdmin) {
-      bodyElement.classList.add('admin-mode');
-      adminControls.forEach(control => control.classList.remove('hidden'));
-    } else {
-      bodyElement.classList.remove('admin-mode');
-      adminControls.forEach(control => control.classList.add('hidden'));
-    }
-  }
-  
-  // Desktop admin toggle
-  if (adminToggle) {
-    adminToggle.addEventListener('change', (e) => {
-      toggleAdminMode(e.target.checked);
-      // Sync mobile toggle
-      if (adminToggleMobile) {
-        adminToggleMobile.checked = e.target.checked;
-      }
-    });
-  }
-  
-  // Mobile admin toggle
-  if (adminToggleMobile) {
-    adminToggleMobile.addEventListener('change', (e) => {
-      toggleAdminMode(e.target.checked);
-      // Sync desktop toggle
-      if (adminToggle) {
-        adminToggle.checked = e.target.checked;
-      }
-    });
-  }
-}
 
 // ---------- MAIN INITIALIZATION ----------
 document.addEventListener('DOMContentLoaded',()=>{
@@ -981,14 +942,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   initMobileMenu();
   initExportNotes();
   initAIIntegration(); // Initialize AI functionality
-  initAdminMode(); // Initialize admin mode toggle
   initBulkAdmin(); // Initialize bulk admin interface
 });
 
 // ---------- BULK ADMIN INTERFACE ----------
 function initBulkAdmin() {
   const bulkAdminBtn = $('#bulk-admin-btn');
-  const bulkAdminBtnMobile = $('#bulk-admin-btn-mobile');
   const bulkAdminModal = $('#bulk-admin-modal');
   const bulkAdminCancel = $('#bulk-admin-cancel');
   const bulkAdminSave = $('#bulk-admin-save');
@@ -1011,7 +970,6 @@ function initBulkAdmin() {
 
   // Event listeners
   if (bulkAdminBtn) bulkAdminBtn.addEventListener('click', showBulkAdmin);
-  if (bulkAdminBtnMobile) bulkAdminBtnMobile.addEventListener('click', showBulkAdmin);
   
   if (bulkAdminCancel) {
     bulkAdminCancel.addEventListener('click', () => {
