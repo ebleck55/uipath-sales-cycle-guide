@@ -288,6 +288,33 @@ class TimelineUiPathApp {
         }
       }
 
+      // Handle collapsible sections
+      if (e.target.closest('.collapsible-header')) {
+        e.preventDefault();
+        const header = e.target.closest('.collapsible-header');
+        const section = header.parentElement;
+        const content = section.querySelector('.collapsible-content');
+        const chevron = header.querySelector('.chevron-icon');
+        
+        if (content && chevron) {
+          const isHidden = content.classList.contains('hidden');
+          content.classList.toggle('hidden');
+          chevron.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
+          
+          // Update the hint text
+          const hintText = header.querySelector('span');
+          if (hintText) {
+            hintText.textContent = isHidden ? 'Click to collapse' : 'Click to expand';
+          }
+        }
+      }
+      
+      // Handle AI response buttons
+      if (e.target.closest('.ai-question-response-btn')) {
+        e.preventDefault();
+        this.handleAIResponse(e.target.closest('.ai-question-response-btn'));
+      }
+
       // Handle navigation arrows
       if (e.target.closest('.nav-prev')) {
         e.preventDefault();
@@ -553,30 +580,61 @@ class TimelineUiPathApp {
       </div>
 
       <!-- Discovery Questions -->
-      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <h3 class="text-xl font-bold mb-4 flex items-center">
-          <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          Key Discovery Questions
-        </h3>
-        <div class="grid md:grid-cols-2 gap-4">
-          ${Object.entries(stage.questions || {}).slice(0, 4).map(([category, questions]) => `
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.escapeHtml(category)}</h4>
-              <div class="space-y-3">
-                ${questions.slice(0, 2).map((q, i) => `
-                  <div class="bg-white p-3 rounded border border-gray-200">
-                    <p class="text-sm text-gray-700 mb-2">${sanitizer.escapeHtml(q)}</p>
-                    <textarea class="note-textarea w-full p-2 border border-gray-300 rounded text-sm resize-none" 
-                             rows="2" 
-                             placeholder="Customer response notes..."
-                             data-note-id="stage-${stageIndex}-q-${category}-${i}"></textarea>
-                  </div>
-                `).join('')}
-              </div>
+      <div class="bg-white rounded-lg shadow-lg mb-6 discovery-questions-section">
+        <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="discovery-questions">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <svg class="chevron-icon w-5 h-5 mr-3 text-purple-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+              <h3 class="text-xl font-bold text-purple-600 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Key Discovery Questions
+              </h3>
             </div>
-          `).join('')}
+            <span class="text-sm text-gray-500">Click to expand</span>
+          </div>
+        </div>
+        <div class="collapsible-content hidden px-6 pb-6">
+          <div class="grid md:grid-cols-2 gap-4">
+            ${Object.entries(stage.questions || {}).map(([category, questions]) => `
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-700 mb-3">${sanitizer.escapeHtml(category)}</h4>
+                <div class="space-y-3">
+                  ${questions.map((q, i) => {
+                    const noteId = `stage-${stageIndex}-q-${category.replace(/\s+/g, '-')}-${i}`;
+                    return `
+                      <details class="bg-white rounded border border-gray-200 question-details">
+                        <summary class="p-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-700 text-sm">
+                          ${sanitizer.escapeHtml(q)}
+                        </summary>
+                        <div class="p-3 pt-0 space-y-3">
+                          <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Your Notes & Customer Response:</label>
+                            <textarea class="note-textarea w-full p-2 border border-gray-300 rounded text-sm resize-none" 
+                                     rows="3" 
+                                     placeholder="Capture customer responses and your notes here..."
+                                     data-note-id="${noteId}"></textarea>
+                          </div>
+                          <div class="flex justify-end">
+                            <button class="ai-question-response-btn px-3 py-1.5 bg-orange-600 text-white rounded-md text-xs font-medium hover:bg-orange-700 transition-colors flex items-center"
+                                    data-question="${encodeURIComponent(q)}" data-note-id="${noteId}">
+                              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                              </svg>
+                              AI Response
+                            </button>
+                          </div>
+                        </div>
+                      </details>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
 
@@ -802,6 +860,181 @@ class TimelineUiPathApp {
 
   showError(message) {
     this.showNotification(message, 'error');
+  }
+
+  async handleAIResponse(button) {
+    const question = decodeURIComponent(button.dataset.question);
+    const noteId = button.dataset.noteId;
+    const textarea = $(`[data-note-id="${noteId}"]`);
+    
+    if (!question || !textarea) {
+      this.showError('Unable to process AI response request');
+      return;
+    }
+
+    // Check if AI integration is available
+    if (!this.isAIAvailable()) {
+      this.showAISetupModal();
+      return;
+    }
+
+    // Show loading state
+    const originalText = button.textContent;
+    button.textContent = 'Generating...';
+    button.disabled = true;
+
+    try {
+      const context = this.buildAIContext(question);
+      const response = await this.generateAIResponse(question, context);
+      
+      // Append response to existing notes or create new
+      const existingNotes = textarea.value.trim();
+      const newContent = existingNotes 
+        ? `${existingNotes}\n\n--- AI Response ---\n${response}`
+        : `--- AI Response ---\n${response}`;
+      
+      textarea.value = newContent;
+      
+      // Update state
+      appState.updateNote(noteId, newContent);
+      
+      this.showNotification('AI response generated successfully!', 'success');
+    } catch (error) {
+      console.error('AI response generation failed:', error);
+      this.showError('Failed to generate AI response. Please check your API key and try again.');
+    } finally {
+      // Reset button
+      button.textContent = originalText;
+      button.disabled = false;
+    }
+  }
+
+  isAIAvailable() {
+    // Check for stored API key (simplified version)
+    const apiKey = sessionStorage.getItem('claude_api_key');
+    return apiKey && apiKey.length > 0;
+  }
+
+  buildAIContext(question) {
+    const currentIndustry = appState.get('currentIndustry');
+    const currentStage = appState.get('currentStage') || 0;
+    const stageName = SALES_CYCLE_DATA.stages[currentStage]?.title || 'Unknown Stage';
+    
+    return {
+      industry: currentIndustry,
+      stage: stageName,
+      question: question
+    };
+  }
+
+  async generateAIResponse(question, context) {
+    const apiKey = sessionStorage.getItem('claude_api_key');
+    
+    if (!apiKey) {
+      throw new Error('No API key available');
+    }
+
+    const prompt = `You are a UiPath sales expert helping with ${context.industry} industry prospects in the ${context.stage} stage.
+
+Question: "${question}"
+
+Please provide a helpful response that:
+1. Suggests what to listen for in the customer's answer
+2. Provides follow-up questions to ask
+3. Identifies potential objections or concerns
+4. Suggests how UiPath's solutions address this area
+
+Keep your response concise and actionable (2-3 paragraphs maximum).`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 500,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.content[0]?.text || 'No response generated';
+  }
+
+  showAISetupModal() {
+    // Create a simple modal for API key setup
+    const modalHTML = `
+      <div id="ai-setup-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <h3 class="text-lg font-semibold mb-4">AI Response Setup</h3>
+          <p class="text-sm text-gray-600 mb-4">
+            To use AI-powered responses, please enter your Claude API key. Your key is stored securely in your browser session.
+          </p>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Claude API Key</label>
+              <input type="password" id="ai-api-key" placeholder="sk-ant-api03-..." 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <p class="text-xs text-gray-500 mt-1">
+                Get your API key from <a href="https://console.anthropic.com" target="_blank" class="text-blue-600 hover:underline">console.anthropic.com</a>
+              </p>
+            </div>
+            <div class="flex justify-end space-x-3">
+              <button id="ai-setup-cancel" class="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">
+                Cancel
+              </button>
+              <button id="ai-setup-save" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+                Save & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = $('#ai-setup-modal');
+    const cancelBtn = $('#ai-setup-cancel');
+    const saveBtn = $('#ai-setup-save');
+    const apiKeyInput = $('#ai-api-key');
+    
+    const closeModal = () => {
+      modal?.remove();
+    };
+    
+    cancelBtn?.addEventListener('click', closeModal);
+    
+    saveBtn?.addEventListener('click', () => {
+      const apiKey = apiKeyInput?.value.trim();
+      if (apiKey) {
+        sessionStorage.setItem('claude_api_key', apiKey);
+        this.showNotification('API key saved! You can now use AI responses.', 'success');
+        closeModal();
+      } else {
+        this.showError('Please enter a valid API key');
+      }
+    });
+    
+    // Close on outside click
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
   }
 }
 
