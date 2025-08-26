@@ -427,25 +427,137 @@ class CustomerInfoManager {
   }
 
   getContextualUseCases(context) {
-    // Return use cases based on LOB, project types, and deployment
+    // Return use cases based on LOB, project types, and deployment - Enhanced with Maestro-specific examples
     const useCases = {
       'consumer-banking': {
-        'rpa': ['Account opening automation', 'Loan processing workflows', 'Customer data updates'],
-        'idp': ['Document verification', 'KYC document processing', 'Loan application intake'],
-        'agentic': ['Intelligent loan underwriting', 'Customer inquiry routing', 'Fraud detection workflows'],
-        'maestro': ['End-to-end loan origination', 'Customer onboarding orchestration', 'Cross-channel customer service']
+        'rpa': [
+          'Account opening data entry and validation',
+          'Credit card application processing',
+          'Customer service ticket routing',
+          'Loan payment processing automation'
+        ],
+        'idp': [
+          'Loan application document extraction',
+          'KYC identity document verification',
+          'Bank statement analysis and categorization',
+          'Insurance document processing for lending'
+        ],
+        'agentic': [
+          'Intelligent loan underwriting with credit scoring',
+          'Fraud detection and alert triage',
+          'Customer inquiry intelligent routing',
+          'Collection strategy optimization'
+        ],
+        'maestro': [
+          'End-to-end mortgage origination (application to closing)',
+          'Complete customer onboarding journey orchestration',
+          'Cross-channel dispute resolution workflow',
+          'Personal banking relationship management automation'
+        ]
       },
       'capital-markets': {
-        'rpa': ['Trade confirmation processing', 'Settlement workflows', 'Regulatory report generation'],
-        'idp': ['Trade document processing', 'Client agreement extraction', 'Compliance documentation'],
-        'agentic': ['Trade exception handling', 'Client risk assessment', 'Market data analysis'],
-        'maestro': ['End-to-end trade lifecycle', 'Client onboarding and servicing', 'Risk management workflows']
+        'rpa': [
+          'Trade settlement confirmation automation',
+          'Client reporting generation',
+          'Regulatory trade reporting',
+          'Market data reconciliation'
+        ],
+        'idp': [
+          'Client onboarding document extraction',
+          'Trade confirmation document processing',
+          'Compliance documentation management',
+          'Research report data extraction'
+        ],
+        'agentic': [
+          'Trade exception investigation and resolution',
+          'Client portfolio analysis and recommendations',
+          'Risk assessment and monitoring',
+          'Compliance alert triage and escalation'
+        ],
+        'maestro': [
+          'End-to-end client onboarding (KYC to account activation)',
+          'Complete trade lifecycle management',
+          'Prime brokerage service orchestration',
+          'Multi-asset portfolio management workflows'
+        ]
       },
       'operations': {
-        'rpa': ['Data entry automation', 'Report generation', 'System reconciliation'],
-        'idp': ['Invoice processing', 'Contract extraction', 'Compliance documentation'],
-        'agentic': ['Exception handling', 'Quality assurance', 'Process optimization'],
-        'maestro': ['End-to-end process orchestration', 'Cross-functional workflows', 'Business process management']
+        'rpa': [
+          'Invoice processing and approval routing',
+          'Employee onboarding data entry',
+          'Vendor management workflows',
+          'Financial reconciliation automation'
+        ],
+        'idp': [
+          'Contract extraction and analysis',
+          'HR document processing',
+          'Expense report data capture',
+          'Procurement document management'
+        ],
+        'agentic': [
+          'Intelligent process exception handling',
+          'Quality assurance and audit trail management',
+          'Vendor risk assessment and monitoring',
+          'Operational metrics analysis and reporting'
+        ],
+        'maestro': [
+          'End-to-end procurement process (request to payment)',
+          'Employee lifecycle management orchestration',
+          'Multi-system financial close process',
+          'Comprehensive vendor onboarding and management'
+        ]
+      },
+      'it-operations': {
+        'rpa': [
+          'System monitoring and alert generation',
+          'User access provisioning',
+          'Software deployment automation',
+          'Backup and recovery processes'
+        ],
+        'idp': [
+          'IT service ticket categorization',
+          'System documentation extraction',
+          'Security incident report processing',
+          'Change request documentation'
+        ],
+        'agentic': [
+          'Intelligent incident routing and prioritization',
+          'Automated root cause analysis',
+          'Security threat assessment and response',
+          'Capacity planning and optimization'
+        ],
+        'maestro': [
+          'End-to-end incident management (detection to resolution)',
+          'Complete software development lifecycle orchestration',
+          'IT service management workflow automation',
+          'Cross-platform system integration management'
+        ]
+      },
+      'finance-operations': {
+        'rpa': [
+          'Accounts payable processing',
+          'Financial report generation',
+          'Budget variance analysis',
+          'Tax calculation and filing automation'
+        ],
+        'idp': [
+          'Invoice and receipt data extraction',
+          'Financial statement analysis',
+          'Tax document processing',
+          'Expense categorization and validation'
+        ],
+        'agentic': [
+          'Intelligent expense approval routing',
+          'Financial anomaly detection and investigation',
+          'Budget planning and forecasting assistance',
+          'Audit trail management and compliance checking'
+        ],
+        'maestro': [
+          'End-to-end month-end close process orchestration',
+          'Complete purchase-to-pay workflow automation',
+          'Integrated financial planning and analysis',
+          'Multi-entity consolidated reporting workflows'
+        ]
       }
     };
     
@@ -467,20 +579,74 @@ class CustomerInfoManager {
 
   updateUseCaseContent(useCaseSection, useCases) {
     const contentContainer = useCaseSection.querySelector('.editable-content');
-    if (contentContainer) {
+    if (contentContainer && useCases.length > 0) {
       contentContainer.innerHTML = `
-        <div class="grid gap-4">
-          ${useCases.map(useCase => `
-            <div class="p-3 bg-gray-50 rounded border-l-4 border-orange-500">
-              <h4 class="font-semibold text-gray-800">${useCase.name}</h4>
-              <div class="text-sm text-gray-600 mt-1">
-                <span class="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs mr-2">${useCase.type.toUpperCase()}</span>
-                ${useCase.deployment ? `<span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${useCase.deployment}</span>` : ''}
+        <div class="space-y-6">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 class="font-semibold text-blue-800 mb-2">🎯 Contextual Use Cases</h4>
+            <p class="text-sm text-blue-700">Based on your selections: ${this.getSelectedContext()}</p>
+          </div>
+          
+          <div class="grid gap-4">
+            ${useCases.map((useCase, index) => `
+              <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-gray-800 mb-2">${useCase.name}</h4>
+                    <div class="text-sm text-gray-600 mb-3">
+                      ${this.getUseCaseDescription(useCase.name, useCase.type)}
+                    </div>
+                  </div>
+                  <div class="ml-4 flex flex-col gap-1">
+                    <span class="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-medium">${useCase.type.toUpperCase()}</span>
+                    ${useCase.deployment && useCase.deployment !== 'automation-cloud' ? 
+                      `<span class="inline-block bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Limited Features</span>` : 
+                      `<span class="inline-block bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Full Features</span>`
+                    }
+                  </div>
+                </div>
+                ${useCase.deployment && ['on-prem', 'automation-suite'].includes(useCase.deployment) ? 
+                  `<div class="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                    <strong>Note:</strong> Consider cloud migration to access advanced AI and Maestro capabilities for this use case.
+                  </div>` : ''
+                }
               </div>
-            </div>
-          `).join('')}
+            `).join('')}
+          </div>
         </div>
       `;
+    }
+  }
+
+  getSelectedContext() {
+    return [
+      this.selectedVertical ? `${this.selectedVertical}` : '',
+      this.selectedLOB ? `${this.selectedLOB}` : '',
+      this.selectedProjectTypes.size > 0 ? `${Array.from(this.selectedProjectTypes).join(', ')}` : '',
+      this.selectedCustomerType ? `${this.selectedCustomerType} customer` : '',
+      this.selectedDeployment ? `${this.selectedDeployment}` : ''
+    ].filter(Boolean).join(' | ');
+  }
+
+  getUseCaseDescription(useCaseName, type) {
+    const descriptions = {
+      'rpa': 'Automated rule-based process with system integrations',
+      'idp': 'AI-powered document processing and data extraction',
+      'agentic': 'Intelligent decision-making with AI reasoning capabilities',
+      'maestro': 'End-to-end orchestrated workflow with human-AI collaboration'
+    };
+    
+    const typeDescription = descriptions[type] || 'Automated workflow';
+    
+    // Add specific descriptions for common patterns
+    if (useCaseName.includes('End-to-end') || useCaseName.includes('Complete')) {
+      return `${typeDescription} - Orchestrates multiple systems and stakeholders across the entire process lifecycle`;
+    } else if (useCaseName.includes('Intelligent') || useCaseName.includes('AI')) {
+      return `${typeDescription} - Uses advanced AI for complex decision-making and exception handling`;
+    } else if (useCaseName.includes('document') || useCaseName.includes('extraction')) {
+      return `${typeDescription} - Processes unstructured documents with high accuracy and validation`;
+    } else {
+      return typeDescription;
     }
   }
 
