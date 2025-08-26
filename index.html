@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UiPath Sales Cycle Guide</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Cycle Guide - Hardened Edition (Beta)</title>
   
-  <!-- Preconnect to external domains for better performance -->
+  <!-- Preconnect to external domains for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.tailwindcss.com">
@@ -18,526 +18,291 @@
   
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Theme color for mobile browsers -->
+  <meta name="theme-color" content="#FA4616">
+  
+  <!-- Security note: CSP will be applied via JavaScript for GitHub Pages compatibility -->
+  
+  <!-- Preload critical resources -->
+  <link rel="modulepreload" href="src/app.js">
+  <link rel="modulepreload" href="src/security/csp-config.js">
+  
+  <!-- SVG Icons (embedded for performance and security) -->
+  <svg style="display: none;">
+    <defs>
+      <g id="edit-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
+      </g>
+      <g id="chevron-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </g>
+      <g id="copy-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+      </g>
+      <g id="trash-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </g>
+      <g id="menu-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </g>
+      <g id="close-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </g>
+    </defs>
+  </svg>
 </head>
-<body class="bg-white text-gray-800">
-  <!-- Header -->
-  <header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="header-container flex justify-between items-center">
-      <div class="flex items-center">
-        <h1 class="text-xl font-bold">UiPath Sales Cycle Guide</h1>
-      </div>
-      
-      <div class="flex items-center">
-        <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center space-x-6 mr-6" role="navigation" aria-label="Main navigation">
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#discovery">Discovery</a>
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#business-qualification">Business Qualification</a>
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#technical-qualification">Technical Qualification</a>
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#proposal">Proposal & Negotiation</a>
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#implement">Implement & Expand</a>
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#key-buyer-personas">Key Buyer Personas</a>
-          <a class="nav-link text-gray-700 font-semibold pb-1" href="#lob-use-cases">LOB Use Cases</a>
-        </nav>
-        
+<body class="font-inter bg-gray-50 text-gray-900">
+  <!-- Loading Indicator -->
+  <div id="app-loading" class="loading-indicator fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="spinner border-4 border-orange-200 border-t-orange-600 rounded-full w-12 h-12 mx-auto mb-4 animate-spin"></div>
+      <p class="text-gray-600">Loading UiPath Sales Guide...</p>
+    </div>
+  </div>
 
-        
-        <!-- Industry Selector -->
-        <div class="industry-selector hidden md:flex border border-gray-200 rounded-lg p-0.5" role="tablist" aria-label="Industry selector">
-          <button id="banking" class="px-3 py-1 text-sm font-semibold rounded-md" role="tab" aria-selected="true">Banking</button>
-          <button id="insurance" class="px-3 py-1 text-sm font-semibold rounded-md" role="tab" aria-selected="false">Insurance</button>
+  <!-- Security Warning (will be hidden if security is properly initialized) -->
+  <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 text-center">
+    ⚠️ Security features are initializing. Please wait...
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo and Title -->
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <img class="h-8 w-auto" src="https://www.uipath.com/hubfs/2023_Rebrand/Logos/UiPath-Logo.svg" alt="UiPath" loading="lazy">
+          </div>
+          <div class="ml-4">
+            <h1 class="text-xl font-bold text-gray-900">Sales Cycle Guide</h1>
+            <p class="text-sm text-gray-500">Hardened Edition</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <!-- Industry Switcher -->
+          <div class="flex bg-gray-100 rounded-lg p-1">
+            <button class="industry-btn px-3 py-1 text-sm font-medium rounded-md transition-colors" data-industry="banking">
+              Banking
+            </button>
+            <button class="industry-btn px-3 py-1 text-sm font-medium rounded-md transition-colors" data-industry="insurance">
+              Insurance
+            </button>
+          </div>
+
+          <!-- Admin Mode Toggle -->
+          <button id="admin-mode-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Enter Edit Mode
+          </button>
+
+          <!-- PWA Install Button (hidden by default) -->
+          <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
+            Install App
+          </button>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <use href="#menu-icon"></use>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+      <div class="px-4 py-3 space-y-3">
+        <!-- Mobile Industry Switcher -->
+        <div class="flex space-x-2">
+          <button class="industry-btn flex-1 px-3 py-2 text-sm font-medium text-center border rounded-md" data-industry="banking">
+            Banking
+          </button>
+          <button class="industry-btn flex-1 px-3 py-2 text-sm font-medium text-center border rounded-md" data-industry="insurance">
+            Insurance
+          </button>
         </div>
         
+        <!-- Mobile Admin Toggle -->
+        <button id="mobile-admin-btn" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+          Enter Edit Mode
+        </button>
       </div>
-      
-      <!-- Mobile Menu Button -->
-      <button id="mobile-menu-button" class="md:hidden flex items-center" aria-label="Toggle mobile menu" aria-expanded="false">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
-        </svg>
-      </button>
-    </div>
-    
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="md:hidden hidden px-6 pb-4">
-      <div class="industry-selector flex border border-gray-200 rounded-lg p-0.5 my-4">
-        <button id="banking-mobile" class="w-1/2 px-3 py-1 text-sm font-semibold rounded-md">Banking</button>
-        <button id="insurance-mobile" class="w-1/2 px-3 py-1 text-sm font-semibold rounded-md">Insurance</button>
-      </div>
-      
-
-      
-      <nav role="navigation" aria-label="Mobile navigation">
-        <a href="#discovery" class="block py-2 text-gray-700 font-semibold">Discovery</a>
-        <a href="#business-qualification" class="block py-2 text-gray-700 font-semibold">Business Qualification</a>
-        <a href="#technical-qualification" class="block py-2 text-gray-700 font-semibold">Technical Qualification</a>
-        <a href="#proposal" class="block py-2 text-gray-700 font-semibold">Proposal & Negotiation</a>
-        <a href="#implement" class="block py-2 text-gray-700 font-semibold">Implement & Expand</a>
-        <a href="#key-buyer-personas" class="block py-2 text-gray-700 font-semibold">Key Buyer Personas</a>
-        <a href="#lob-use-cases" class="block py-2 text-gray-700 font-semibold">LOB Use Cases</a>
-      </nav>
-      
     </div>
   </header>
 
+  <!-- Admin Status Bar -->
+  <div id="admin-status" class="hidden bg-orange-100 border-b border-orange-200 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="h-5 w-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <use href="#edit-icon"></use>
+        </svg>
+        <span class="text-sm font-medium text-orange-800">Edit Mode Active</span>
+      </div>
+      <div class="text-sm text-orange-700">
+        Click pencil icons to edit content
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content -->
-  <main class="main-container" role="main">
-    <!-- Sales Cycle Stages -->
-    <section id="discovery" class="content-section mb-12"></section>
-    <section id="business-qualification" class="content-section mb-12"></section>
-    <section id="technical-qualification" class="content-section mb-12"></section>
-    <section id="proposal" class="content-section mb-12"></section>
-    <section id="implement" class="content-section mb-12"></section>
-    
-    <!-- Bottom Section with Two Square Boxes -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-      <!-- Key Buyer Personas Box -->
-      <section id="key-buyer-personas" class="content-section bg-gray-50 p-8 rounded-lg shadow-lg">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-3xl font-bold border-b-2 border-gray-200 pb-2">Key Buyer Personas</h2>
-          <div class="edit-icon hidden">
-            <button id="add-persona-btn" class="px-3 py-1.5 text-white rounded-md text-sm font-semibold transition-colors" style="background-color: #FA4616;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'" onclick="addNewPersona()">
-              + Add Persona
-            </button>
-          </div>
-        </div>
-        <p class="mb-4 text-gray-600">Switch industry to tailor the view.</p>
-        <div id="personas-banking" data-industry="banking" class="grid grid-cols-1 gap-4"></div>
-        <div id="personas-insurance" data-industry="insurance" class="grid grid-cols-1 gap-4 hidden"></div>
-      </section>
-      
-      <!-- LOB Use Cases Box -->
-      <section id="lob-use-cases" class="content-section bg-gray-50 p-8 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-bold border-b-2 border-gray-200 pb-2 mb-4">LOB Use Cases</h2>
-        <p class="mb-4 text-gray-600">Agentic use cases by line of business.</p>
-        
-        <div class="space-y-6">
-          <!-- Finance -->
-          <div class="bg-white p-4 rounded-md border">
-            <h3 class="text-xl font-semibold mb-3 text-blue-700">Finance</h3>
-            <ul class="space-y-2 text-sm">
-              <li>• Automated invoice processing and approval workflows</li>
-              <li>• Intelligent expense report validation and reconciliation</li>
-              <li>• Real-time financial reporting and analytics</li>
-              <li>• Compliance monitoring and regulatory reporting</li>
-            </ul>
-          </div>
-          
-          <!-- Human Resources -->
-          <div class="bg-white p-4 rounded-md border">
-            <h3 class="text-xl font-semibold mb-3 text-green-700">Human Resources</h3>
-            <ul class="space-y-2 text-sm">
-              <li>• Automated employee onboarding and offboarding</li>
-              <li>• Resume screening and candidate matching</li>
-              <li>• Benefits enrollment and management</li>
-              <li>• Performance review workflows and notifications</li>
-            </ul>
-          </div>
-          
-          <!-- Operations -->
-          <div class="bg-white p-4 rounded-md border">
-            <h3 class="text-xl font-semibold mb-3 text-purple-700">Operations</h3>
-            <ul class="space-y-2 text-sm">
-              <li>• Supply chain optimization and inventory management</li>
-              <li>• Quality assurance testing and validation</li>
-              <li>• Customer service ticket routing and resolution</li>
-              <li>• Process monitoring and performance analytics</li>
-            </ul>
-          </div>
-          
-          <!-- IT -->
-          <div class="bg-white p-4 rounded-md border">
-            <h3 class="text-xl font-semibold mb-3 text-red-700">IT</h3>
-            <ul class="space-y-2 text-sm">
-              <li>• Automated system monitoring and incident response</li>
-              <li>• Software deployment and configuration management</li>
-              <li>• Data backup and disaster recovery processes</li>
-              <li>• Security compliance and vulnerability scanning</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-    </div>
-    
-    <!-- Edit Links (Bottom of Page) -->
-    <div class="mt-12 text-center">
-      <div class="flex justify-center gap-8">
-        <button id="admin-mode-btn" class="text-gray-500 hover:text-uipath-orange transition-colors duration-200 text-sm font-medium underline">
-          Edit
-        </button>
-        <button id="bulk-admin-btn" class="text-gray-500 hover:text-uipath-orange transition-colors duration-200 text-sm font-medium underline">
-          Bulk Edit
-        </button>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Personas Section -->
+    <section id="personas-section" class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Key Decision Makers & Personas</h2>
+      <div id="personas-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Personas will be rendered here by JavaScript -->
       </div>
-      <div id="admin-status" class="mt-2 text-xs text-gray-400 hidden">
-        Admin mode enabled - click pencil icons to edit content
+    </section>
+
+    <!-- Sales Stages Section -->
+    <section id="stages-section">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Sales Cycle Stages</h2>
+      <div class="space-y-8">
+        <!-- Stage 1: Discovery -->
+        <div id="stage-1" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Stage content will be rendered here by JavaScript -->
+        </div>
+
+        <!-- Stage 2: Technical Evaluation -->
+        <div id="stage-2" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Stage content will be rendered here by JavaScript -->
+        </div>
+
+        <!-- Stage 3: Business Case -->
+        <div id="stage-3" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Stage content will be rendered here by JavaScript -->
+        </div>
+
+        <!-- Stage 4: Procurement -->
+        <div id="stage-4" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Stage content will be rendered here by JavaScript -->
+        </div>
+
+        <!-- Stage 5: Implementation Planning -->
+        <div id="stage-5" class="stage-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Stage content will be rendered here by JavaScript -->
+        </div>
       </div>
-    </div>
+    </section>
   </main>
 
-  <!-- Copy to Clipboard Success Message -->
-  <div id="copy-message" class="fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-2" role="status" aria-live="polite">
-    Notes copied to clipboard!
-  </div>
-
-
-  <!-- Bulk Admin Interface Modal -->
-  <div id="bulk-admin-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" role="dialog" aria-modal="true" aria-labelledby="bulk-admin-title">
-    <div class="relative top-5 mx-auto p-5 border w-full max-w-7xl shadow-lg rounded-md bg-white modal-content">
-      <div class="flex justify-between items-center mb-4">
-        <h3 id="bulk-admin-title" class="text-2xl leading-6 font-bold text-gray-900">📝 Bulk Content Editor</h3>
-        <div class="flex gap-2">
-          <div class="relative">
-            <button id="bulk-admin-export" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">📥 Export</button>
-            <div id="export-dropdown" class="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg border hidden z-10">
-              <button id="export-csv" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100">📊 Export as CSV</button>
-              <button id="export-json" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100">🔧 Export as JSON</button>
-            </div>
-          </div>
-          <div class="relative">
-            <button id="bulk-admin-import" class="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">📤 Import</button>
-            <div id="import-dropdown" class="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg border hidden z-10">
-              <label for="bulk-import-csv" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer">📊 Import CSV</label>
-              <label for="bulk-import-json" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer">🔧 Import JSON</label>
-            </div>
-          </div>
-          <input type="file" id="bulk-import-csv" accept=".csv" class="hidden">
-          <input type="file" id="bulk-import-json" accept=".json" class="hidden">
-        </div>
-      </div>
-      
-      <!-- Tab Navigation -->
-      <div class="border-b border-gray-200 mb-6">
-        <nav class="flex space-x-8" aria-label="Tabs">
-          <button class="bulk-tab active py-2 px-1 border-b-2 font-medium text-sm" data-tab="discovery">🔍 Discovery</button>
-          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="business">💼 Business Qualification</button>
-          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="technical">⚙️ Technical Qualification</button>
-          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="proposal">📋 Proposal & Negotiation</button>
-          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="implement">🚀 Implement & Expand</button>
-          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="personas">👥 Key Buyer Personas</button>
-          <button class="bulk-tab py-2 px-1 border-b-2 font-medium text-sm" data-tab="settings">⚙️ Settings</button>
-        </nav>
-      </div>
-
-      <!-- Tab Content -->
-      <div class="max-h-[70vh] overflow-y-auto">
-        
-        <!-- Discovery Tab -->
-        <div id="discovery-tab" class="bulk-tab-content">
-          <div class="space-y-6">
-            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
-              <h3 class="text-xl font-bold text-blue-800 mb-4">🔍 Discovery Stage</h3>
-              
-              <!-- Outcomes Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
-                  <button type="button" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" onclick="addOutcome('discovery')">+ Add Outcome</button>
-                </div>
-                <div id="discovery-outcomes-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Initial Personas Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
-                  <button type="button" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" onclick="addInitialPersona('discovery')">+ Add Persona</button>
-                </div>
-                <div id="discovery-personas-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Questions Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
-                  <button type="button" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" onclick="addQuestionCategory('discovery')">+ Add Category</button>
-                </div>
-                <div id="discovery-questions-container" class="space-y-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Business Qualification Tab -->
-        <div id="business-tab" class="bulk-tab-content hidden">
-          <div class="space-y-6">
-            <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
-              <h3 class="text-xl font-bold text-green-800 mb-4">💼 Business Qualification</h3>
-              
-              <!-- Outcomes Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
-                  <button type="button" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200" onclick="addOutcome('business')">+ Add Outcome</button>
-                </div>
-                <div id="business-outcomes-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Initial Personas Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
-                  <button type="button" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200" onclick="addInitialPersona('business')">+ Add Persona</button>
-                </div>
-                <div id="business-personas-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Questions Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
-                  <button type="button" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200" onclick="addQuestionCategory('business')">+ Add Category</button>
-                </div>
-                <div id="business-questions-container" class="space-y-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Technical Qualification Tab -->
-        <div id="technical-tab" class="bulk-tab-content hidden">
-          <div class="space-y-6">
-            <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-500">
-              <h3 class="text-xl font-bold text-red-800 mb-4">⚙️ Technical Qualification</h3>
-              
-              <!-- Outcomes Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
-                  <button type="button" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200" onclick="addOutcome('technical')">+ Add Outcome</button>
-                </div>
-                <div id="technical-outcomes-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Initial Personas Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
-                  <button type="button" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200" onclick="addInitialPersona('technical')">+ Add Persona</button>
-                </div>
-                <div id="technical-personas-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Questions Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
-                  <button type="button" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200" onclick="addQuestionCategory('technical')">+ Add Category</button>
-                </div>
-                <div id="technical-questions-container" class="space-y-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Proposal & Negotiation Tab -->
-        <div id="proposal-tab" class="bulk-tab-content hidden">
-          <div class="space-y-6">
-            <div class="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
-              <h3 class="text-xl font-bold text-orange-800 mb-4">📋 Proposal & Negotiation</h3>
-              
-              <!-- Outcomes Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
-                  <button type="button" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200" onclick="addOutcome('proposal')">+ Add Outcome</button>
-                </div>
-                <div id="proposal-outcomes-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Initial Personas Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
-                  <button type="button" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200" onclick="addInitialPersona('proposal')">+ Add Persona</button>
-                </div>
-                <div id="proposal-personas-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Questions Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
-                  <button type="button" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200" onclick="addQuestionCategory('proposal')">+ Add Category</button>
-                </div>
-                <div id="proposal-questions-container" class="space-y-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Implement & Expand Tab -->
-        <div id="implement-tab" class="bulk-tab-content hidden">
-          <div class="space-y-6">
-            <div class="bg-indigo-50 p-6 rounded-lg border-l-4 border-indigo-500">
-              <h3 class="text-xl font-bold text-indigo-800 mb-4">🚀 Implement & Expand</h3>
-              
-              <!-- Outcomes Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Outcomes/Exit Criteria</label>
-                  <button type="button" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200" onclick="addOutcome('implement')">+ Add Outcome</button>
-                </div>
-                <div id="implement-outcomes-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Initial Personas Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Initial Personas</label>
-                  <button type="button" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200" onclick="addInitialPersona('implement')">+ Add Persona</button>
-                </div>
-                <div id="implement-personas-container" class="space-y-2"></div>
-              </div>
-
-              <!-- Questions Section -->
-              <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
-                  <label class="block text-sm font-semibold text-gray-700">Discovery Questions</label>
-                  <button type="button" class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200" onclick="addQuestionCategory('implement')">+ Add Category</button>
-                </div>
-                <div id="implement-questions-container" class="space-y-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Key Buyer Personas Tab -->
-        <div id="personas-tab" class="bulk-tab-content hidden">
-          <div class="space-y-6">
-            <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
-              <h3 class="text-xl font-bold text-purple-800 mb-4">👥 Key Buyer Personas</h3>
-              
-              <!-- Banking Personas -->
-              <div class="mb-8">
-                <div class="flex justify-between items-center mb-4">
-                  <h4 class="text-lg font-semibold text-gray-800">Banking Industry</h4>
-                  <button type="button" class="text-sm bg-purple-100 text-purple-700 px-3 py-2 rounded hover:bg-purple-200" onclick="addPersona('banking')">+ Add Banking Persona</button>
-                </div>
-                <div id="banking-personas-editor" class="space-y-4"></div>
-              </div>
-
-              <!-- Insurance Personas -->
-              <div class="mb-8">
-                <div class="flex justify-between items-center mb-4">
-                  <h4 class="text-lg font-semibold text-gray-800">Insurance Industry</h4>
-                  <button type="button" class="text-sm bg-purple-100 text-purple-700 px-3 py-2 rounded hover:bg-purple-200" onclick="addPersona('insurance')">+ Add Insurance Persona</button>
-                </div>
-                <div id="insurance-personas-editor" class="space-y-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Settings Tab -->
-        <div id="settings-tab" class="bulk-tab-content hidden">
-          <div class="space-y-6">
-            <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-500">
-              <h3 class="text-xl font-bold text-gray-800 mb-4">⚙️ Settings</h3>
-              
-              <!-- API Key Section -->
-              <div class="mb-8">
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <h4 class="text-lg font-semibold text-blue-800 mb-3">🔐 Claude API Key Configuration</h4>
-                  <p class="text-sm text-blue-700 mb-4">
-                    Configure your Claude API key to enable AI-powered features like question generation and objection responses. 
-                    Your API key is stored securely in your browser's local storage and never transmitted to our servers.
-                  </p>
-                  
-                  <div class="space-y-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">API Key Status</label>
-                      <div id="api-key-status" class="flex items-center space-x-2">
-                        <span class="text-sm px-2 py-1 rounded" id="api-status-indicator">Checking...</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label for="claude-api-key" class="block text-sm font-medium text-gray-700 mb-2">
-                        Claude API Key
-                        <span class="text-xs text-gray-500">(Get yours from <a href="https://console.anthropic.com" target="_blank" class="text-blue-600 hover:underline">console.anthropic.com</a>)</span>
-                      </label>
-                      <div class="flex space-x-2">
-                        <input 
-                          type="password" 
-                          id="claude-api-key" 
-                          placeholder="sk-ant-api03-..." 
-                          class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                        <button 
-                          id="save-api-key" 
-                          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        >
-                          Save
-                        </button>
-                        <button 
-                          id="clear-api-key" 
-                          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                        >
-                          Clear
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div class="text-xs text-gray-600 space-y-1">
-                      <p>• Your API key is encrypted and stored locally in your browser</p>
-                      <p>• We never store or transmit your API key to external servers</p>
-                      <p>• You can clear your API key at any time using the Clear button</p>
-                      <p>• API usage and costs are billed directly by Anthropic to your account</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Additional Settings -->
-              <div class="mb-8">
-                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                  <h4 class="text-lg font-semibold text-green-800 mb-3">🎛️ Application Settings</h4>
-                  <div class="space-y-3">
-                    <label class="flex items-center space-x-2">
-                      <input type="checkbox" id="enable-auto-save" class="rounded">
-                      <span class="text-sm text-green-700">Enable auto-save for notes and progress</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                      <input type="checkbox" id="enable-ai-features" class="rounded">
-                      <span class="text-sm text-green-700">Enable AI-powered features (requires API key)</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      
-      <div class="flex justify-between items-center px-4 py-3 mt-4 border-t">
-        <div class="text-sm text-gray-600">
-          💡 Tip: Use line breaks for lists. For questions use format: "Category Name | Question text" - one per line
-        </div>
-        <div class="flex gap-2">
-          <button id="bulk-admin-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
-          <button id="bulk-admin-save" class="px-4 py-2 text-white rounded-md font-semibold" style="background-color: #FA4616; hover:background-color: #E03E0F;" onmouseover="this.style.backgroundColor='#E03E0F'" onmouseout="this.style.backgroundColor='#FA4616'">💾 Save All Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Modal (Admin Mode) -->
-  <div id="edit-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
     <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white modal-content">
-      <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900 text-center mb-4">Edit Content</h3>
-      <div id="modal-content-area" class="mt-2 px-7 py-3 max-h-[70vh] overflow-y-auto"></div>
-      <div class="items-center px-4 py-3 text-right">
-        <button id="modal-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 mr-2 btn-secondary">Cancel</button>
-        <button id="modal-save" class="px-4 py-2 uipath-deep-blue text-white rounded-md hover:bg-blue-800 btn-primary">Save Changes</button>
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900">Edit Content</h3>
+        <button class="modal-close text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <use href="#close-icon"></use>
+          </svg>
+        </button>
+      </div>
+      <div id="modal-content-area" class="mt-2 px-2 py-3 max-h-[70vh] overflow-y-auto">
+        <!-- Modal content will be inserted here -->
+      </div>
+      <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
+        <button id="modal-cancel" class="modal-close px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+          Cancel
+        </button>
+        <button id="modal-save" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+          Save Changes
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Load Scripts -->
-  <script src="js/data.js"></script>
-  <script src="js/performance.js"></script>
-  <script src="js/ai-integration.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Notification Container -->
+  <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2">
+    <!-- Notifications will be inserted here by JavaScript -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center mb-4 md:mb-0">
+          <img class="h-6 w-auto mr-3" src="https://www.uipath.com/hubfs/2023_Rebrand/Logos/UiPath-Logo.svg" alt="UiPath" loading="lazy">
+          <span class="text-sm text-gray-600">Sales Cycle Guide v2.0 (Hardened)</span>
+        </div>
+        <div class="flex items-center space-x-4 text-sm text-gray-600">
+          <span id="app-status" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+            ✓ Secure
+          </span>
+          <span id="connection-status" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+            Online
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <!-- Note: Using ES modules for better security and maintainability -->
+  <script type="module" src="src/app.js"></script>
+  <script type="module" src="js/data.js"></script>
+
+  <!-- Hide loading indicator once app is ready -->
+  <script>
+    document.addEventListener('app:ready', () => {
+      const loading = document.getElementById('app-loading');
+      const securityWarning = document.getElementById('security-warning');
+      
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      if (securityWarning) {
+        securityWarning.style.display = 'none';
+      }
+      
+      // Update app status
+      const appStatus = document.getElementById('app-status');
+      if (appStatus) {
+        appStatus.textContent = '✓ Ready';
+        appStatus.className = 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs';
+      }
+    });
+
+    // Update connection status
+    window.addEventListener('online', () => {
+      const status = document.getElementById('connection-status');
+      if (status) {
+        status.textContent = 'Online';
+        status.className = 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs';
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      const status = document.getElementById('connection-status');
+      if (status) {
+        status.textContent = 'Offline';
+        status.className = 'px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs';
+      }
+    });
+
+    // Handle any module loading errors
+    window.addEventListener('error', (event) => {
+      if (event.filename && event.filename.includes('src/')) {
+        console.error('Module loading error:', event);
+        document.getElementById('app-loading').innerHTML = `
+          <div class="text-center">
+            <div class="text-red-600 text-xl mb-4">⚠️</div>
+            <p class="text-red-600 font-medium">Failed to load application modules</p>
+            <p class="text-gray-600 text-sm mt-2">Please refresh the page and try again</p>
+            <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+              Refresh Page
+            </button>
+          </div>
+        `;
+      }
+    });
+  </script>
 </body>
 </html>
