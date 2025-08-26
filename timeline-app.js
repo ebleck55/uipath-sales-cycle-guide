@@ -1499,6 +1499,57 @@ class ResourceManager {
     });
   }
 
+  renderStageResources(resources, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    if (!resources || resources.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center py-8 col-span-3">No resources found for the selected customer criteria.</p>';
+      return;
+    }
+
+    const resourcesHTML = resources.map(resource => `
+      <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-semibold text-gray-800 flex items-center">
+            <a href="${sanitizer.escapeHtml(resource.link)}" 
+               class="text-blue-600 hover:underline hover:text-blue-800 transition-colors" 
+               target="_blank" rel="noopener noreferrer">
+              ${sanitizer.renderSafeHTML(resource.name)}
+            </a>
+          </h4>
+        </div>
+        
+        <div class="space-y-3">
+          <div>
+            <h5 class="text-sm font-medium text-green-700 mb-1">Overview:</h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              ${sanitizer.renderSafeHTML(resource.overview || 'No overview provided.')}
+            </p>
+          </div>
+          
+          <div>
+            <h5 class="text-sm font-medium text-green-700 mb-1">Why it matters:</h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              ${sanitizer.renderSafeHTML(resource.why || 'Reason not specified.')}
+            </p>
+          </div>
+          
+          ${resource.relevance && resource.relevance.length > 0 ? `
+          <div>
+            <h5 class="text-sm font-medium text-green-700 mb-1">Relevance:</h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              ${resource.relevance.join(', ')}
+            </p>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    container.innerHTML = resourcesHTML;
+  }
+
   attachResourceEventListeners() {
     // Handle resource selection
     document.addEventListener('click', (e) => {
@@ -1852,8 +1903,9 @@ class CustomerInfoManager {
     // Get filtered resources based on current context
     const filteredResources = this.resourceManager.getFilteredResources(context);
     
-    // Render the resources in the main Key Resources section
-    this.resourceManager.renderResourceCards(filteredResources, 'resources-container');
+    // Render the resources in all stage Key Resources sections
+    const currentStage = appState.get('currentStage') || 0;
+    this.resourceManager.renderStageResources(filteredResources, `stage-resources-container-${currentStage}`);
     
     console.log('Resources updated for context:', context, 'Found resources:', filteredResources.length);
   }
@@ -3997,73 +4049,8 @@ class TimelineUiPathApp {
           </div>
         </div>
         <div class="collapsible-content hidden px-6 pb-6">
-          <div class="grid lg:grid-cols-3 gap-6">
-            ${(stage.resources?.[currentIndustry] || []).map((resource, i) => `
-              <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div class="flex items-start justify-between mb-3">
-                  <h4 class="font-semibold text-gray-800 flex items-center">
-                    <a href="${sanitizer.escapeHtml(resource.link)}" 
-                       class="text-blue-600 hover:underline hover:text-blue-800 transition-colors" 
-                       target="_blank" rel="noopener noreferrer" data-editable>
-                      ${sanitizer.renderSafeHTML(resource.name)}
-                    </a>
-                  </h4>
-                  <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
-                          data-edit-type="resource" data-edit-id="${stageIndex}-${i}">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                    </svg>
-                  </button>
-                </div>
-                
-                <div class="space-y-3">
-                  <div>
-                    <div class="flex items-start justify-between">
-                      <h5 class="text-sm font-medium text-green-700 mb-1">Overview:</h5>
-                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
-                              data-edit-type="resource-overview" data-edit-id="${stageIndex}-${i}">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                        </svg>
-                      </button>
-                    </div>
-                    <p class="text-sm text-gray-600 leading-relaxed" data-editable>
-                      ${sanitizer.renderSafeHTML(resource.overview || 'No overview provided.')}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div class="flex items-start justify-between">
-                      <h5 class="text-sm font-medium text-green-700 mb-1">Why it matters:</h5>
-                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
-                              data-edit-type="resource-why" data-edit-id="${stageIndex}-${i}">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                        </svg>
-                      </button>
-                    </div>
-                    <p class="text-sm text-gray-600 leading-relaxed" data-editable>
-                      ${sanitizer.renderSafeHTML(resource.why || 'Reason not specified.')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-            
-            <!-- Add New Resource Button -->
-            <div class="edit-btn hidden">
-              <div class="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-green-300 hover:border-green-400 hover:bg-green-100 transition-colors cursor-pointer">
-                <button class="w-full h-full flex items-center justify-center text-green-600" 
-                        data-edit-type="new-resource" data-edit-id="${stageIndex}">
-                  <div class="text-center">
-                    <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Add New Resource</span>
-                  </div>
-                </button>
-              </div>
-            </div>
+          <div id="stage-resources-container-${stageIndex}" class="grid lg:grid-cols-3 gap-6">
+            <!-- Filtered resources will be rendered here by ResourceManager -->
           </div>
         </div>
       </div>
@@ -4259,6 +4246,13 @@ class TimelineUiPathApp {
     `;
     
     container.innerHTML = contentHTML;
+    
+    // Render filtered resources in the stage Key Resources section
+    if (this.resourceManager) {
+      const context = this.getSelectionContext();
+      const filteredResources = this.resourceManager.getFilteredResources(context);
+      this.resourceManager.renderStageResources(filteredResources, `stage-resources-container-${stageIndex}`);
+    }
     
     // Restore checkbox states
     this.restoreFormState(stageIndex);
