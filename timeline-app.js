@@ -275,6 +275,12 @@ class TimelineUiPathApp {
         e.preventDefault();
         this.handleAIResponse(e.target.closest('.ai-question-response-btn'));
       }
+      
+      // Handle AI objection response buttons
+      if (e.target.closest('.ai-objection-response-btn')) {
+        e.preventDefault();
+        this.handleAIObjectionResponse(e.target.closest('.ai-objection-response-btn'));
+      }
 
       // Handle navigation arrows
       if (e.target.closest('.nav-prev')) {
@@ -565,6 +571,73 @@ class TimelineUiPathApp {
                 </div>
               </div>
             `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Common Objections -->
+      <div class="bg-white rounded-lg shadow-lg mb-6 objections-section">
+        <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="objections">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <svg class="chevron-icon w-5 h-5 mr-3 text-red-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+              <h3 class="text-xl font-bold text-red-600 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Common Objections
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="collapsible-content hidden px-6 pb-6">
+          <div class="space-y-4">
+            ${(stage.objections || []).map((objection, i) => {
+              const objectionId = `stage-${stageIndex}-obj-${i}`;
+              return `
+                <details class="bg-red-50 rounded-lg border border-red-200 objection-details">
+                  <summary class="p-4 cursor-pointer hover:bg-red-100 font-medium text-red-800">
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      ${sanitizer.escapeHtml(objection.q)}
+                    </div>
+                  </summary>
+                  <div class="p-4 pt-0 space-y-4">
+                    <div class="bg-white p-4 rounded-lg border border-red-100">
+                      <h5 class="text-sm font-semibold text-green-700 mb-2 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Suggested Response:
+                      </h5>
+                      <p class="text-sm text-gray-700">${sanitizer.escapeHtml(objection.a)}</p>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Your Custom Response & Notes:</label>
+                      <textarea class="note-textarea w-full p-2 border border-gray-300 rounded text-sm resize-none" 
+                               rows="3" 
+                               placeholder="Add your own response strategy and notes for this objection..."
+                               data-note-id="${objectionId}"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                      <button class="ai-objection-response-btn px-3 py-1.5 bg-orange-600 text-white rounded-md text-xs font-medium hover:bg-orange-700 transition-colors flex items-center"
+                              data-objection="${encodeURIComponent(objection.q)}" 
+                              data-context="${encodeURIComponent(objection.a)}"
+                              data-note-id="${objectionId}">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        AI Response
+                      </button>
+                    </div>
+                  </div>
+                </details>
+              `;
+            }).join('')}
           </div>
         </div>
       </div>
@@ -945,6 +1018,104 @@ Keep your response concise and actionable (2-3 paragraphs maximum).`;
         closeModal();
       }
     });
+  }
+
+  async handleAIObjectionResponse(button) {
+    const objection = decodeURIComponent(button.dataset.objection);
+    const context = decodeURIComponent(button.dataset.context);
+    const noteId = button.dataset.noteId;
+    const textarea = document.querySelector(`[data-note-id="${noteId}"]`);
+    
+    if (!objection || !textarea) {
+      this.showError('Unable to process AI objection response request');
+      return;
+    }
+
+    // Check if AI integration is available
+    if (!this.isAIAvailable()) {
+      this.showAISetupModal();
+      return;
+    }
+
+    // Show loading state
+    const originalText = button.textContent;
+    button.textContent = 'Generating...';
+    button.disabled = true;
+
+    try {
+      const response = await this.generateAIObjectionResponse(objection, context);
+      
+      // Append response to existing notes or create new
+      const existingNotes = textarea.value.trim();
+      const newContent = existingNotes 
+        ? `${existingNotes}\n\n--- AI Enhanced Response ---\n${response}`
+        : `--- AI Enhanced Response ---\n${response}`;
+      
+      textarea.value = newContent;
+      
+      // Update state
+      appState.updateNote(noteId, newContent);
+      
+      this.showNotification('AI objection response generated successfully!', 'success');
+    } catch (error) {
+      console.error('AI objection response generation failed:', error);
+      this.showError('Failed to generate AI response. Please check your API key and try again.');
+    } finally {
+      // Reset button
+      button.textContent = originalText;
+      button.disabled = false;
+    }
+  }
+
+  async generateAIObjectionResponse(objection, suggestedResponse) {
+    const apiKey = sessionStorage.getItem('claude_api_key');
+    if (!apiKey) {
+      throw new Error('No API key available');
+    }
+
+    const currentStage = this.stages[appState.getState().currentStage];
+    const stageContext = this.buildAIContext('objection handling');
+
+    const prompt = `You are a UiPath sales expert helping handle objections in the ${stageContext.stage} stage for ${stageContext.industry} industry prospects.
+
+Objection: "${objection}"
+Suggested Response: "${suggestedResponse}"
+
+Please provide an enhanced response strategy that:
+1. Acknowledges the customer's concern with empathy
+2. Builds on or improves the suggested response
+3. Provides specific UiPath value propositions that address this objection
+4. Includes follow-up questions to continue the conversation
+5. Suggests concrete next steps or proof points
+
+Keep your response practical and conversation-ready (2-3 paragraphs maximum).`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 600,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.content[0]?.text || 'No response generated';
   }
 }
 
