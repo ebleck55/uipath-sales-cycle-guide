@@ -3907,43 +3907,41 @@ class TimelineUiPathApp {
           </div>
         </div>
         <div class="collapsible-content hidden px-4 pb-4">
-          <div class="space-y-2 pt-2 border-t border-gray-100">
-            <div class="relative">
-              <div class="flex items-start justify-between">
-                <h4 class="text-sm font-medium text-gray-700 mb-1">Their World:</h4>
-                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors" 
-                        data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="world">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                  </svg>
-                </button>
-              </div>
-              <p class="text-xs text-gray-600 leading-relaxed" data-editable>${sanitizer.renderSafeHTML(persona.world || '')}</p>
+          <div class="space-y-4 pt-4 border-t border-gray-100">
+            
+            <!-- Who They Are -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <h4 class="text-sm font-semibold text-blue-800 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Who They Are
+              </h4>
+              <p class="text-sm text-blue-700 leading-relaxed">${sanitizer.renderSafeHTML(persona.world || '')}</p>
             </div>
-            <div class="relative">
-              <div class="flex items-start justify-between">
-                <h4 class="text-sm font-medium text-gray-700 mb-1">What They Care About:</h4>
-                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors" 
-                        data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="cares">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                  </svg>
-                </button>
-              </div>
-              <p class="text-xs text-gray-600 leading-relaxed" data-editable>${sanitizer.renderSafeHTML(persona.cares || '')}</p>
+            
+            <!-- What They Care About -->
+            <div class="bg-green-50 rounded-lg p-4">
+              <h4 class="text-sm font-semibold text-green-800 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+                What They Care About
+              </h4>
+              <p class="text-sm text-green-700 leading-relaxed">${sanitizer.renderSafeHTML(persona.cares || '')}</p>
             </div>
-            <div class="relative">
-              <div class="flex items-start justify-between">
-                <h4 class="text-sm font-medium text-gray-700 mb-1">How UiPath Helps:</h4>
-                <button class="edit-btn hidden p-1 text-gray-400 hover:text-blue-600 transition-colors" 
-                        data-edit-type="persona-field" data-edit-id="${index}" data-edit-field="help">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                  </svg>
-                </button>
-              </div>
-              <p class="text-xs text-gray-600 leading-relaxed" data-editable>${sanitizer.renderSafeHTML(persona.help || '')}</p>
+            
+            <!-- How UiPath Can Help Them -->
+            <div class="bg-orange-50 rounded-lg p-4">
+              <h4 class="text-sm font-semibold text-orange-800 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                How UiPath Can Help Them
+              </h4>
+              <p class="text-sm text-orange-700 leading-relaxed">${sanitizer.renderSafeHTML(persona.help || '')}</p>
             </div>
+            
           </div>
         </div>
       </div>
