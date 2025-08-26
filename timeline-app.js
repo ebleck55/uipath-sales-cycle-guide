@@ -1661,72 +1661,86 @@ class TimelineUiPathApp {
             </li>
           </ul>
         </div>
+      </div>
 
-        <!-- Resources -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h3 class="text-xl font-bold mb-4 text-green-600 flex items-center">
+      <!-- Key Resources -->
+      <div class="bg-white rounded-lg shadow-lg mb-6">
+        <div class="p-6">
+          <h3 class="text-xl font-bold mb-6 text-green-600 flex items-center">
             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             Key Resources
           </h3>
-          <ul class="space-y-2">
-            ${((stage.resources?.[currentIndustry] || []).slice(0, 5)).map((resource, i) => `
-              <li class="group">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-start">
-                      <a href="${sanitizer.escapeHtml(resource.link)}" 
-                         class="text-blue-600 hover:underline text-sm flex-1" 
-                         target="_blank" rel="noopener noreferrer" data-editable>
-                        → ${sanitizer.renderSafeHTML(resource.name)}
-                      </a>
-                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors ml-2" 
-                              data-edit-type="resource" data-edit-id="${stageIndex}-${i}">
+          
+          <div class="grid lg:grid-cols-3 gap-6">
+            ${(stage.resources?.[currentIndustry] || []).map((resource, i) => `
+              <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-3">
+                  <h4 class="font-semibold text-gray-800 flex items-center">
+                    <a href="${sanitizer.escapeHtml(resource.link)}" 
+                       class="text-blue-600 hover:underline hover:text-blue-800 transition-colors" 
+                       target="_blank" rel="noopener noreferrer" data-editable>
+                      ${sanitizer.renderSafeHTML(resource.name)}
+                    </a>
+                  </h4>
+                  <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
+                          data-edit-type="resource" data-edit-id="${stageIndex}-${i}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex items-start justify-between">
+                      <h5 class="text-sm font-medium text-green-700 mb-1">Overview:</h5>
+                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
+                              data-edit-type="resource-overview" data-edit-id="${stageIndex}-${i}">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
                         </svg>
                       </button>
                     </div>
-                    <div class="edit-btn hidden mt-1 text-xs text-gray-500 space-y-1">
-                      <div class="flex items-start">
-                        <span class="text-gray-400 mr-2">Overview:</span>
-                        <span data-editable class="flex-1">${resource.overview || 'No overview'}</span>
-                        <button class="p-1 text-gray-400 hover:text-green-600 transition-colors ml-1" 
-                                data-edit-type="resource-overview" data-edit-id="${stageIndex}-${i}">
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="flex items-start">
-                        <span class="text-gray-400 mr-2">Why:</span>
-                        <span data-editable class="flex-1">${resource.why || 'No reason specified'}</span>
-                        <button class="p-1 text-gray-400 hover:text-green-600 transition-colors ml-1" 
-                                data-edit-type="resource-why" data-edit-id="${stageIndex}-${i}">
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
-                          </svg>
-                        </button>
-                      </div>
+                    <p class="text-sm text-gray-600 leading-relaxed" data-editable>
+                      ${sanitizer.renderSafeHTML(resource.overview || 'No overview provided.')}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <div class="flex items-start justify-between">
+                      <h5 class="text-sm font-medium text-green-700 mb-1">Why it matters:</h5>
+                      <button class="edit-btn hidden p-1 text-gray-400 hover:text-green-600 transition-colors" 
+                              data-edit-type="resource-why" data-edit-id="${stageIndex}-${i}">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path>
+                        </svg>
+                      </button>
                     </div>
+                    <p class="text-sm text-gray-600 leading-relaxed" data-editable>
+                      ${sanitizer.renderSafeHTML(resource.why || 'Reason not specified.')}
+                    </p>
                   </div>
                 </div>
-              </li>
+              </div>
             `).join('')}
+            
             <!-- Add New Resource Button -->
-            <li>
-              <button class="edit-btn hidden w-full mt-3 p-2 border-2 border-dashed border-green-300 rounded-lg text-green-600 hover:border-green-400 hover:bg-green-50 transition-colors" 
-                      data-edit-type="new-resource" data-edit-id="${stageIndex}">
-                <div class="flex items-center justify-center">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                  Add New Resource
-                </div>
-              </button>
-            </li>
-          </ul>
+            <div class="edit-btn hidden">
+              <div class="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-green-300 hover:border-green-400 hover:bg-green-100 transition-colors cursor-pointer">
+                <button class="w-full h-full flex items-center justify-center text-green-600" 
+                        data-edit-type="new-resource" data-edit-id="${stageIndex}">
+                  <div class="text-center">
+                    <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Add New Resource</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
