@@ -171,131 +171,134 @@
       </div>
     </section>
 
-    <!-- Personas Section -->
-    <section id="personas-section" class="mb-8">
-      <div class="bg-white rounded-lg shadow-lg">
-        <div class="collapsible-header p-8 cursor-pointer hover:bg-gray-50 transition-colors" data-section="personas-section">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center">
-              <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-              <h2 class="text-2xl font-bold text-gray-900 flex items-center">
-                <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+    <!-- Two Column Layout for Personas and Use Cases -->
+    <div class="mt-12 grid lg:grid-cols-2 gap-8">
+      <!-- Left Column: Decision Makers & Personas -->
+      <section id="personas-section">
+        <div class="bg-white rounded-lg shadow-lg">
+          <div class="collapsible-header p-8 cursor-pointer hover:bg-gray-50 transition-colors" data-section="personas-section">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
-                Decision Makers & Personas
-              </h2>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                  </svg>
+                  Decision Makers & Personas
+                </h2>
+              </div>
+            </div>
+          </div>
+          <div class="collapsible-content hidden px-8 pb-8">
+            <div id="personas-container" class="grid gap-6">
+              <!-- Personas will be rendered here by JavaScript -->
             </div>
           </div>
         </div>
-        <div class="collapsible-content hidden px-8 pb-8">
-          <div id="personas-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Personas will be rendered here by JavaScript -->
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- LOB Use Cases Section -->
-    <section id="use-cases-section" class="mb-8">
-      <div class="bg-white rounded-lg shadow-lg">
-        <div class="collapsible-header p-8 cursor-pointer hover:bg-gray-50 transition-colors" data-section="use-cases-section">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center">
-              <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-              <h2 class="text-2xl font-bold text-gray-900 flex items-center">
-                <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      <!-- Right Column: LOB Use Cases -->
+      <section id="use-cases-section">
+        <div class="bg-white rounded-lg shadow-lg">
+          <div class="collapsible-header p-8 cursor-pointer hover:bg-gray-50 transition-colors" data-section="use-cases-section">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
-                LOB Use Cases
-              </h2>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  LOB Use Cases
+                </h2>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="collapsible-content hidden px-8 pb-8">
-          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <!-- Banking Use Cases -->
-            <div class="bg-blue-50 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-blue-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                </svg>
-                Banking
-              </h3>
-              <ul class="space-y-2">
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="10">• Consumer Banking Operations</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="15">• Credit Risk Assessment</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="20">• Commercial Lending</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="25">• Trade Finance Automation</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="30">• Capital Markets Processing</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="35">• Wealth Management</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="40">• Payments Processing</button></li>
-                <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="45">• Treasury Operations</button></li>
-              </ul>
-            </div>
+          <div class="collapsible-content hidden px-8 pb-8">
+            <div class="grid md:grid-cols-2 gap-6">
+              
+              <!-- Banking Use Cases -->
+              <div class="bg-blue-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                  Banking
+                </h3>
+                <ul class="space-y-2">
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="10">• Consumer Banking Operations</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="15">• Credit Risk Assessment</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="20">• Commercial Lending</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="25">• Trade Finance Automation</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="30">• Capital Markets Processing</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="35">• Wealth Management</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="40">• Payments Processing</button></li>
+                  <li><button class="use-case-link text-sm text-blue-700 hover:text-blue-900 text-left" data-page="45">• Treasury Operations</button></li>
+                </ul>
+              </div>
 
-            <!-- Insurance Use Cases -->
-            <div class="bg-green-50 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-green-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                </svg>
-                Insurance
-              </h3>
-              <ul class="space-y-2">
-                <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="50">• Claims Processing</button></li>
-                <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="52">• Policy Administration</button></li>
-                <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="54">• Underwriting Automation</button></li>
-                <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="56">• Customer Onboarding</button></li>
-                <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="58">• Regulatory Reporting</button></li>
-                <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="60">• Fraud Detection</button></li>
-              </ul>
-            </div>
+              <!-- Insurance Use Cases -->
+              <div class="bg-green-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-green-900 mb-4 flex items-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                  </svg>
+                  Insurance
+                </h3>
+                <ul class="space-y-2">
+                  <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="50">• Claims Processing</button></li>
+                  <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="52">• Policy Administration</button></li>
+                  <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="54">• Underwriting Automation</button></li>
+                  <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="56">• Customer Onboarding</button></li>
+                  <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="58">• Regulatory Reporting</button></li>
+                  <li><button class="use-case-link text-sm text-green-700 hover:text-green-900 text-left" data-page="60">• Fraud Detection</button></li>
+                </ul>
+              </div>
 
-            <!-- IT Operations -->
-            <div class="bg-purple-50 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-purple-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-                IT Operations
-              </h3>
-              <ul class="space-y-2">
-                <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="62">• ServiceNow Integration</button></li>
-                <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="64">• System Monitoring</button></li>
-                <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="66">• Data Migration</button></li>
-                <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="68">• Infrastructure Automation</button></li>
-                <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="70">• Security Operations</button></li>
-                <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="72">• Backup & Recovery</button></li>
-              </ul>
-            </div>
+              <!-- IT Operations -->
+              <div class="bg-purple-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-purple-900 mb-4 flex items-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  IT Operations
+                </h3>
+                <ul class="space-y-2">
+                  <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="62">• ServiceNow Integration</button></li>
+                  <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="64">• System Monitoring</button></li>
+                  <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="66">• Data Migration</button></li>
+                  <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="68">• Infrastructure Automation</button></li>
+                  <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="70">• Security Operations</button></li>
+                  <li><button class="use-case-link text-sm text-purple-700 hover:text-purple-900 text-left" data-page="72">• Backup & Recovery</button></li>
+                </ul>
+              </div>
 
-            <!-- Finance & Operations -->
-            <div class="bg-orange-50 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-orange-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-                Finance & Operations
-              </h3>
-              <ul class="space-y-2">
-                <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="74">• Invoice Processing</button></li>
-                <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="76">• Financial Reconciliation</button></li>
-                <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="78">• Expense Management</button></li>
-                <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="5">• Procurement Automation</button></li>
-                <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="7">• HR Onboarding</button></li>
-                <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="9">• Compliance Reporting</button></li>
-              </ul>
-            </div>
+              <!-- Finance & Operations -->
+              <div class="bg-orange-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-orange-900 mb-4 flex items-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                  Finance & Operations
+                </h3>
+                <ul class="space-y-2">
+                  <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="74">• Invoice Processing</button></li>
+                  <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="76">• Financial Reconciliation</button></li>
+                  <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="78">• Expense Management</button></li>
+                  <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="5">• Procurement Automation</button></li>
+                  <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="7">• HR Onboarding</button></li>
+                  <li><button class="use-case-link text-sm text-orange-700 hover:text-orange-900 text-left" data-page="9">• Compliance Reporting</button></li>
+                </ul>
+              </div>
 
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <!-- Edit Modal -->

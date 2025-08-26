@@ -447,12 +447,11 @@ class TimelineUiPathApp {
     
     const contentHTML = `
       <!-- Stage Header -->
-      <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
-        <div class="mb-6">
-          <h2 class="text-3xl font-bold text-gray-900 mb-2">
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div class="text-center">
+          <h2 class="text-3xl font-bold text-gray-900">
             ${sanitizer.escapeHtml(stage.title)}
           </h2>
-          <p class="text-gray-600">${sanitizer.escapeHtml(stage.description || 'Drive the sales process forward in this critical stage.')}</p>
         </div>
       </div>
 
