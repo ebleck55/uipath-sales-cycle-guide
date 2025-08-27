@@ -1,10 +1,10 @@
 /**
- * Optimized Admin Panel System
- * Provides rapid content updates, enhanced usability, and real-time synchronization
- * Maintains compatibility with existing admin functionality while adding optimizations
+ * Admin Module - Unified Content Management System
+ * Integrates with the module system for proper dependency management
+ * Provides content management for personas, stages, resources, and categories
  */
 
-class OptimizedAdminPanel {
+export class AdminModule {
   constructor() {
     this.initialized = false;
     this.isOnline = navigator.onLine;
@@ -33,17 +33,21 @@ class OptimizedAdminPanel {
       analytics: true
     };
     
-    this.init();
+    // Module initialization will be called by ModuleManager
   }
 
   /**
-   * Initialize the optimized admin panel
+   * Initialize the admin module
+   * @param {Object} config - Configuration object from module manager
    */
-  async init() {
+  async init(config = {}) {
     if (this.initialized) return;
     
     try {
-      console.log('🔧 Initializing Optimized Admin Panel...');
+      console.log('🔧 Initializing Admin Module...');
+      
+      // Store config
+      this.config = config;
       
       // Initialize Unified Data Manager
       await this.initializeUnifiedDataManager();
@@ -65,11 +69,13 @@ class OptimizedAdminPanel {
       // Load existing data
       await this.loadDataFromSources();
       
-      // Render interface
-      await this.renderInterface();
+      // Only render interface if admin panel is requested
+      if (config.renderInterface !== false) {
+        await this.renderInterface();
+      }
       
       this.initialized = true;
-      console.log('✅ Optimized Admin Panel initialized successfully');
+      console.log('✅ Admin Module initialized successfully');
       
       // Notify parent window if embedded
       if (window.parent !== window) {
@@ -1385,28 +1391,39 @@ class OptimizedAdminPanel {
     });
   }
 
-  // Initialize the admin panel
-  static async initialize() {
-    if (window.optimizedAdminPanel) {
-      console.warn('Admin panel already initialized');
-      return window.optimizedAdminPanel;
+  /**
+   * Destroy method for clean shutdown
+   */
+  async destroy() {
+    console.log('🔄 Shutting down Admin Module...');
+    
+    try {
+      // Clear timers
+      if (this.autoSaveTimer) {
+        clearInterval(this.autoSaveTimer);
+      }
+      
+      // Save any pending changes
+      if (this.changes.size > 0) {
+        await this.saveChanges();
+      }
+      
+      // Clear event listeners
+      document.removeEventListener('click', this.handleClick);
+      document.removeEventListener('change', this.handleChange);
+      document.removeEventListener('input', this.handleInput);
+      
+      // Cleanup editors
+      this.editors.clear();
+      
+      this.initialized = false;
+      console.log('✅ Admin Module shut down successfully');
+      
+    } catch (error) {
+      console.error('❌ Error during admin module shutdown:', error);
     }
-    
-    const adminPanel = new OptimizedAdminPanel();
-    window.optimizedAdminPanel = adminPanel;
-    
-    return adminPanel;
   }
 }
 
-// Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => OptimizedAdminPanel.initialize());
-} else {
-  OptimizedAdminPanel.initialize();
-}
-
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { OptimizedAdminPanel };
-}
+// Export the AdminModule class
+export default AdminModule;

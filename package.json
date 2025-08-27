@@ -1,0 +1,46 @@
+{
+  "name": "uipath-sales-cycle-guide",
+  "version": "2.0.0",
+  "description": "UiPath Sales Cycle Guide - Interactive application for sales teams",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "build": "node scripts/deploy.js production",
+    "preview": "cd dist && python3 -m http.server 8080",
+    "deploy:staging": "node scripts/deploy.js staging",
+    "deploy:prod": "node scripts/deploy.js production",
+    "clean": "rm -rf dist/",
+    "lint": "echo 'Linting would run here (eslint src/)'",
+    "test": "echo 'Tests would run here'"
+  },
+  "keywords": [
+    "uipath",
+    "sales",
+    "automation",
+    "rpa",
+    "guide"
+  ],
+  "author": "UiPath Sales Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/uipath-sales-cycle-guide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/uipath-sales-cycle-guide/issues"
+  },
+  "homepage": "https://your-org.github.io/uipath-sales-cycle-guide#readme",
+  "devDependencies": {
+    "http-server": "^14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11"
+  ]
+}

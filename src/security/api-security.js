@@ -6,8 +6,35 @@
 class APISecurityManager {
   constructor() {
     this.encryptionKey = null;
-    this.initializeEncryption();
     this.rateLimiter = new Map();
+    this.config = null;
+    this.initialized = false;
+  }
+
+  /**
+   * Initialize the API security manager with configuration
+   * @param {Object} config - Configuration from app config
+   */
+  async init(config = {}) {
+    if (this.initialized) return;
+    
+    this.config = config;
+    await this.initializeEncryption();
+    this.setupRateLimiting();
+    this.initialized = true;
+    
+    console.log('🔐 API Security Manager initialized');
+  }
+
+  /**
+   * Setup rate limiting based on configuration
+   */
+  setupRateLimiting() {
+    this.rateLimitConfig = {
+      maxRequests: this.config?.security?.rateLimit?.maxRequests || 60,
+      windowMs: this.config?.security?.rateLimit?.windowMs || 60000, // 1 minute
+      blockDuration: this.config?.security?.rateLimit?.blockDuration || 300000 // 5 minutes
+    };
   }
 
   /**
@@ -15,6 +42,12 @@ class APISecurityManager {
    * Note: This is obfuscation, not true security. For production, use a backend.
    */
   async initializeEncryption() {
+    // Skip encryption if disabled in config
+    if (this.config?.security?.apiKeys?.encryption === false) {
+      console.log('🔐 API key encryption disabled by configuration');
+      return;
+    }
+    
     // Generate a session-specific key for obfuscation
     const sessionId = this.generateSessionId();
     this.encryptionKey = await this.deriveKey(sessionId);

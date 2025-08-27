@@ -15,9 +15,24 @@ class PerformanceManager {
       renderTime: 0,
       interactionTime: 0
     };
+    this.config = null;
+    this.initialized = false;
+  }
+
+  /**
+   * Initialize the performance manager with configuration
+   * @param {Object} config - Configuration from app config
+   */
+  async init(config = {}) {
+    if (this.initialized) return;
     
+    this.config = config;
     this.initializeObservers();
     this.setupPerformanceMonitoring();
+    this.setupCaching();
+    this.initialized = true;
+    
+    console.log('⚡ Performance Manager initialized');
   }
 
   /**
@@ -173,6 +188,71 @@ class PerformanceManager {
     window.addEventListener('load', () => {
       this.metrics.loadTime = performance.now();
     });
+  }
+
+  /**
+   * Setup caching based on configuration
+   */
+  setupCaching() {
+    const cacheConfig = this.config?.cache || {};
+    
+    this.cacheSettings = {
+      maxSize: cacheConfig.maxSize || 50,
+      ttl: cacheConfig.ttl || 15 * 60 * 1000, // 15 minutes
+      version: cacheConfig.version || '1.0.0',
+      prefix: cacheConfig.prefix || 'perf-cache-'
+    };
+
+    // Clear cache if version changed
+    const storedVersion = localStorage.getItem(`${this.cacheSettings.prefix}version`);
+    if (storedVersion !== this.cacheSettings.version) {
+      this.clearCache();
+      localStorage.setItem(`${this.cacheSettings.prefix}version`, this.cacheSettings.version);
+    }
+
+    // Setup cache cleanup interval
+    setInterval(() => this.cleanupExpiredCache(), 5 * 60 * 1000); // Every 5 minutes
+  }
+
+  /**
+   * Clear all cached content
+   */
+  clearCache() {
+    this.cache.clear();
+    
+    // Clear localStorage cache entries
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(this.cacheSettings.prefix)) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    console.log('🧹 Performance cache cleared');
+  }
+
+  /**
+   * Cleanup expired cache entries
+   */
+  cleanupExpiredCache() {
+    const now = Date.now();
+    
+    for (const [key, value] of this.cache.entries()) {
+      if (value.timestamp && now - value.timestamp > this.cacheSettings.ttl) {
+        this.cache.delete(key);
+      }
+    }
+    
+    // Limit cache size
+    if (this.cache.size > this.cacheSettings.maxSize) {
+      const entriesToRemove = this.cache.size - this.cacheSettings.maxSize;
+      let removed = 0;
+      
+      for (const key of this.cache.keys()) {
+        if (removed >= entriesToRemove) break;
+        this.cache.delete(key);
+        removed++;
+      }
+    }
   }
 
   /**

@@ -1,276 +1,295 @@
 /**
  * Application Configuration
- * Centralized configuration management
+ * Central configuration management for all environments
  */
+class AppConfig {
+  constructor() {
+    this.config = null;
+    this.environment = null;
+  }
 
-export const APP_CONFIG = {
-  // Application metadata
-  name: 'UiPath Sales Cycle Guide',
-  version: '2.0.0',
-  description: 'Comprehensive sales cycle management tool for UiPath solutions',
+  /**
+   * Initialize configuration
+   */
+  init() {
+    this.environment = this.detectEnvironment();
+    this.config = this.loadConfiguration();
+    
+    console.log(`🔧 App configured for ${this.environment} environment`);
+    return this.config;
+  }
 
-  // Security settings
-  security: {
-    // Content Security Policy
-    csp: {
-      enableCSP: true,
-      reportViolations: true,
-      strictMode: false // Set to true for production
-    },
-    
-    // API security
-    api: {
-      maxRetries: 3,
-      timeoutMs: 30000,
-      rateLimitPerMinute: 10,
-      keyExpiryHours: 24
-    },
-    
-    // Input validation
-    validation: {
-      maxInputLength: 10000,
-      allowedFileTypes: ['json', 'txt'],
-      maxFileSize: 1024 * 1024 // 1MB
+  /**
+   * Detect current environment
+   */
+  detectEnvironment() {
+    // Check for development indicators
+    if (location.hostname === 'localhost' || 
+        location.hostname === '127.0.0.1' || 
+        location.port === '3000' ||
+        location.protocol === 'file:') {
+      return 'development';
     }
-  },
-
-  // Performance settings
-  performance: {
-    debounceDelayMs: 300,
-    throttleDelayMs: 100,
-    virtualScrollThreshold: 100,
-    cacheExpiryMs: 3600000, // 1 hour
-    lazyLoadThreshold: '50px'
-  },
-
-  // UI configuration
-  ui: {
-    // Animation durations
-    animations: {
-      fadeMs: 300,
-      slideMs: 250,
-      scaleMs: 200
-    },
     
-    // Responsive breakpoints
-    breakpoints: {
-      sm: 640,
-      md: 768,
-      lg: 1024,
-      xl: 1280
-    },
-    
-    // Theme configuration
-    theme: {
-      primaryColor: '#FA4616', // UiPath Orange
-      secondaryColor: '#1E40AF', // UiPath Blue
-      successColor: '#10B981',
-      errorColor: '#EF4444',
-      warningColor: '#F59E0B'
+    // Check for staging
+    if (location.hostname.includes('staging') || 
+        location.hostname.includes('test')) {
+      return 'staging';
     }
-  },
+    
+    // Production by default
+    return 'production';
+  }
 
-  // Feature flags
-  features: {
-    enableAI: true,
-    enableExport: true,
-    enableImport: true,
-    enableOfflineMode: true,
-    enableNotifications: true,
-    enableAnalytics: false, // Disabled for privacy
-    enableAutoSave: false, // Disabled per user request
-    enablePWA: true
-  },
+  /**
+   * Load environment-specific configuration
+   */
+  loadConfiguration() {
+    const baseConfig = {
+      app: {
+        name: 'UiPath Sales Cycle Guide',
+        version: '2.0.0',
+        debug: false
+      },
+      features: {
+        ai: true,
+        analytics: true,
+        performance: true,
+        admin: true,
+        offline: false
+      },
+      api: {
+        timeout: 30000,
+        retries: 3,
+        baseUrl: ''
+      },
+      ui: {
+        theme: 'default',
+        animations: true,
+        lazy: true
+      },
+      cache: {
+        version: '2.1.0',
+        prefix: 'uipath-sales-',
+        ttl: 24 * 60 * 60 * 1000 // 24 hours
+      },
+      security: {
+        csp: true,
+        sanitize: true,
+        apiKeys: {
+          storage: 'localStorage', // or 'sessionStorage'
+          encryption: true, // Enable encryption for API keys
+          keyPrefix: 'enc_'
+        },
+        cors: {
+          enabled: true,
+          allowedOrigins: ['*']
+        }
+      },
+      modules: {
+        loadOptional: true,
+        failSafe: true
+      }
+    };
 
-  // API endpoints
-  api: {
-    claude: {
-      baseUrl: 'https://api.anthropic.com/v1',
-      version: '2023-06-01',
-      models: {
-        default: 'claude-3-haiku-20240307',
-        premium: 'claude-3-sonnet-20240229'
+    // Environment-specific overrides
+    const envConfig = {
+      development: {
+        app: {
+          debug: true
+        },
+        api: {
+          timeout: 60000
+        },
+        ui: {
+          animations: false
+        },
+        security: {
+          csp: false,
+          apiKeys: {
+            encryption: false // Disable encryption in dev for easier debugging
+          }
+        }
+      },
+      staging: {
+        features: {
+          analytics: false
+        }
+      },
+      production: {
+        features: {
+          admin: false, // Hide admin in production
+          debug: false
+        },
+        cache: {
+          ttl: 7 * 24 * 60 * 60 * 1000 // 7 days in production
+        },
+        security: {
+          csp: true,
+          cors: {
+            allowedOrigins: [] // Restrict CORS in production
+          }
+        }
+      }
+    };
+
+    // Merge configurations
+    const currentEnvConfig = envConfig[this.environment] || {};
+    return this.deepMerge(baseConfig, currentEnvConfig);
+  }
+
+  /**
+   * Deep merge configuration objects
+   */
+  deepMerge(target, source) {
+    const result = { ...target };
+    
+    for (const key in source) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        result[key] = this.deepMerge(result[key] || {}, source[key]);
+      } else {
+        result[key] = source[key];
       }
     }
-  },
-
-  // Storage configuration
-  storage: {
-    // Use sessionStorage for temporary data, no localStorage persistence
-    useSessionStorage: true,
-    keyPrefix: 'uipath_sales_',
-    encryptSensitiveData: true,
-    maxStorageSize: 5 * 1024 * 1024 // 5MB
-  },
-
-  // Industry configuration
-  industries: [
-    {
-      id: 'banking',
-      name: 'Banking & Financial Services',
-      icon: 'bank',
-      color: '#1E40AF'
-    },
-    {
-      id: 'insurance',
-      name: 'Insurance',
-      icon: 'shield',
-      color: '#7C3AED'
-    }
-  ],
-
-  // Export/Import settings
-  export: {
-    formats: ['json', 'csv', 'txt'],
-    defaultFormat: 'json',
-    includeMetadata: true,
-    compressOutput: false
-  },
-
-  // Error handling
-  errorHandling: {
-    showUserFriendlyMessages: true,
-    logToConsole: true,
-    maxRetries: 3,
-    retryDelayMs: 1000
-  },
-
-  // Development settings
-  development: {
-    enableDebugMode: false,
-    enablePerformanceMonitoring: false,
-    enableStateLogging: false,
-    mockAIResponses: false
-  },
-
-  // Accessibility settings
-  accessibility: {
-    enableHighContrast: false,
-    enableReducedMotion: false,
-    enableScreenReaderSupport: true,
-    enableKeyboardNavigation: true
-  },
-
-  // PWA settings
-  pwa: {
-    enableServiceWorker: true,
-    enableOfflineMode: true,
-    enableInstallPrompt: true,
-    cacheStrategy: 'cacheFirst',
-    updateStrategy: 'prompt'
+    
+    return result;
   }
-};
 
-/**
- * Get configuration value
- * @param {string} path - Configuration path (dot notation)
- * @param {*} defaultValue - Default value if path not found
- * @returns {*} Configuration value
- */
-export function getConfig(path, defaultValue = null) {
-  const keys = path.split('.');
-  let value = APP_CONFIG;
-  
-  for (const key of keys) {
-    value = value?.[key];
-    if (value === undefined) {
+  /**
+   * Get configuration value with dot notation
+   */
+  get(path, defaultValue = null) {
+    if (!this.config) {
+      console.warn('Configuration not initialized');
       return defaultValue;
     }
-  }
-  
-  return value;
-}
 
-/**
- * Check if feature is enabled
- * @param {string} featureName - Feature name
- * @returns {boolean} Feature status
- */
-export function isFeatureEnabled(featureName) {
-  return getConfig(`features.${featureName}`, false);
-}
-
-/**
- * Get API configuration
- * @param {string} service - API service name
- * @returns {Object} API configuration
- */
-export function getAPIConfig(service = 'claude') {
-  return getConfig(`api.${service}`, {});
-}
-
-/**
- * Get security configuration
- * @returns {Object} Security configuration
- */
-export function getSecurityConfig() {
-  return getConfig('security', {});
-}
-
-/**
- * Get performance configuration
- * @returns {Object} Performance configuration
- */
-export function getPerformanceConfig() {
-  return getConfig('performance', {});
-}
-
-/**
- * Get UI configuration
- * @returns {Object} UI configuration
- */
-export function getUIConfig() {
-  return getConfig('ui', {});
-}
-
-/**
- * Update configuration (for dynamic updates)
- * @param {string} path - Configuration path
- * @param {*} value - New value
- */
-export function updateConfig(path, value) {
-  const keys = path.split('.');
-  let current = APP_CONFIG;
-  
-  for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i];
-    if (!(key in current)) {
-      current[key] = {};
+    const keys = path.split('.');
+    let value = this.config;
+    
+    for (const key of keys) {
+      if (value && typeof value === 'object' && key in value) {
+        value = value[key];
+      } else {
+        return defaultValue;
+      }
     }
-    current = current[key];
+    
+    return value;
   }
-  
-  current[keys[keys.length - 1]] = value;
+
+  /**
+   * Set configuration value with dot notation
+   */
+  set(path, value) {
+    if (!this.config) {
+      this.config = {};
+    }
+
+    const keys = path.split('.');
+    let current = this.config;
+    
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+      if (!current[key] || typeof current[key] !== 'object') {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+    
+    current[keys[keys.length - 1]] = value;
+  }
+
+  /**
+   * Check if feature is enabled
+   */
+  isFeatureEnabled(featureName) {
+    return this.get(`features.${featureName}`, false);
+  }
+
+  /**
+   * Get environment
+   */
+  getEnvironment() {
+    return this.environment;
+  }
+
+  /**
+   * Get full configuration
+   */
+  getAll() {
+    return this.config;
+  }
+
+  /**
+   * Get API configuration for a specific service
+   */
+  getApiConfig(serviceName) {
+    const apiConfig = this.get('api', {});
+    const serviceConfig = apiConfig[serviceName] || {};
+    
+    return {
+      timeout: serviceConfig.timeout || apiConfig.timeout || 30000,
+      retries: serviceConfig.retries || apiConfig.retries || 3,
+      baseUrl: serviceConfig.baseUrl || apiConfig.baseUrl || '',
+      headers: serviceConfig.headers || apiConfig.headers || {}
+    };
+  }
+
+  /**
+   * Check if a feature is enabled for current environment
+   */
+  isFeatureEnabledForEnvironment(featureName) {
+    const environmentFeatures = this.get(`environments.${this.environment}.features`, {});
+    const globalFeatures = this.get('features', {});
+    
+    // Environment-specific setting takes precedence
+    if (environmentFeatures.hasOwnProperty(featureName)) {
+      return environmentFeatures[featureName];
+    }
+    
+    return globalFeatures[featureName] || false;
+  }
+
+  /**
+   * Get security settings for current environment
+   */
+  getSecurityConfig() {
+    const securityConfig = this.get('security', {});
+    const envSecurityConfig = this.get(`environments.${this.environment}.security`, {});
+    
+    return this.deepMerge(securityConfig, envSecurityConfig);
+  }
+
+  /**
+   * Validate configuration
+   */
+  validate() {
+    const required = [
+      'app.name',
+      'app.version',
+      'cache.version'
+    ];
+
+    const missing = required.filter(path => this.get(path) === null);
+    
+    if (missing.length > 0) {
+      throw new Error(`Missing required configuration: ${missing.join(', ')}`);
+    }
+
+    // Validate environment-specific requirements
+    if (this.environment === 'production') {
+      const prodRequired = ['security.csp'];
+      const prodMissing = prodRequired.filter(path => !this.get(path));
+      
+      if (prodMissing.length > 0) {
+        console.warn(`Production configuration recommendations missing: ${prodMissing.join(', ')}`);
+      }
+    }
+
+    return true;
+  }
 }
 
-/**
- * Validate configuration
- * @returns {Array} Array of validation errors
- */
-export function validateConfig() {
-  const errors = [];
-  
-  // Validate required fields
-  if (!APP_CONFIG.name) errors.push('App name is required');
-  if (!APP_CONFIG.version) errors.push('App version is required');
-  
-  // Validate security settings
-  if (APP_CONFIG.security.api.rateLimitPerMinute < 1) {
-    errors.push('Rate limit must be at least 1 request per minute');
-  }
-  
-  // Validate performance settings
-  if (APP_CONFIG.performance.debounceDelayMs < 0) {
-    errors.push('Debounce delay must be non-negative');
-  }
-  
-  return errors;
-}
-
-// Validate configuration on load
-const configErrors = validateConfig();
-if (configErrors.length > 0) {
-  console.error('Configuration validation errors:', configErrors);
-}
-
-export default APP_CONFIG;
+export default AppConfig;
+export { AppConfig };

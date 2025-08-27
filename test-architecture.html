@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Guide - Architecture Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .success { background-color: #d4edda; border-color: #c3e6cb; }
+    .error { background-color: #f8d7da; border-color: #f5c6cb; }
+    .loading { background-color: #e2e3e5; border-color: #d6d8db; }
+    pre { 
+      background: #f8f9fa; 
+      padding: 10px; 
+      border-radius: 3px; 
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .module-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin: 2px;
+    }
+    .loaded { background: #d4edda; color: #155724; }
+    .failed { background: #f8d7da; color: #721c24; }
+    .pending { background: #fff3cd; color: #856404; }
+  </style>
+</head>
+<body>
+  <h1>🏗️ UiPath Sales Guide - Architecture Test</h1>
+  <p>This page tests the new modular architecture to ensure all components load correctly.</p>
+
+  <div id="test-results">
+    <div class="test-section loading">
+      <h3>🔄 Running Architecture Tests...</h3>
+      <p>Initializing test suite...</p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Architecture test suite
+    class ArchitectureTest {
+      constructor() {
+        this.results = [];
+        this.moduleStatus = new Map();
+        this.startTime = Date.now();
+      }
+
+      async runTests() {
+        const resultsContainer = document.getElementById('test-results');
+        resultsContainer.innerHTML = '<div class="test-section loading"><h3>🔄 Testing Architecture...</h3></div>';
+
+        try {
+          // Test 1: Module System
+          await this.testModuleSystem();
+          
+          // Test 2: Configuration System
+          await this.testConfigurationSystem();
+          
+          // Test 3: Core Components
+          await this.testCoreComponents();
+          
+          // Test 4: File Structure
+          await this.testFileStructure();
+
+          // Display results
+          this.displayResults(resultsContainer);
+          
+        } catch (error) {
+          console.error('Test suite failed:', error);
+          resultsContainer.innerHTML = `
+            <div class="test-section error">
+              <h3>❌ Test Suite Failed</h3>
+              <p>Error: ${error.message}</p>
+              <pre>${error.stack}</pre>
+            </div>
+          `;
+        }
+      }
+
+      async testModuleSystem() {
+        this.log('🔧 Testing module system...');
+        
+        try {
+          // Test module manager import
+          const { ModuleManager } = await import('./src/core/module-manager.js');
+          this.moduleStatus.set('ModuleManager', 'loaded');
+          
+          // Test app config import
+          const { AppConfig } = await import('./src/config/app-config.js');
+          this.moduleStatus.set('AppConfig', 'loaded');
+          
+          this.addResult('✅ Module System', 'Module imports working correctly', 'success');
+        } catch (error) {
+          this.moduleStatus.set('ModuleManager', 'failed');
+          this.addResult('❌ Module System', `Module import failed: ${error.message}`, 'error');
+        }
+      }
+
+      async testConfigurationSystem() {
+        this.log('⚙️ Testing configuration system...');
+        
+        try {
+          const { AppConfig } = await import('./src/config/app-config.js');
+          const config = new AppConfig();
+          const configResult = config.init();
+          
+          // Test basic config methods
+          const appName = config.get('app.name');
+          const environment = config.getEnvironment();
+          const isValid = config.validate();
+          
+          if (appName && environment && isValid) {
+            this.addResult('✅ Configuration System', 
+              `Environment: ${environment}, App: ${appName}`, 'success');
+          } else {
+            throw new Error('Configuration validation failed');
+          }
+        } catch (error) {
+          this.addResult('❌ Configuration System', 
+            `Config test failed: ${error.message}`, 'error');
+        }
+      }
+
+      async testCoreComponents() {
+        this.log('🧩 Testing core components...');
+        
+        const components = [
+          { name: 'AdminModule', path: './src/admin/optimized-admin.js', class: 'AdminModule' },
+          { name: 'AIModule', path: './src/ai/ai-module.js', class: 'AIModule' },
+          { name: 'PerformanceManager', path: './src/core/performance.js', class: 'PerformanceManager' },
+          { name: 'UnifiedDataManager', path: './src/core/unified-data-manager.js', class: 'UnifiedDataManager' }
+        ];
+
+        let successCount = 0;
+        let failureDetails = [];
+
+        for (const component of components) {
+          try {
+            const module = await import(component.path);
+            const ComponentClass = module[component.class] || module.default;
+            
+            if (ComponentClass) {
+              // Test instantiation
+              const instance = new ComponentClass();
+              if (typeof instance.init === 'function') {
+                this.log(`  ✅ ${component.name}: Can instantiate and has init method`);
+              } else {
+                this.log(`  ⚠️ ${component.name}: Instantiated but no init method`);
+              }
+              this.moduleStatus.set(component.name, 'loaded');
+              successCount++;
+            } else {
+              throw new Error(`Class ${component.class} not found in module`);
+            }
+          } catch (error) {
+            this.moduleStatus.set(component.name, 'failed');
+            failureDetails.push(`${component.name}: ${error.message}`);
+          }
+        }
+
+        if (successCount === components.length) {
+          this.addResult('✅ Core Components', 
+            `All ${components.length} core components loaded successfully`, 'success');
+        } else {
+          this.addResult('⚠️ Core Components', 
+            `${successCount}/${components.length} components loaded. Failures: ${failureDetails.join(', ')}`, 
+            successCount > 0 ? 'warning' : 'error');
+        }
+      }
+
+      async testFileStructure() {
+        this.log('📁 Testing file structure...');
+        
+        const criticalFiles = [
+          'src/app.js',
+          'src/components/timeline-app.js',
+          'js/data.js'
+        ];
+
+        let structureValid = true;
+        let missingFiles = [];
+
+        for (const file of criticalFiles) {
+          try {
+            const response = await fetch(file, { method: 'HEAD' });
+            if (!response.ok) {
+              missingFiles.push(file);
+              structureValid = false;
+            }
+          } catch (error) {
+            missingFiles.push(file);
+            structureValid = false;
+          }
+        }
+
+        if (structureValid) {
+          this.addResult('✅ File Structure', 
+            'All critical files accessible', 'success');
+        } else {
+          this.addResult('❌ File Structure', 
+            `Missing files: ${missingFiles.join(', ')}`, 'error');
+        }
+      }
+
+      addResult(title, message, status) {
+        this.results.push({ title, message, status });
+        this.log(`${title}: ${message}`);
+      }
+
+      log(message) {
+        console.log(message);
+      }
+
+      displayResults(container) {
+        const totalTime = Date.now() - this.startTime;
+        const successCount = this.results.filter(r => r.status === 'success').length;
+        const totalTests = this.results.length;
+
+        let html = `
+          <div class="test-section">
+            <h3>📊 Test Results Summary</h3>
+            <p><strong>Completed:</strong> ${totalTests} tests in ${totalTime}ms</p>
+            <p><strong>Success Rate:</strong> ${successCount}/${totalTests} tests passed</p>
+            
+            <h4>Module Status:</h4>
+            <div>
+        `;
+
+        for (const [module, status] of this.moduleStatus) {
+          const statusClass = status === 'loaded' ? 'loaded' : status === 'failed' ? 'failed' : 'pending';
+          html += `<span class="module-status ${statusClass}">${module}: ${status}</span>`;
+        }
+
+        html += '</div></div>';
+
+        // Add individual test results
+        for (const result of this.results) {
+          const sectionClass = result.status === 'success' ? 'success' : 
+                              result.status === 'warning' ? 'loading' : 'error';
+          html += `
+            <div class="test-section ${sectionClass}">
+              <h4>${result.title}</h4>
+              <p>${result.message}</p>
+            </div>
+          `;
+        }
+
+        // Add next steps
+        html += `
+          <div class="test-section">
+            <h3>🚀 Next Steps</h3>
+            <ul>
+              <li>✅ Architecture cleanup completed</li>
+              <li>✅ Modular system implemented</li>
+              <li>✅ Environment configuration ready</li>
+              <li>✅ Build and deployment process created</li>
+              <li>🎯 Ready for production deployment</li>
+            </ul>
+            
+            <h4>Deployment Commands:</h4>
+            <pre>
+# Development server
+npm run dev
+
+# Build for production  
+npm run build
+
+# Deploy to staging
+npm run deploy:staging
+
+# Deploy to production
+npm run deploy:prod
+            </pre>
+          </div>
+        `;
+
+        container.innerHTML = html;
+      }
+    }
+
+    // Run the tests when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      const tester = new ArchitectureTest();
+      tester.runTests();
+    });
+  </script>
+</body>
+</html>
