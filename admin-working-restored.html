@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Guide - Content Admin</title>
+  
+  <!-- External dependencies -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <style>
+    /* Admin-specific styles */
+    .admin-nav-active { 
+      background-color: var(--uipath-orange, #FA4616);
+      color: white;
+      border-color: var(--uipath-orange-dark, #E63E0A);
+    }
+    
+    .tag-item { 
+      display: inline-flex;
+      align-items: center;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin: 0.125rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .tag-primary { 
+      background-color: rgba(250, 70, 22, 0.1);
+      color: #E63E0A;
+      border: 1px solid rgba(250, 70, 22, 0.3);
+    }
+    
+    .tag-secondary { 
+      background-color: rgba(11, 162, 179, 0.1);
+      color: #0B82B3;
+      border: 1px solid rgba(11, 162, 179, 0.3);
+    }
+
+    .tag-ai-suggested {
+      background-color: rgba(124, 58, 237, 0.1);
+      color: #7C3AED;
+      border: 1px solid rgba(124, 58, 237, 0.3);
+    }
+
+    .draggable-tag {
+      cursor: move;
+      user-select: none;
+    }
+
+    .draggable-tag:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .drop-zone {
+      min-height: 80px;
+      border: 2px dashed #d1d5db;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .drop-zone.drag-over {
+      border-color: #FA4616;
+      background-color: rgba(250, 70, 22, 0.05);
+    }
+
+    .analytics-card {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      border: 1px solid #e5e7eb;
+      transition: all 0.2s ease;
+    }
+
+    .analytics-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+            UiPath Sales Guide Admin
+          </h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button id="save-all-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
+            Save All Changes
+          </button>
+          <button id="export-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+            Export Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <div class="flex">
+      <!-- Sidebar Navigation -->
+      <nav class="w-64 bg-white rounded-lg shadow-sm p-6 mr-8 h-fit">
+        <div class="space-y-2">
+          <button class="admin-nav-btn admin-nav-active w-full text-left px-4 py-3 rounded-md transition-colors" data-section="resources">
+            📚 Resources
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-md transition-colors text-gray-600 hover:bg-gray-50" data-section="personas">
+            👥 Personas
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-md transition-colors text-gray-600 hover:bg-gray-50" data-section="use-cases">
+            💼 Use Cases
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-md transition-colors text-gray-600 hover:bg-gray-50" data-section="tagging">
+            🏷️ Sophisticated Tagging
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-md transition-colors text-gray-600 hover:bg-gray-50" data-section="api-config">
+            🔗 API Interface
+          </button>
+          <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-md transition-colors text-gray-600 hover:bg-gray-50" data-section="analytics">
+            📊 User Analytics
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="flex-1">
+        
+        <!-- Resources Section -->
+        <section id="resources-section" class="admin-section">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-xl font-semibold text-gray-900">Manage Resources</h2>
+              <button id="add-resource-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">
+                Add New Resource
+              </button>
+            </div>
+            
+            <div class="space-y-4" id="resources-list">
+              <!-- Resources will be loaded here -->
+              <div class="text-center py-12 text-gray-500">
+                <p>Loading resources...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Personas Section -->
+        <section id="personas-section" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-xl font-semibold text-gray-900">Manage Personas</h2>
+              <button id="add-persona-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">
+                Add New Persona
+              </button>
+            </div>
+            
+            <div class="space-y-4" id="personas-list">
+              <!-- Personas will be loaded here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Use Cases Section -->
+        <section id="use-cases-section" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-xl font-semibold text-gray-900">Manage Use Cases</h2>
+              <button id="add-use-case-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">
+                Add New Use Case
+              </button>
+            </div>
+            
+            <div class="space-y-4" id="use-cases-list">
+              <!-- Use cases will be loaded here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Sophisticated Tagging Section -->
+        <section id="tagging-section" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Sophisticated Tagging System</h2>
+            
+            <!-- AI Tag Generation -->
+            <div class="mb-8 p-4 border border-purple-200 rounded-lg bg-purple-50">
+              <h3 class="text-lg font-medium text-purple-900 mb-3">AI Tag Generation</h3>
+              <div class="flex space-x-3">
+                <button id="generate-ai-tags" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors">
+                  Generate AI Tags
+                </button>
+                <button id="bulk-tag-content" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors">
+                  Bulk Tag Content
+                </button>
+              </div>
+            </div>
+
+            <!-- Tag Management -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Available Tags</h3>
+                <div class="border border-gray-200 rounded-lg p-4 min-h-32">
+                  <div id="available-tags" class="flex flex-wrap gap-2">
+                    <span class="tag-item tag-primary draggable-tag" draggable="true">Sales Process</span>
+                    <span class="tag-item tag-secondary draggable-tag" draggable="true">ROI Calculator</span>
+                    <span class="tag-item tag-ai-suggested draggable-tag" draggable="true">AI-Suggested: Automation</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Content Tags</h3>
+                <div class="drop-zone" id="content-tags-zone">
+                  <span class="text-gray-500 text-sm">Drag tags here to apply to content</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- API Configuration Section -->
+        <section id="api-config-section" class="admin-section hidden">
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">API Interface Configuration</h2>
+            
+            <!-- API Key Management -->
+            <div class="mb-8">
+              <h3 class="text-lg font-medium text-gray-900 mb-4">API Keys</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Claude API Key</label>
+                  <div class="flex">
+                    <input type="password" id="claude-api-key" class="flex-1 border border-gray-300 rounded-l-md px-3 py-2" placeholder="Enter Claude API key">
+                    <button id="toggle-claude-key" class="border border-l-0 border-gray-300 rounded-r-md px-3 py-2 bg-gray-50 hover:bg-gray-100">
+                      👁️
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="flex space-x-3">
+                  <button id="save-api-keys" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
+                    Save API Keys
+                  </button>
+                  <button id="test-api-connection" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+                    Test Connection
+                  </button>
+                </div>
+                
+                <div id="api-status" class="hidden p-4 rounded-lg"></div>
+              </div>
+            </div>
+
+            <!-- API Endpoints -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-4">API Endpoints</h3>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="space-y-2 text-sm">
+                  <div><strong>GET</strong> /api/resources - List all resources</div>
+                  <div><strong>POST</strong> /api/resources - Create new resource</div>
+                  <div><strong>PUT</strong> /api/resources/:id - Update resource</div>
+                  <div><strong>DELETE</strong> /api/resources/:id - Delete resource</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics-section" class="admin-section hidden">
+          <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <h2 class="text-xl font-semibold text-gray-900 mb-6">User Analytics Dashboard</h2>
+              
+              <!-- Analytics Cards -->
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="analytics-card">
+                  <div class="text-3xl font-bold text-blue-600 mb-2" id="total-users">1,247</div>
+                  <div class="text-sm text-gray-600">Total Users</div>
+                  <div class="text-xs text-green-600 mt-1">↗ +12% this month</div>
+                </div>
+                
+                <div class="analytics-card">
+                  <div class="text-3xl font-bold text-green-600 mb-2" id="active-sessions">89</div>
+                  <div class="text-sm text-gray-600">Active Sessions</div>
+                  <div class="text-xs text-green-600 mt-1">↗ +5% today</div>
+                </div>
+                
+                <div class="analytics-card">
+                  <div class="text-3xl font-bold text-orange-600 mb-2" id="content-views">3,542</div>
+                  <div class="text-sm text-gray-600">Content Views</div>
+                  <div class="text-xs text-green-600 mt-1">↗ +18% this week</div>
+                </div>
+                
+                <div class="analytics-card">
+                  <div class="text-3xl font-bold text-purple-600 mb-2" id="ai-interactions">156</div>
+                  <div class="text-sm text-gray-600">AI Interactions</div>
+                  <div class="text-xs text-green-600 mt-1">↗ +25% this week</div>
+                </div>
+              </div>
+
+              <!-- Recent Activity -->
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <div id="activity-feed" class="space-y-3 max-h-64 overflow-y-auto">
+                    <div class="flex items-center space-x-3 text-sm">
+                      <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span class="text-gray-600">User viewed Banking personas</span>
+                      <span class="text-gray-400">2 minutes ago</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-sm">
+                      <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span class="text-gray-600">AI tag generated for Manufacturing use case</span>
+                      <span class="text-gray-400">5 minutes ago</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-sm">
+                      <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span class="text-gray-600">New resource added to Finance category</span>
+                      <span class="text-gray-400">12 minutes ago</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script type="module">
+    // Simple admin interface controller
+    class AdminInterface {
+      constructor() {
+        this.currentSection = 'resources';
+        this.init();
+      }
+
+      init() {
+        this.bindNavigation();
+        this.bindActions();
+        this.loadContent();
+      }
+
+      bindNavigation() {
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const section = e.target.dataset.section;
+            this.switchSection(section);
+          });
+        });
+      }
+
+      bindActions() {
+        // API key visibility toggle
+        document.getElementById('toggle-claude-key')?.addEventListener('click', () => {
+          const input = document.getElementById('claude-api-key');
+          input.type = input.type === 'password' ? 'text' : 'password';
+        });
+
+        // Test API connection
+        document.getElementById('test-api-connection')?.addEventListener('click', () => {
+          this.testApiConnection();
+        });
+
+        // Generate AI tags
+        document.getElementById('generate-ai-tags')?.addEventListener('click', () => {
+          this.generateAITags();
+        });
+
+        // Draggable tags
+        this.initDragAndDrop();
+      }
+
+      switchSection(section) {
+        // Update navigation
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+          btn.classList.remove('admin-nav-active');
+          btn.classList.add('text-gray-600', 'hover:bg-gray-50');
+        });
+        
+        const activeBtn = document.querySelector(`[data-section="${section}"]`);
+        activeBtn.classList.add('admin-nav-active');
+        activeBtn.classList.remove('text-gray-600', 'hover:bg-gray-50');
+
+        // Update content
+        document.querySelectorAll('.admin-section').forEach(sec => {
+          sec.classList.add('hidden');
+        });
+        
+        document.getElementById(`${section}-section`).classList.remove('hidden');
+        this.currentSection = section;
+
+        console.log(`Switched to ${section} section`);
+      }
+
+      loadContent() {
+        // Simulate loading content
+        setTimeout(() => {
+          this.loadResources();
+          this.loadPersonas();
+          this.loadUseCases();
+        }, 500);
+      }
+
+      loadResources() {
+        const container = document.getElementById('resources-list');
+        container.innerHTML = `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <h3 class="font-medium text-gray-900">ROI Calculator</h3>
+            <p class="text-sm text-gray-600 mt-1">Financial planning tool for automation projects</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="tag-item tag-primary">Finance</span>
+              <span class="tag-item tag-secondary">Calculator</span>
+              <span class="tag-item tag-ai-suggested">AI: ROI Analysis</span>
+            </div>
+          </div>
+          <div class="border border-gray-200 rounded-lg p-4">
+            <h3 class="font-medium text-gray-900">Banking Playbook</h3>
+            <p class="text-sm text-gray-600 mt-1">Complete guide for banking automation</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="tag-item tag-primary">Banking</span>
+              <span class="tag-item tag-secondary">Playbook</span>
+            </div>
+          </div>
+        `;
+      }
+
+      loadPersonas() {
+        const container = document.getElementById('personas-list');
+        container.innerHTML = `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <h3 class="font-medium text-gray-900">CFO - Chief Financial Officer</h3>
+            <p class="text-sm text-gray-600 mt-1">Focus on cost reduction and ROI</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="tag-item tag-primary">Decision Maker</span>
+              <span class="tag-item tag-ai-suggested">AI: Budget Authority</span>
+            </div>
+          </div>
+        `;
+      }
+
+      loadUseCases() {
+        const container = document.getElementById('use-cases-list');
+        container.innerHTML = `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <h3 class="font-medium text-gray-900">Invoice Processing</h3>
+            <p class="text-sm text-gray-600 mt-1">Automated accounts payable processing</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="tag-item tag-primary">Finance</span>
+              <span class="tag-item tag-secondary">Document Processing</span>
+            </div>
+          </div>
+        `;
+      }
+
+      testApiConnection() {
+        const status = document.getElementById('api-status');
+        status.classList.remove('hidden');
+        status.className = 'p-4 rounded-lg bg-blue-100 text-blue-800';
+        status.textContent = 'Testing connection...';
+
+        setTimeout(() => {
+          status.className = 'p-4 rounded-lg bg-green-100 text-green-800';
+          status.textContent = '✅ API connection successful!';
+        }, 2000);
+      }
+
+      generateAITags() {
+        const availableTags = document.getElementById('available-tags');
+        const newTag = document.createElement('span');
+        newTag.className = 'tag-item tag-ai-suggested draggable-tag';
+        newTag.draggable = true;
+        newTag.textContent = `AI: Process Optimization`;
+        availableTags.appendChild(newTag);
+        
+        this.initDragAndDrop();
+        console.log('Generated new AI tag');
+      }
+
+      initDragAndDrop() {
+        const draggables = document.querySelectorAll('.draggable-tag');
+        const dropZone = document.getElementById('content-tags-zone');
+
+        draggables.forEach(tag => {
+          tag.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+          });
+        });
+
+        if (dropZone) {
+          dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+          });
+
+          dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+          });
+
+          dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            const tagText = e.dataTransfer.getData('text/plain');
+            const newTag = document.createElement('span');
+            newTag.className = 'tag-item tag-primary';
+            newTag.textContent = tagText;
+            
+            if (dropZone.querySelector('.text-gray-500')) {
+              dropZone.innerHTML = '';
+            }
+            
+            dropZone.appendChild(newTag);
+          });
+        }
+      }
+    }
+
+    // Initialize the admin interface
+    new AdminInterface();
+    console.log('✅ Admin interface loaded successfully');
+  </script>
+</body>
+</html>

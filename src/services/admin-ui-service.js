@@ -463,26 +463,59 @@ export class AdminUIService {
   async loadAdminCSS() {
     try {
       // Check if admin CSS is already loaded
-      if (document.querySelector('link[href*="admin"]')) {
+      if (document.querySelector('[data-admin-styles="true"]')) {
         return;
       }
 
-      // Extract CSS from admin.html
+      // Extract ALL CSS and dependencies from admin.html
       const adminResponse = await fetch('./src/admin/admin.html');
       const adminHtml = await adminResponse.text();
       
       const parser = new DOMParser();
       const adminDoc = parser.parseFromString(adminHtml, 'text/html');
       
-      // Extract style tags and add them
+      // Load external fonts
+      const fontLinks = adminDoc.querySelectorAll('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"]');
+      fontLinks.forEach(link => {
+        if (!document.querySelector(`link[href="${link.href}"]`)) {
+          const newLink = document.createElement('link');
+          newLink.rel = link.rel;
+          newLink.href = link.href;
+          if (link.crossOrigin) newLink.crossOrigin = link.crossOrigin;
+          document.head.appendChild(newLink);
+        }
+      });
+      
+      // Load Tailwind CSS
+      const tailwindScript = adminDoc.querySelector('script[src*="tailwindcss.com"]');
+      if (tailwindScript && !document.querySelector('script[src*="tailwindcss.com"]')) {
+        const newScript = document.createElement('script');
+        newScript.src = tailwindScript.src;
+        document.head.appendChild(newScript);
+      }
+      
+      // Load main site CSS for consistency (adjust path)
+      const mainCSS = adminDoc.querySelector('link[href*="styles.css"]');
+      if (mainCSS && !document.querySelector('link[href*="styles.css"]')) {
+        const newLink = document.createElement('link');
+        newLink.rel = 'stylesheet';
+        newLink.href = './css/styles.css'; // Correct path for integrated environment
+        document.head.appendChild(newLink);
+      }
+      
+      // Extract admin-specific style tags
       const styles = adminDoc.querySelectorAll('style');
       styles.forEach(style => {
         const newStyle = document.createElement('style');
         newStyle.textContent = style.textContent;
+        newStyle.setAttribute('data-admin-styles', 'true');
         document.head.appendChild(newStyle);
       });
       
-      console.log('✅ Admin CSS loaded');
+      console.log('✅ Admin CSS and all dependencies loaded');
+      
+      // Wait for external resources to load
+      return new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
       console.warn('⚠️ Could not load admin CSS:', error);
     }
@@ -518,12 +551,17 @@ export class AdminUIService {
       const adminModule = await import('../admin/admin.js');
       const AdminInterface = adminModule.AdminInterface || adminModule.default;
       
-      // Wait for the admin container to be in DOM
+      // Wait for the admin container to be in DOM and ensure DOM is ready
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       const adminContainer = document.getElementById('admin-interface-container');
       if (adminContainer) {
         // Initialize the admin interface
         this.adminInterface = new AdminInterface();
         console.log('✅ Admin interface functionality initialized');
+        
+        // Ensure admin navigation buttons work
+        this.fixAdminNavigation();
       } else {
         console.error('❌ Admin interface container not found');
       }
@@ -531,6 +569,31 @@ export class AdminUIService {
       console.error('❌ Failed to initialize admin interface:', error);
       // Continue without admin functionality
     }
+  }
+
+  fixAdminNavigation() {
+    // Re-bind admin navigation events to ensure they work in the integrated environment
+    setTimeout(() => {
+      console.log('🔧 Fixing admin navigation...');
+      
+      // Find all admin navigation buttons and ensure they work
+      document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const section = e.target.dataset.section;
+          if (section && this.adminInterface) {
+            console.log(`🔄 Switching to section: ${section}`);
+            this.adminInterface.switchSection(section);
+          }
+        });
+      });
+      
+      // Trigger a click on the first nav button to ensure something is showing
+      const firstNavBtn = document.querySelector('.admin-nav-btn');
+      if (firstNavBtn) {
+        firstNavBtn.click();
+        console.log('✅ Admin navigation fixed and activated');
+      }
+    }, 100);
   }
 
   bindAdminPanelEvents() {

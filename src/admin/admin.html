@@ -2351,9 +2351,41 @@
   </div>
 
   <!-- Scripts -->
-  <script src="../api/contentAPI.js"></script>
-  <script src="../services/ai-service.js" type="module"></script>
-  <script src="../../js/ai-integration.js"></script>
-  <script src="admin.js"></script>
+  <script type="module">
+    // Initialize the admin interface
+    (async function() {
+      try {
+        console.log('🔄 Loading admin interface...');
+        
+        // Load ContentAPI
+        const { ContentAPI } = await import('../api/contentAPI.js');
+        window.ContentAPI = ContentAPI;
+        console.log('✅ ContentAPI loaded');
+        
+        // Load AdminInterface
+        const { AdminInterface } = await import('./admin.js');
+        console.log('✅ AdminInterface loaded');
+        
+        // Initialize admin interface
+        window.adminInterface = new AdminInterface();
+        console.log('✅ Admin interface initialized successfully');
+        
+      } catch (error) {
+        console.error('❌ Failed to initialize admin interface:', error);
+        
+        // Show error to user
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50';
+        errorDiv.innerHTML = `
+          <strong>Error:</strong> Failed to load admin interface<br>
+          <small>${error.message}</small><br>
+          <button onclick="window.location.reload()" class="mt-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+            Retry
+          </button>
+        `;
+        document.body.appendChild(errorDiv);
+      }
+    })();
+  </script>
 </body>
 </html>

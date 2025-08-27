@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Cycle Guide - Complete Edition</title>
+  
+  <!-- Preconnect to external domains for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Theme color for mobile browsers -->
+  <meta name="theme-color" content="#FA4616">
+  
+  <!-- Preload critical resources -->
+  <link rel="modulepreload" href="src/app.js">
+  <link rel="modulepreload" href="src/security/csp-config.js">
+  <link rel="modulepreload" href="src/admin/admin.js">
+  <link rel="modulepreload" href="src/api/contentAPI.js">
+
+  <style>
+    /* Admin-specific styles integrated directly */
+    .admin-nav-active { 
+      background-color: var(--uipath-orange);
+      color: white;
+      border-color: var(--uipath-orange-dark);
+    }
+    
+    .tag-item { 
+      display: inline-flex;
+      align-items: center;
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--border-radius-sm);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      transition: var(--transition-fast);
+    }
+    
+    .tag-primary { 
+      background-color: rgba(250, 70, 22, 0.1);
+      color: var(--uipath-orange-dark);
+      border: 1px solid rgba(250, 70, 22, 0.2);
+    }
+    
+    .tag-secondary { 
+      background-color: rgba(11, 162, 179, 0.1);
+      color: var(--uipath-teal-dark);
+      border: 1px solid rgba(11, 162, 179, 0.2);
+    }
+
+    .tag-ai-suggested {
+      background-color: rgba(124, 58, 237, 0.1);
+      color: var(--uipath-purple-dark, #6B46C1);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .tag-pain-point { 
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #DC2626;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .tag-outcome { 
+      background-color: rgba(34, 197, 94, 0.1);
+      color: #059669;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .sortable-placeholder {
+      background-color: rgba(250, 70, 22, 0.1);
+      border: 2px dashed var(--uipath-orange);
+      border-radius: var(--border-radius-md);
+      height: 60px;
+      margin: 0.5rem 0;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      color: #9CA3AF;
+      margin-right: 0.5rem;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .modal-overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .edit-highlight {
+      background-color: rgba(250, 70, 22, 0.05);
+      border-left: 4px solid var(--uipath-orange);
+      padding-left: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Admin panel styles */
+    .admin-panel {
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .admin-panel.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-20px);
+    }
+
+    .admin-section {
+      min-height: 600px;
+    }
+
+    .admin-section.hidden {
+      display: none;
+    }
+
+    /* Ensure proper z-index layering */
+    .admin-panel {
+      z-index: 9999;
+    }
+
+    /* Edit mode indicator */
+    .edit-mode-active {
+      border: 2px solid var(--uipath-orange);
+      border-radius: var(--border-radius-md);
+      background-color: rgba(250, 70, 22, 0.02);
+    }
+  </style>
+
+  <!-- SVG Icons (embedded for performance and security) -->
+  <svg style="display: none;">
+    <defs>
+      <g id="edit-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
+      </g>
+      <g id="chevron-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </g>
+      <g id="copy-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+      </g>
+      <g id="trash-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </g>
+      <g id="menu-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </g>
+      <g id="settings-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </g>
+    </defs>
+  </svg>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-500 mx-auto mb-4"></div>
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">Loading UiPath Sales Guide</h2>
+      <p class="text-gray-500">Initializing content and admin system...</p>
+    </div>
+  </div>
+
+  <!-- Admin Mode Toggle (Bottom Right) -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <button id="admin-mode-toggle" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center space-x-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <use href="#settings-icon"/>
+      </svg>
+      <span id="admin-mode-text">Enter Edit Mode</span>
+    </button>
+  </div>
+
+  <!-- Admin Status Bar (Hidden by default) -->
+  <div id="admin-status-bar" class="fixed top-0 left-0 right-0 bg-red-600 text-white px-4 py-2 text-sm font-medium text-center z-30 hidden">
+    🔧 Edit Mode Active - Changes will be saved automatically
+  </div>
+
+  <!-- Main Application Container -->
+  <div class="min-h-screen">
+    <!-- Timeline Application Content -->
+    <div id="timeline-app">
+      <!-- Header -->
+      <div class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img src="images/uipath-logo.svg" alt="UiPath" class="h-8 mr-4" onerror="this.style.display='none'">
+              <div>
+                <h1 class="text-2xl font-bold text-gray-900">Sales Cycle Guide</h1>
+                <p class="text-sm text-gray-600">Complete Edition with Content Management</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+              <div class="text-sm text-gray-500">
+                <span id="current-stage-indicator">Discovery</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Context Configuration -->
+      <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label for="vertical-select" class="block text-sm font-medium text-gray-700 mb-1">Industry Vertical</label>
+              <select id="vertical-select" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">Select Vertical</option>
+                <option value="banking">Banking & Financial Services</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="government">Public Sector</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="lob-select" class="block text-sm font-medium text-gray-700 mb-1">Line of Business</label>
+              <select id="lob-select" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">Select LOB</option>
+                <option value="finance">Finance</option>
+                <option value="hr">Human Resources</option>
+                <option value="it">IT Operations</option>
+                <option value="operations">Operations</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="customer-type-select" class="block text-sm font-medium text-gray-700 mb-1">Customer Type</label>
+              <select id="customer-type-select" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">Select Type</option>
+                <option value="new">New Customer</option>
+                <option value="existing">Existing Customer</option>
+                <option value="expansion">Expansion</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="deployment-select" class="block text-sm font-medium text-gray-700 mb-1">Deployment</label>
+              <select id="deployment-select" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">Select Deployment</option>
+                <option value="on-prem">On-Premises</option>
+                <option value="automation-suite">Automation Suite</option>
+                <option value="automation-cloud">Automation Cloud</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sales Timeline -->
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <div id="timeline-container">
+          <!-- Timeline content will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Panel (Full Screen Overlay) -->
+    <div id="admin-panel" class="fixed inset-0 bg-black bg-opacity-50 z-50 admin-panel hidden">
+      <div class="bg-white h-full overflow-y-auto">
+        
+        <!-- Admin Header -->
+        <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center">
+            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <use href="#settings-icon"/>
+            </svg>
+            <h2 class="text-xl font-semibold">Content Administration</h2>
+          </div>
+          <button id="close-admin-panel" class="text-white hover:text-gray-200 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Admin Navigation -->
+        <div class="bg-gray-100 border-b border-gray-200">
+          <div class="max-w-7xl mx-auto px-6">
+            <nav class="flex space-x-8">
+              <button data-section="resources" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">Resources</button>
+              <button data-section="personas" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">Personas</button>
+              <button data-section="use-cases" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">Use Cases</button>
+              <button data-section="tags" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">Tags</button>
+              <button data-section="analytics" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">Analytics</button>
+              <button data-section="ai-config" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">AI Config</button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Admin Content Area -->
+        <div class="max-w-7xl mx-auto px-6 py-8">
+          
+          <!-- Resources Section -->
+          <div id="resources-section" class="admin-section">
+            <div class="mb-6 flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-gray-900">Manage Resources</h3>
+              <div class="flex space-x-3">
+                <button id="add-resource-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">Add Resource</button>
+                <button id="import-resources-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors">Import</button>
+                <button id="export-resources-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">Export</button>
+              </div>
+            </div>
+
+            <!-- Resource Filters -->
+            <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input type="text" id="resource-search" placeholder="Search resources..." class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <select id="resource-vertical-filter" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">All Verticals</option>
+                <option value="banking">Banking</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="government">Government</option>
+              </select>
+              <select id="resource-type-filter" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">All Types</option>
+                <option value="calculator">Calculator</option>
+                <option value="playbook">Playbook</option>
+                <option value="case-study">Case Study</option>
+                <option value="demo">Demo</option>
+              </select>
+            </div>
+
+            <!-- Resources List -->
+            <div id="resources-list" class="space-y-4">
+              <!-- Resources will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Personas Section -->
+          <div id="personas-section" class="admin-section hidden">
+            <div class="mb-6 flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-gray-900">Manage Personas</h3>
+              <div class="flex space-x-3">
+                <button id="add-persona-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">Add Persona</button>
+                <button id="generate-ai-tags-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition-colors">Generate AI Tags</button>
+              </div>
+            </div>
+
+            <!-- Personas List -->
+            <div id="personas-list" class="space-y-4">
+              <!-- Personas will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Use Cases Section -->
+          <div id="use-cases-section" class="admin-section hidden">
+            <div class="mb-6 flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-gray-900">Manage Use Cases</h3>
+              <button id="add-use-case-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">Add Use Case</button>
+            </div>
+
+            <!-- Use Cases List -->
+            <div id="use-cases-list" class="space-y-4">
+              <!-- Use cases will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Tags Section -->
+          <div id="tags-section" class="admin-section hidden">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">Manage Tags</h3>
+              <p class="text-gray-600">Organize and manage content tags across all sections.</p>
+            </div>
+
+            <!-- Tags Management -->
+            <div id="tags-management">
+              <!-- Tags will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Analytics Section -->
+          <div id="analytics-section" class="admin-section hidden">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">Analytics Dashboard</h3>
+            </div>
+
+            <!-- Analytics Content -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div class="text-3xl font-bold text-blue-600 mb-2" id="total-resources-count">0</div>
+                <div class="text-sm text-gray-600">Total Resources</div>
+              </div>
+              <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <div class="text-3xl font-bold text-green-600 mb-2" id="total-personas-count">0</div>
+                <div class="text-sm text-gray-600">Total Personas</div>
+              </div>
+              <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                <div class="text-3xl font-bold text-purple-600 mb-2" id="total-use-cases-count">0</div>
+                <div class="text-sm text-gray-600">Total Use Cases</div>
+              </div>
+              <div class="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                <div class="text-3xl font-bold text-orange-600 mb-2" id="total-tags-count">0</div>
+                <div class="text-sm text-gray-600">Total Tags</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Config Section -->
+          <div id="ai-config-section" class="admin-section hidden">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">AI Configuration</h3>
+              <p class="text-gray-600">Configure AI services for content enhancement and analysis.</p>
+            </div>
+
+            <!-- AI Config Form -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <div class="space-y-4">
+                <div>
+                  <label for="ai-api-key" class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                  <div class="flex">
+                    <input type="password" id="ai-api-key" placeholder="Enter your AI API key..." class="flex-1 border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <button id="toggle-api-visibility" class="border border-l-0 border-gray-300 rounded-r-md px-3 py-2 bg-gray-50 hover:bg-gray-100">👁️</button>
+                  </div>
+                </div>
+                <div class="flex space-x-3">
+                  <button id="save-ai-config" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">Save Configuration</button>
+                  <button id="test-ai-connection" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">Test Connection</button>
+                </div>
+                <div id="ai-status" class="hidden p-4 rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Resource Modal -->
+  <div id="resource-modal" class="fixed inset-0 bg-black bg-opacity-50 z-60 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold">Add/Edit Resource</h3>
+          <button id="close-resource-modal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <form id="resource-form" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+              <input type="text" name="title" required class="w-full border border-gray-300 rounded-md px-3 py-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <select name="type" required class="w-full border border-gray-300 rounded-md px-3 py-2">
+                <option value="">Select Type</option>
+                <option value="calculator">Calculator</option>
+                <option value="playbook">Playbook</option>
+                <option value="case-study">Case Study</option>
+                <option value="demo">Demo</option>
+                <option value="whitepaper">Whitepaper</option>
+                <option value="datasheet">Datasheet</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea name="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Vertical</label>
+              <select name="vertical" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                <option value="">Select Vertical</option>
+                <option value="banking">Banking</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="government">Government</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">LOB</label>
+              <select name="lob" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                <option value="">Select LOB</option>
+                <option value="finance">Finance</option>
+                <option value="hr">HR</option>
+                <option value="it">IT</option>
+                <option value="operations">Operations</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">URL</label>
+            <input type="url" name="url" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" id="cancel-resource-btn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+            <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors">Save Resource</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading all scripts -->
+  <script type="module">
+    // Import all necessary modules
+    import { ContentAPI } from './src/api/contentAPI.js';
+    import { initializeSecurityConfig } from './src/security/csp-config.js';
+    
+    // Global variables
+    window.ContentAPI = ContentAPI;
+    window.contentAPI = new ContentAPI();
+    window.adminMode = false;
+    window.currentSection = 'resources';
+
+    // Initialize security
+    initializeSecurityConfig();
+
+    // Initialize the application
+    class IntegratedSalesGuide {
+      constructor() {
+        this.timelineApp = null;
+        this.adminInterface = null;
+        this.contentAPI = new ContentAPI();
+        
+        this.initializeApp();
+      }
+
+      async initializeApp() {
+        try {
+          console.log('🚀 Initializing Integrated Sales Guide...');
+          
+          // Load timeline functionality
+          await this.initializeTimeline();
+          
+          // Load admin functionality  
+          await this.initializeAdmin();
+          
+          // Bind UI events
+          this.bindEvents();
+          
+          // Hide loading screen
+          document.getElementById('loading-screen').style.display = 'none';
+          
+          console.log('✅ Application initialized successfully');
+        } catch (error) {
+          console.error('❌ Failed to initialize application:', error);
+        }
+      }
+
+      async initializeTimeline() {
+        // Load timeline app functionality
+        const { TimelineApp } = await import('./src/app.js');
+        this.timelineApp = new TimelineApp();
+        console.log('✅ Timeline application loaded');
+      }
+
+      async initializeAdmin() {
+        // Load admin interface functionality
+        const { AdminInterface } = await import('./src/admin/admin.js');
+        this.adminInterface = new AdminInterface();
+        console.log('✅ Admin interface loaded');
+        
+        // Ensure admin navigation works
+        this.bindAdminNavigation();
+      }
+
+      bindEvents() {
+        // Admin mode toggle
+        const adminToggle = document.getElementById('admin-mode-toggle');
+        adminToggle.addEventListener('click', () => this.toggleAdminMode());
+
+        // Admin panel close
+        const closeBtn = document.getElementById('close-admin-panel');
+        closeBtn.addEventListener('click', () => this.hideAdminPanel());
+
+        // Resource modal events
+        document.getElementById('add-resource-btn').addEventListener('click', () => this.openResourceModal());
+        document.getElementById('close-resource-modal').addEventListener('click', () => this.closeResourceModal());
+        document.getElementById('cancel-resource-btn').addEventListener('click', () => this.closeResourceModal());
+        document.getElementById('resource-form').addEventListener('submit', (e) => this.saveResource(e));
+      }
+
+      bindAdminNavigation() {
+        // Ensure admin navigation buttons work
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const section = e.target.dataset.section;
+            this.switchAdminSection(section);
+          });
+        });
+      }
+
+      toggleAdminMode() {
+        window.adminMode = !window.adminMode;
+        
+        const toggle = document.getElementById('admin-mode-toggle');
+        const text = document.getElementById('admin-mode-text');
+        const statusBar = document.getElementById('admin-status-bar');
+
+        if (window.adminMode) {
+          // Enter admin mode
+          toggle.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+          toggle.classList.add('bg-red-600', 'hover:bg-red-700');
+          text.textContent = 'Exit Edit Mode';
+          statusBar.classList.remove('hidden');
+          
+          // Show admin panel
+          this.showAdminPanel();
+        } else {
+          // Exit admin mode
+          toggle.classList.remove('bg-red-600', 'hover:bg-red-700');
+          toggle.classList.add('bg-blue-600', 'hover:bg-blue-700');
+          text.textContent = 'Enter Edit Mode';
+          statusBar.classList.add('hidden');
+          
+          this.hideAdminPanel();
+        }
+      }
+
+      showAdminPanel() {
+        const panel = document.getElementById('admin-panel');
+        panel.classList.remove('hidden');
+        
+        // Load first section by default
+        this.switchAdminSection('resources');
+        console.log('✅ Admin panel opened');
+      }
+
+      hideAdminPanel() {
+        const panel = document.getElementById('admin-panel');
+        panel.classList.add('hidden');
+        console.log('✅ Admin panel closed');
+      }
+
+      switchAdminSection(section) {
+        // Update navigation
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+          btn.classList.remove('admin-nav-active', 'border-orange-500', 'text-orange-600');
+          btn.classList.add('border-transparent', 'text-gray-500');
+        });
+
+        const activeBtn = document.querySelector(`[data-section="${section}"]`);
+        if (activeBtn) {
+          activeBtn.classList.remove('border-transparent', 'text-gray-500');
+          activeBtn.classList.add('admin-nav-active', 'border-orange-500', 'text-orange-600');
+        }
+
+        // Update content
+        document.querySelectorAll('.admin-section').forEach(sec => {
+          sec.classList.add('hidden');
+        });
+
+        const activeSection = document.getElementById(`${section}-section`);
+        if (activeSection) {
+          activeSection.classList.remove('hidden');
+          
+          // Load section data if needed
+          this.loadSectionData(section);
+        }
+
+        window.currentSection = section;
+        console.log(`✅ Switched to ${section} section`);
+      }
+
+      async loadSectionData(section) {
+        switch (section) {
+          case 'resources':
+            await this.loadResourcesData();
+            break;
+          case 'personas':
+            await this.loadPersonasData();
+            break;
+          case 'use-cases':
+            await this.loadUseCasesData();
+            break;
+          case 'analytics':
+            await this.loadAnalyticsData();
+            break;
+        }
+      }
+
+      async loadResourcesData() {
+        try {
+          const resources = await this.contentAPI.getResources();
+          const container = document.getElementById('resources-list');
+          
+          if (resources.length === 0) {
+            container.innerHTML = '<div class="text-center py-12 text-gray-500">No resources found. Add your first resource to get started.</div>';
+            return;
+          }
+
+          container.innerHTML = resources.map(resource => `
+            <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h4 class="font-semibold text-gray-900">${resource.title}</h4>
+                  <p class="text-sm text-gray-600 mt-1">${resource.description || 'No description'}</p>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    ${resource.tags?.primary?.map(tag => `<span class="tag-item tag-primary">${tag}</span>`).join('') || ''}
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+                  <button class="text-red-600 hover:text-red-800 text-sm">Delete</button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+          
+        } catch (error) {
+          console.error('Failed to load resources:', error);
+        }
+      }
+
+      async loadPersonasData() {
+        try {
+          const personas = await this.contentAPI.getPersonas();
+          const container = document.getElementById('personas-list');
+          
+          container.innerHTML = personas.length === 0 
+            ? '<div class="text-center py-12 text-gray-500">No personas found.</div>'
+            : personas.map(persona => `
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-gray-900">${persona.name}</h4>
+                  <p class="text-sm text-gray-600">${persona.role}</p>
+                </div>
+              `).join('');
+        } catch (error) {
+          console.error('Failed to load personas:', error);
+        }
+      }
+
+      async loadUseCasesData() {
+        try {
+          const useCases = await this.contentAPI.getUseCases();
+          const container = document.getElementById('use-cases-list');
+          
+          container.innerHTML = useCases.length === 0
+            ? '<div class="text-center py-12 text-gray-500">No use cases found.</div>'
+            : useCases.map(useCase => `
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-gray-900">${useCase.title}</h4>
+                  <p class="text-sm text-gray-600">${useCase.description}</p>
+                </div>
+              `).join('');
+        } catch (error) {
+          console.error('Failed to load use cases:', error);
+        }
+      }
+
+      async loadAnalyticsData() {
+        try {
+          const [resources, personas, useCases] = await Promise.all([
+            this.contentAPI.getResources(),
+            this.contentAPI.getPersonas(),
+            this.contentAPI.getUseCases()
+          ]);
+
+          document.getElementById('total-resources-count').textContent = resources.length;
+          document.getElementById('total-personas-count').textContent = personas.length;
+          document.getElementById('total-use-cases-count').textContent = useCases.length;
+          document.getElementById('total-tags-count').textContent = '0'; // Will be implemented
+          
+        } catch (error) {
+          console.error('Failed to load analytics:', error);
+        }
+      }
+
+      openResourceModal() {
+        document.getElementById('resource-modal').classList.remove('hidden');
+      }
+
+      closeResourceModal() {
+        document.getElementById('resource-modal').classList.add('hidden');
+        document.getElementById('resource-form').reset();
+      }
+
+      async saveResource(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const resourceData = {
+          id: `resource_${Date.now()}`,
+          title: formData.get('title'),
+          type: formData.get('type'),
+          description: formData.get('description'),
+          vertical: formData.get('vertical'),
+          lob: formData.get('lob'),
+          url: formData.get('url'),
+          tags: {
+            primary: [],
+            secondary: []
+          }
+        };
+
+        console.log('Saving resource:', resourceData);
+        
+        // Here you would save to your data store
+        // For now, just close the modal and refresh the list
+        this.closeResourceModal();
+        await this.loadResourcesData();
+      }
+    }
+
+    // Initialize the application
+    new IntegratedSalesGuide();
+  </script>
+</body>
+</html>

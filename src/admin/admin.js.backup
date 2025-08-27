@@ -223,10 +223,14 @@ class AdminInterface {
     }
 
     // Analytics filters
-    const analyticsTimePeriodElement = document.getElementById('stats-time-period');
-    if (analyticsTimePeriodElement) {
-      analyticsTimePeriodElement.addEventListener('change', () => {
+    const statsTimePeriod = document.getElementById('stats-time-period');
+    if (statsTimePeriod) {
+      statsTimePeriod.addEventListener('change', () => {
         this.renderSiteStatistics();
+      });
+      
+      // Also bind the update statistics period functionality
+      statsTimePeriod.addEventListener('change', () => {
         this.updateStatisticsPeriod();
       });
     }
@@ -293,7 +297,12 @@ class AdminInterface {
       });
     }
 
-    // promptContextFilter is already handled above, removing duplicate
+    const promptContextFilter = document.getElementById('prompt-context-filter');
+    if (promptContextFilter) {
+      promptContextFilter.addEventListener('change', () => {
+        this.filterPromptsTable();
+      });
+    }
 
     console.log('Admin interface initialized');
   }
@@ -3321,12 +3330,6 @@ Make recommendations specific to UiPath automation solutions and enterprise sale
     const acceptBtn = document.getElementById('accept-extraction');
     const editBtn = document.getElementById('edit-extraction');
     const retryBtn = document.getElementById('retry-extraction');
-
-    // Only initialize if elements exist
-    if (!uploadArea || !fileInput) {
-      console.log('PDF extraction elements not found, skipping initialization');
-      return;
-    }
 
     // Upload area click handler
     uploadArea.addEventListener('click', () => {
