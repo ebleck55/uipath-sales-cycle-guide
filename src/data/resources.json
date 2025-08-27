@@ -18,14 +18,13 @@
             "automation-cloud": "Includes cloud scaling benefits for high-volume processing",
             "on-prem": "Focuses on data security and compliance for sensitive financial data"
           },
-          "tags": {
-            "primary": ["roi-analysis", "consumer-banking", "business-case"],
-            "secondary": ["cost-reduction", "process-efficiency", "customer-experience"],
-            "use_cases": ["account-opening", "loan-processing", "customer-service"],
-            "outcomes": ["cost-quantification", "business-impact", "automation-value"]
-          },
+          "tags": [
+            "roi-analysis", "consumer-banking", "business-case", 
+            "cost-reduction", "process-efficiency", "customer-experience",
+            "account-opening", "loan-processing", "customer-service",
+            "cost-quantification", "business-impact", "automation-value"
+          ],
           "priority": "high",
-          "complexity": "low",
           "timeToValue": "immediate"
         },
         {
@@ -42,14 +41,13 @@
             "existing": "Advanced strategies for expanding automation to complex loan products",
             "new-logo": "Foundational approach starting with standard loan types"
           },
-          "tags": {
-            "primary": ["loan-origination", "underwriting", "compliance"],
-            "secondary": ["process-automation", "risk-management", "regulatory"],
-            "use_cases": ["application-processing", "credit-analysis", "compliance-checks"],
-            "outcomes": ["faster-approvals", "regulatory-compliance", "risk-control"]
-          },
+          "tags": [
+            "loan-origination", "underwriting", "compliance",
+            "process-automation", "risk-management", "regulatory", 
+            "application-processing", "credit-analysis", "compliance-checks",
+            "faster-approvals", "regulatory-compliance", "risk-control"
+          ],
           "priority": "high",
-          "complexity": "medium",
           "timeToValue": "4-6 weeks"
         },
         {
@@ -69,7 +67,6 @@
             "outcomes": ["faster-onboarding", "improved-accuracy", "compliance-assurance"]
           },
           "priority": "high",
-          "complexity": "low",
           "timeToValue": "2-4 weeks"
         }
       ],
@@ -95,7 +92,6 @@
             "outcomes": ["reduced-settlement-risk", "operational-efficiency", "compliance-adherence"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "8-12 weeks"
         },
         {
@@ -115,7 +111,6 @@
             "outcomes": ["timely-submissions", "reduced-compliance-costs", "audit-readiness"]
           },
           "priority": "high",
-          "complexity": "medium",
           "timeToValue": "6-8 weeks"
         },
         {
@@ -135,7 +130,6 @@
             "outcomes": ["faster-onboarding", "revenue-acceleration", "improved-client-service"]
           },
           "priority": "medium",
-          "complexity": "medium",
           "timeToValue": "6-10 weeks"
         }
       ],
@@ -157,7 +151,6 @@
             "outcomes": ["faster-decisions", "improved-accuracy", "risk-discipline"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "10-16 weeks"
         }
       ],
@@ -179,7 +172,6 @@
             "outcomes": ["improved-returns", "advisor-efficiency", "client-satisfaction"]
           },
           "priority": "medium",
-          "complexity": "medium",
           "timeToValue": "8-12 weeks"
         }
       ]
@@ -203,7 +195,6 @@
             "outcomes": ["faster-claims", "improved-satisfaction", "cost-efficiency"]
           },
           "priority": "high",
-          "complexity": "medium",
           "timeToValue": "6-10 weeks"
         },
         {
@@ -223,7 +214,6 @@
             "outcomes": ["reduced-fraud-losses", "protected-margins", "improved-detection"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "12-16 weeks"
         }
       ],
@@ -245,7 +235,6 @@
             "outcomes": ["reduced-admin-costs", "improved-experience", "operational-efficiency"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "12-18 weeks"
         }
       ],
@@ -267,7 +256,6 @@
             "outcomes": ["optimized-allocation", "faster-processing", "cost-efficiency"]
           },
           "priority": "high",
-          "complexity": "medium",
           "timeToValue": "6-8 weeks"
         },
         {
@@ -287,7 +275,6 @@
             "outcomes": ["thorough-investigations", "faster-resolution", "compliance-assurance"]
           },
           "priority": "medium",
-          "complexity": "medium",
           "timeToValue": "8-10 weeks"
         }
       ],
@@ -309,7 +296,6 @@
             "outcomes": ["faster-issuance", "maintained-quality", "stp-capability"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "14-20 weeks"
         },
         {
@@ -329,7 +315,6 @@
             "outcomes": ["improved-accuracy", "competitive-edge", "enhanced-profitability"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "16-24 weeks"
         }
       ]
@@ -353,7 +338,6 @@
             "outcomes": ["faster-close", "improved-accuracy", "audit-preparation"]
           },
           "priority": "high",
-          "complexity": "medium",
           "timeToValue": "8-12 weeks"
         },
         {
@@ -373,7 +357,6 @@
             "outcomes": ["eliminated-manual-work", "reduced-errors", "improved-vendor-relations"]
           },
           "priority": "high",
-          "complexity": "medium",
           "timeToValue": "6-10 weeks"
         },
         {
@@ -393,7 +376,6 @@
             "outcomes": ["timely-reports", "consistent-formatting", "satisfied-stakeholders"]
           },
           "priority": "medium",
-          "complexity": "medium",
           "timeToValue": "6-8 weeks"
         }
       ],
@@ -415,7 +397,6 @@
             "outcomes": ["consistent-experience", "reduced-admin-burden", "faster-productivity"]
           },
           "priority": "medium",
-          "complexity": "low",
           "timeToValue": "4-6 weeks"
         },
         {
@@ -435,7 +416,6 @@
             "outcomes": ["reduced-complexity", "improved-self-service", "compliance-assurance"]
           },
           "priority": "low",
-          "complexity": "medium",
           "timeToValue": "8-12 weeks"
         }
       ],
@@ -457,7 +437,6 @@
             "outcomes": ["improved-service-delivery", "faster-response", "higher-satisfaction"]
           },
           "priority": "medium",
-          "complexity": "medium",
           "timeToValue": "8-12 weeks"
         },
         {
@@ -477,7 +456,6 @@
             "outcomes": ["maintained-security", "reduced-compliance-overhead", "faster-response"]
           },
           "priority": "high",
-          "complexity": "high",
           "timeToValue": "12-16 weeks"
         }
       ]
@@ -487,7 +465,6 @@
     "types": ["calculator", "playbook", "template", "guide", "accelerator", "kit", "solution", "platform", "ai-solution", "ai-models", "suite", "workflow", "toolkit", "security-suite"],
     "verticals": ["banking", "insurance", "general"],
     "priority_levels": ["high", "medium", "low"],
-    "complexity_levels": ["low", "medium", "high"],
     "time_to_value": ["immediate", "2-4 weeks", "4-6 weeks", "6-8 weeks", "6-10 weeks", "8-10 weeks", "8-12 weeks", "10-16 weeks", "12-16 weeks", "12-18 weeks", "14-20 weeks", "16-24 weeks"],
     "tags": {
       "primary": ["roi-analysis", "consumer-banking", "loan-origination", "trade-settlement", "claims-processing", "underwriting", "financial-reporting"],

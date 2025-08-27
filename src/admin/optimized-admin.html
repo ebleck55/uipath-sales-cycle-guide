@@ -27,6 +27,29 @@
       border-color: var(--uipath-orange-dark);
     }
     
+    /* Notification animations */
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+    
     .tag-item { 
       display: inline-flex;
       align-items: center;
@@ -122,24 +145,45 @@
       border: 1px solid var(--gray-200);
     }
     
-    /* Navigation styling */
+    /* Enhanced Navigation styling */
     .admin-nav-btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: var(--border-radius-sm);
+      padding: 0.875rem 1.25rem;
+      border-radius: var(--border-radius);
       font-weight: 500;
       transition: var(--transition-default);
       border: 2px solid transparent;
       color: var(--gray-700);
       background: white;
-      margin-bottom: 0.5rem;
-      display: block;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
       width: 100%;
       text-align: left;
+      position: relative;
+      cursor: pointer;
+      font-size: 0.95rem;
     }
     
     .admin-nav-btn:hover {
-      background: var(--gray-100);
+      background: var(--gray-50);
       color: var(--gray-900);
+      transform: translateX(4px);
+      border-left: 3px solid var(--uipath-orange);
+    }
+    
+    .admin-nav-btn::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-400);
+      margin-right: 0.75rem;
+      transition: var(--transition-default);
+    }
+    
+    .admin-nav-btn.admin-nav-active::before {
+      background: var(--uipath-orange);
+      box-shadow: 0 0 8px rgba(250, 70, 22, 0.3);
     }
     
     /* Button styling consistent with main site */
@@ -310,27 +354,137 @@
       color: var(--uipath-orange);
       transform: translateY(-1px);
     }
+    
+    /* Enhanced card styling */
+    .admin-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+      border: 1px solid var(--gray-200);
+      transition: var(--transition-default);
+    }
+    
+    .admin-card:hover {
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+      transform: translateY(-1px);
+    }
+    
+    .admin-card-header {
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .admin-card-body {
+      padding: 1.5rem;
+    }
+    
+    /* Enhanced tag styling */
+    .tag-enhanced {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.375rem 0.75rem;
+      margin: 0.125rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 9999px;
+      transition: var(--transition-fast);
+      cursor: pointer;
+    }
+    
+    .tag-enhanced:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .tag-enhanced.tag-primary {
+      background: linear-gradient(135deg, rgba(250, 70, 22, 0.1), rgba(250, 70, 22, 0.15));
+      color: var(--uipath-orange-dark);
+      border: 1px solid rgba(250, 70, 22, 0.3);
+    }
+    
+    .tag-enhanced.tag-secondary {
+      background: linear-gradient(135deg, rgba(11, 162, 179, 0.1), rgba(11, 162, 179, 0.15));
+      color: var(--uipath-teal-dark);
+      border: 1px solid rgba(11, 162, 179, 0.3);
+    }
+    
+    /* Filter button styling */
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid var(--gray-300);
+      background: white;
+      color: var(--gray-700);
+      border-radius: 8px;
+      font-weight: 500;
+      transition: var(--transition-default);
+      cursor: pointer;
+    }
+    
+    .filter-btn:hover {
+      border-color: var(--uipath-orange);
+      color: var(--uipath-orange);
+      background: rgba(250, 70, 22, 0.05);
+    }
+    
+    .filter-btn.active {
+      border-color: var(--uipath-orange);
+      background: var(--uipath-orange);
+      color: white;
+    }
+    
+    /* Search results styling */
+    .search-results {
+      position: relative;
+      z-index: 50;
+    }
+    
+    .search-result-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .search-result-item:hover {
+      background: var(--gray-50);
+    }
+    
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body style="background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%); min-height: 100vh;">
   <!-- Header -->
   <header style="background: white; box-shadow: var(--shadow-sm); border-bottom: 1px solid var(--gray-200);">
     <div class="max-w-7xl mx-auto px-6 py-4">
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <div class="flex items-center">
           <h1 style="font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--gray-900); background: linear-gradient(135deg, var(--uipath-orange), var(--uipath-orange-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
             UiPath Sales Guide Admin
           </h1>
         </div>
-        <div class="flex items-center space-x-4">
-          <button id="save-all-btn" class="btn-primary">
-            Save All Changes
+        
+        
+        <div class="flex items-center space-x-3">
+          <button id="save-all-btn" class="btn-primary flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Save All</span>
           </button>
-          <button id="preview-btn" class="btn-secondary">
-            Preview Changes
+          <button id="preview-btn" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            <span>Preview</span>
           </button>
-          <a href="../../index.html" class="btn-secondary" style="text-decoration: none;">
-            Back to App
+          <a href="../../index.html" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium flex items-center space-x-2" style="text-decoration: none;">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Back to App</span>
           </a>
         </div>
       </div>
@@ -411,25 +565,61 @@
               </button>
             </div>
 
-            <!-- Search and Filters -->
-            <div class="mb-6 grid md:grid-cols-4 gap-4">
-              <input type="text" id="resource-search" placeholder="Search resources..." 
-                     class="form-input">
-              <select id="resource-vertical-filter" class="form-input">
-                <option value="">All Verticals</option>
-                <option value="banking">Banking</option>
-                <option value="insurance">Insurance</option>
-                <option value="general">General</option>
-              </select>
-              <select id="resource-type-filter" class="form-input">
-                <option value="">All Types</option>
-                <option value="solution-kits">Solution Kits</option>
-                <option value="demo-videos">Demo Videos</option>
-                <option value="customer-stories">Customer Stories</option>
-                <option value="first-call-decks">First Call Decks</option>
-                <option value="specialty-presentations">Specialty Presentations</option>
-                <option value="business-value">Business Value</option>
-              </select>
+            <!-- Advanced Search and Filters -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+              <!-- Search Row -->
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="relative">
+                  <input type="text" id="resource-search" placeholder="🔍 Fuzzy search across all fields..." 
+                         class="w-full px-4 py-3 pl-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                  <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                    Smart Search
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="resource-tags-filter" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                  <label for="resource-tags-filter" class="text-sm text-gray-700">Search in tags</label>
+                  <input type="checkbox" id="resource-content-filter" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500" checked>
+                  <label for="resource-content-filter" class="text-sm text-gray-700">Search in content</label>
+                </div>
+              </div>
+              
+              <!-- Filter Row -->
+              <div class="grid grid-cols-5 gap-3">
+                <select id="resource-vertical-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 text-sm">
+                  <option value="">All Industries</option>
+                  <option value="banking">Banking</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="general">General</option>
+                </select>
+                <select id="resource-type-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 text-sm">
+                  <option value="">All Types</option>
+                  <option value="solution-kit">Solution Kit</option>
+                  <option value="demo-video">Demo Video</option>
+                  <option value="first-call-deck">First Call Deck</option>
+                  <option value="specialty-asset">Specialty Asset</option>
+                  <option value="business-value">Business Value</option>
+                </select>
+                <select id="resource-has-link-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 text-sm">
+                  <option value="">All Resources</option>
+                  <option value="with-link">Has External Link</option>
+                  <option value="no-link">No External Link</option>
+                </select>
+                <select id="resource-sort-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 text-sm">
+                  <option value="relevance">Sort by Relevance</option>
+                  <option value="name">Sort by Name</option>
+                  <option value="type">Sort by Type</option>
+                  <option value="industry">Sort by Industry</option>
+                </select>
+                <button id="clear-resource-filters" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                  Clear All
+                </button>
+              </div>
+              
+              <!-- Results Info -->
+              <div class="mt-3 text-xs text-gray-500">
+                <span id="resource-results-count">Showing all resources</span>
+              </div>
             </div>
 
             <!-- Resources List -->
@@ -449,31 +639,66 @@
               </button>
             </div>
 
-            <!-- Search and Filters for Use Cases -->
-            <div class="mb-6 grid md:grid-cols-4 gap-4">
-              <input type="text" id="use-case-search" placeholder="Search use cases..." 
-                     class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500">
-              <select id="use-case-vertical-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
-                <option value="">All Verticals</option>
-                <option value="banking">Banking</option>
-                <option value="insurance">Insurance</option>
-                <option value="general">General</option>
-              </select>
-              <select id="use-case-category-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
-                <option value="">All Categories</option>
-                <option value="RPA">RPA</option>
-                <option value="IDP">IDP</option>
-                <option value="Agentic">Agentic</option>
-                <option value="RPA + IDP">RPA + IDP</option>
-                <option value="IDP + Agentic">IDP + Agentic</option>
-                <option value="Maestro">Maestro</option>
-              </select>
-              <select id="use-case-complexity-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
-                <option value="">All Complexity</option>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
+            <!-- Advanced Search and Filters for Use Cases -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+              <!-- Search Row -->
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="relative">
+                  <input type="text" id="use-case-search" placeholder="🔍 Fuzzy search use cases..." 
+                         class="w-full px-4 py-3 pl-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                  <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                    Smart Search
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="use-case-tags-filter" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                  <label for="use-case-tags-filter" class="text-sm text-gray-700">Search in tags</label>
+                  <input type="checkbox" id="use-case-content-filter" class="rounded border-gray-300 text-green-600 focus:ring-green-500" checked>
+                  <label for="use-case-content-filter" class="text-sm text-gray-700">Search in content</label>
+                </div>
+              </div>
+              
+              <!-- Filter Row -->
+              <div class="grid grid-cols-5 gap-3">
+                <select id="use-case-vertical-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm">
+                  <option value="">All Industries</option>
+                  <option value="banking">Banking</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="general">General</option>
+                </select>
+                <select id="use-case-category-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm">
+                  <option value="">All Technologies</option>
+                  <option value="RPA">RPA</option>
+                  <option value="IDP">IDP</option>
+                  <option value="Agentic">Agentic</option>
+                  <option value="RPA + IDP">RPA + IDP</option>
+                  <option value="IDP + Agentic">IDP + Agentic</option>
+                  <option value="Maestro">Maestro</option>
+                </select>
+                <select id="use-case-lob-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm">
+                  <option value="">All LOBs</option>
+                  <option value="operations">Operations</option>
+                  <option value="finance">Finance</option>
+                  <option value="hr">Human Resources</option>
+                  <option value="customer-service">Customer Service</option>
+                  <option value="risk-compliance">Risk & Compliance</option>
+                </select>
+                <select id="use-case-sort-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm">
+                  <option value="relevance">Sort by Relevance</option>
+                  <option value="name">Sort by Name</option>
+                  <option value="complexity">Sort by Complexity</option>
+                  <option value="industry">Sort by Industry</option>
+                  <option value="category">Sort by Technology</option>
+                </select>
+                <button id="clear-use-case-filters" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                  Clear All
+                </button>
+              </div>
+              
+              <!-- Results Info -->
+              <div class="mt-3 text-xs text-gray-500">
+                <span id="use-case-results-count">Showing all use cases</span>
+              </div>
             </div>
 
             <!-- Use Cases List -->
@@ -492,6 +717,55 @@
                 Add New Persona
               </button>
             </div>
+
+            <!-- Advanced Search and Filters for Personas -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+              <!-- Search Row -->
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="relative">
+                  <input type="text" id="persona-search" placeholder="🔍 Fuzzy search personas..." 
+                         class="w-full px-4 py-3 pl-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                  <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                    Smart Search
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="persona-tags-filter" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                  <label for="persona-tags-filter" class="text-sm text-gray-700">Search in tags</label>
+                  <input type="checkbox" id="persona-content-filter" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500" checked>
+                  <label for="persona-content-filter" class="text-sm text-gray-700">Search in content</label>
+                </div>
+              </div>
+              
+              <!-- Filter Row -->
+              <div class="grid grid-cols-4 gap-3">
+                <select id="persona-vertical-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 text-sm">
+                  <option value="">All Industries</option>
+                  <option value="banking">Banking</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="general">General</option>
+                </select>
+                <select id="persona-lob-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 text-sm">
+                  <option value="">All LOBs</option>
+                  <!-- LOB options will be populated dynamically from Categories/Types -->
+                </select>
+                <select id="persona-sort-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 text-sm">
+                  <option value="title">Sort by Title</option>
+                  <option value="industry">Sort by Industry</option>
+                  <option value="lob">Sort by LOB</option>
+                </select>
+                <button id="clear-persona-filters" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                  Clear All
+                </button>
+              </div>
+              
+              <!-- Results Info -->
+              <div class="mt-3 text-xs text-gray-500">
+                <span id="persona-results-count">Showing all personas</span>
+              </div>
+            </div>
+
+            <!-- Personas List -->
             <div id="personas-list" class="space-y-4">
               <!-- Personas will be populated here -->
             </div>
@@ -630,24 +904,27 @@
         <!-- Tag Management Section -->
         <section id="section-tags" class="admin-section hidden">
           <div class="bg-white rounded-lg shadow-sm p-6">
-            <div class="flex justify-between items-center mb-6">
-              <h2 class="text-2xl font-bold text-gray-900">Tag Management</h2>
-              <button id="add-new-tag-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
-                Add New Tag
-              </button>
+            <div class="mb-6">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Tag Management</h2>
+              
+              <!-- Add New Tag Input -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Add New Tag</label>
+                <div class="flex space-x-2">
+                  <input type="text" id="new-tag-input" placeholder="Type tag name and press Enter..." 
+                         class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <button id="add-tag-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                    Add
+                  </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Press Enter or click Add to create a new tag</p>
+              </div>
             </div>
 
             <!-- Search and Filter Tags -->
-            <div class="mb-6 grid md:grid-cols-3 gap-4">
+            <div class="mb-6 grid md:grid-cols-2 gap-4">
               <input type="text" id="tag-search" placeholder="Search tags..." 
                      class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <select id="tag-filter-category" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">All Categories</option>
-                <option value="automation">Automation</option>
-                <option value="business">Business</option>
-                <option value="technical">Technical</option>
-                <option value="industry">Industry</option>
-              </select>
               <select id="tag-filter-usage" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All Usage</option>
                 <option value="high">High Usage</option>
@@ -1062,10 +1339,10 @@
                 <!-- Add/Edit LOB Form -->
                 <div>
                   <h3 class="text-lg font-medium text-gray-900 mb-4">Add/Edit Line of Business</h3>
-                  <form id="lob-form" class="space-y-4">
+                  <form id="lob-form" data-admin-form="lob-form" class="space-y-4">
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">Parent Vertical</label>
-                      <select id="lob-parent-vertical" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                      <select id="lob-parent-vertical" name="lob-parent-vertical" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500">
                         <option value="">Select Parent Vertical</option>
                         <option value="corporate">Corporate Functions</option>
                         <option value="banking">Banking</option>
@@ -1075,12 +1352,12 @@
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">LOB Name</label>
-                      <input type="text" id="lob-name" placeholder="e.g. Operations, Legal, Procurement" 
+                      <input type="text" id="lob-name" name="lob-name" placeholder="e.g. Operations, Legal, Procurement" 
                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                      <textarea id="lob-description" rows="3" 
+                      <textarea id="lob-description" name="lob-description" rows="3" 
                                 placeholder="Brief description of this line of business..."
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
                     </div>
@@ -1154,15 +1431,15 @@
                 <!-- Add/Edit Project Type Form -->
                 <div>
                   <h3 class="text-lg font-medium text-gray-900 mb-4">Add/Edit Project Type</h3>
-                  <form id="project-type-form" class="space-y-4">
+                  <form id="project-type-form" data-admin-form="project-type-form" class="space-y-4">
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">Project Type Name</label>
-                      <input type="text" id="project-type-name" placeholder="e.g. API Integration, Process Mining" 
+                      <input type="text" id="project-type-name" name="project-type-name" placeholder="e.g. API Integration, Process Mining" 
                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                      <textarea id="project-type-description" rows="3" 
+                      <textarea id="project-type-description" name="project-type-description" rows="3" 
                                 placeholder="Brief description of this project type..."
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textarea>
                     </div>
@@ -1739,11 +2016,10 @@
                 <select id="resource-type" required 
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
                   <option value="">Select Type</option>
-                  <option value="solution-kits">Solution Kits</option>
-                  <option value="demo-videos">Demo Videos</option>
-                  <option value="customer-stories">Customer Stories</option>
-                  <option value="first-call-decks">First Call Decks</option>
-                  <option value="specialty-presentations">Specialty Presentations</option>
+                  <option value="solution-kit">Solution Kit</option>
+                  <option value="demo-video">Demo Video</option>
+                  <option value="first-call-deck">First Call Deck</option>
+                  <option value="specialty-asset">Specialty Asset</option>
                   <option value="business-value">Business Value</option>
                 </select>
               </div>
@@ -1758,15 +2034,6 @@
                   <option value="banking">Banking</option>
                   <option value="insurance">Insurance</option>
                   <option value="general">General</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Complexity</label>
-                <select id="resource-complexity" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
                 </select>
               </div>
             </div>
@@ -1815,7 +2082,7 @@
               <div class="mt-4">
                 <div class="flex justify-between items-center mb-2">
                   <h5 class="text-sm font-medium text-gray-700">Common Tags (click to add):</h5>
-                  <button type="button" id="ai-suggest-resource-tags" class="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-1" onclick="adminInterface.suggestResourceTags()">
+                  <button type="button" id="ai-suggest-resource-tags" class="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-1" onclick="adminInterface.getAITagSuggestions('resource')">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                     </svg>
@@ -1860,19 +2127,19 @@
           <button id="close-use-case-modal" class="text-gray-400 hover:text-gray-600">×</button>
         </div>
 
-        <form id="use-case-form" class="space-y-4">
+        <form id="use-case-form" class="space-y-4" data-admin-form="use-case-form">
           <!-- Basic Information -->
           <div class="form-section">
             <h4 class="text-lg font-medium mb-4">Basic Information</h4>
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Use Case Name *</label>
-                <input type="text" id="use-case-name" required 
+                <input type="text" id="use-case-name" name="use-case-name" required 
                        class="form-input">
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-                <select id="use-case-category" required class="form-input">
+                <select id="use-case-category" name="use-case-category" required class="form-input">
                   <option value="">Select Category</option>
                   <option value="RPA">RPA</option>
                   <option value="IDP">IDP</option>
@@ -1885,7 +2152,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Vertical *</label>
-                <select id="use-case-vertical" required class="form-input">
+                <select id="use-case-vertical" name="use-case-vertical" required class="form-input">
                   <option value="">Select Vertical</option>
                   <option value="banking">Banking</option>
                   <option value="insurance">Insurance</option>
@@ -1893,8 +2160,15 @@
                 </select>
               </div>
               <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Line of Business</label>
+                <select id="use-case-lob" class="form-input" multiple>
+                  <!-- LOB options will be populated dynamically from Categories/Types -->
+                </select>
+                <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple LOBs. Options are controlled by your Categories/Types taxonomy.</p>
+              </div>
+              <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Complexity</label>
-                <select id="use-case-complexity" class="form-input">
+                <select id="use-case-complexity" name="use-case-complexity" class="form-input">
                   <option value="Medium">Medium</option>
                   <option value="Low">Low</option>
                   <option value="High">High</option>
@@ -1902,7 +2176,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Time to Value</label>
-                <select id="use-case-time-to-value" class="form-input">
+                <select id="use-case-time-to-value" name="use-case-time-to-value" class="form-input">
                   <option value="">Select Time to Value</option>
                   <option value="4-6 weeks">4-6 weeks</option>
                   <option value="6-8 weeks">6-8 weeks</option>
@@ -1920,24 +2194,24 @@
             <h4 class="text-lg font-medium mb-4">Description & Value</h4>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-              <textarea id="use-case-description" required rows="3" 
+              <textarea id="use-case-description" name="use-case-description" required rows="3" 
                         class="form-input"></textarea>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Business Value *</label>
-              <textarea id="use-case-business-value" required rows="2" 
+              <textarea id="use-case-business-value" name="use-case-business-value" required rows="2" 
                         class="form-input"></textarea>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Estimated ROI</label>
-              <input type="text" id="use-case-roi" placeholder="e.g., 300%" 
+              <input type="text" id="use-case-roi" name="use-case-roi" placeholder="e.g., 300%" 
                      class="form-input">
             </div>
             
             <!-- External Link -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">External Link</label>
-              <input type="url" id="use-case-link" placeholder="https://example.com/use-case-link" 
+              <input type="url" id="use-case-link" name="use-case-link" placeholder="https://example.com/use-case-link" 
                      class="form-input" />
               <p class="text-xs text-gray-500 mt-1">Optional: Link to external documentation, examples, or resources</p>
             </div>
@@ -1967,7 +2241,7 @@
             <div class="mt-4">
               <div class="flex justify-between items-center mb-2">
                 <h5 class="text-sm font-medium text-gray-700">Common Tags (click to add):</h5>
-                <button type="button" id="ai-suggest-usecase-tags" class="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-1" onclick="adminInterface.suggestUseCaseTags()">
+                <button type="button" id="ai-suggest-use-case-tags" class="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-1" onclick="adminInterface.getAITagSuggestions('use-case')">
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                   </svg>
@@ -2041,6 +2315,13 @@
                 </select>
               </div>
               <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Line of Business</label>
+                <select id="persona-lob" class="form-input" multiple>
+                  <!-- LOB options will be populated dynamically from Categories/Types -->
+                </select>
+                <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple LOBs. Options are controlled by your Categories/Types taxonomy.</p>
+              </div>
+              <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                 <select id="persona-priority" class="form-input">
                   <option value="medium">Medium</option>
@@ -2096,7 +2377,7 @@
               <div>
                 <div class="flex justify-between items-center mb-2">
                   <label class="block text-sm font-medium text-gray-700">Quick Add Common Tags</label>
-                  <button type="button" id="ai-suggest-persona-tags" class="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-1" onclick="adminInterface.suggestPersonaTags()">
+                  <button type="button" id="ai-suggest-persona-tags" class="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center space-x-1" onclick="adminInterface.getAITagSuggestions('persona')">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                     </svg>
@@ -2212,9 +2493,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Vertical</label>
                 <select id="filter-rule-vertical" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   <option value="">Any Vertical</option>
-                  <option value="banking">Banking</option>
-                  <option value="insurance">Insurance</option>
-                  <option value="general">General</option>
+                  <!-- Options will be populated dynamically -->
                 </select>
               </div>
               
@@ -2222,39 +2501,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Line of Business</label>
                 <select id="filter-rule-lob" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                   <option value="">Any LOB</option>
-                  
-                  <!-- General LOBs (Cross-industry) -->
-                  <optgroup label="General LOBs">
-                    <option value="finance">Finance</option>
-                    <option value="hr">Human Resources</option>
-                    <option value="it">Information Technology</option>
-                    <option value="operations">Operations</option>
-                    <option value="sales">Sales & Marketing</option>
-                    <option value="legal">Legal & Compliance</option>
-                    <option value="procurement">Procurement</option>
-                    <option value="customer-service">Customer Service</option>
-                  </optgroup>
-                  
-                  <!-- Banking-specific LOBs -->
-                  <optgroup label="Banking LOBs">
-                    <option value="banking-retail">Retail Banking</option>
-                    <option value="banking-commercial">Commercial Banking</option>
-                    <option value="banking-investment">Investment Banking</option>
-                    <option value="banking-risk">Risk Management</option>
-                    <option value="banking-compliance">Banking Compliance</option>
-                    <option value="banking-operations">Banking Operations</option>
-                    <option value="banking-credit">Credit & Lending</option>
-                  </optgroup>
-                  
-                  <!-- Insurance-specific LOBs -->
-                  <optgroup label="Insurance LOBs">
-                    <option value="insurance-underwriting">Underwriting</option>
-                    <option value="insurance-claims">Claims Processing</option>
-                    <option value="insurance-policy">Policy Administration</option>
-                    <option value="insurance-actuarial">Actuarial</option>
-                    <option value="insurance-compliance">Insurance Compliance</option>
-                    <option value="insurance-sales">Insurance Sales</option>
-                  </optgroup>
+                  <!-- Options will be populated dynamically based on vertical selection -->
                 </select>
               </div>
             </div>
@@ -2350,6 +2597,94 @@
     </div>
   </div>
 
+  <!-- PDF Upload Modal -->
+  <div id="pdf-upload-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="pdf-upload-modal-title" class="text-xl font-semibold">Upload PDF Document</h3>
+          <button id="close-pdf-upload-modal" class="text-gray-400 hover:text-gray-600">×</button>
+        </div>
+
+        <form id="pdf-upload-form" class="space-y-6">
+          <!-- File Upload Area -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Select PDF File</label>
+            <div id="pdf-drop-area" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-orange-400 hover:bg-orange-50 transition-all cursor-pointer">
+              <div class="space-y-4">
+                <div class="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                  <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-lg font-medium text-gray-900">Drop your PDF here</p>
+                  <p class="text-sm text-gray-500 mt-1">or click to browse your files</p>
+                  <p class="text-xs text-gray-400 mt-1">Maximum file size: 10MB</p>
+                </div>
+              </div>
+              <input type="file" id="pdf-modal-file-input" accept=".pdf" class="hidden">
+            </div>
+            
+            <!-- File Info Display -->
+            <div id="selected-file-info" class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p id="file-name" class="font-medium text-gray-900"></p>
+                    <p id="file-size" class="text-sm text-gray-500"></p>
+                  </div>
+                </div>
+                <button type="button" id="remove-file-btn" class="text-red-500 hover:text-red-700">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Processing Options -->
+          <div class="border border-gray-200 rounded-lg p-4">
+            <h4 class="text-lg font-medium text-gray-900 mb-4">Processing Options</h4>
+            <div class="space-y-3">
+              <label class="flex items-center">
+                <input type="checkbox" id="extract-text" checked class="rounded border-gray-300">
+                <span class="ml-2 text-sm">Extract text content</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" id="extract-images" class="rounded border-gray-300">
+                <span class="ml-2 text-sm">Extract images and charts</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" id="generate-summary" class="rounded border-gray-300">
+                <span class="ml-2 text-sm">Generate AI summary</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex justify-end space-x-3">
+            <button type="button" id="cancel-pdf-upload" class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+              Cancel
+            </button>
+            <button type="submit" id="start-pdf-processing" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50" disabled>
+              <span class="flex items-center space-x-2">
+                <span>Process PDF</span>
+                <div id="upload-spinner" class="hidden animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script type="module">
     // Initialize the admin interface
@@ -2358,7 +2693,7 @@
         console.log('🔄 Loading admin interface...');
         
         // Load Unified Data Manager first
-        await import('../unified-data-manager.js');
+        await import('../core/unified-data-manager.js');
         // UnifiedDataManager is now available as window.UnifiedDataManager
         window.unifiedDataManager = new window.UnifiedDataManager();
         await window.unifiedDataManager.init();
@@ -2369,12 +2704,13 @@
         window.ContentAPI = ContentAPI;
         console.log('✅ ContentAPI loaded');
         
-        // Load AdminInterface
-        const { AdminInterface } = await import('./admin.js');
-        console.log('✅ AdminInterface loaded');
+        // Load AdminModule
+        const { AdminModule } = await import('./optimized-admin.js');
+        console.log('✅ AdminModule loaded');
         
         // Initialize admin interface
-        window.adminInterface = new AdminInterface();
+        window.adminInterface = new AdminModule();
+        await window.adminInterface.init({ renderInterface: true });
         console.log('✅ Admin interface initialized successfully');
         
       } catch (error) {

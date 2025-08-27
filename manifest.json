@@ -2,7 +2,7 @@
   "name": "UiPath Sales Cycle Guide - Optimized",
   "short_name": "UiPath Sales",
   "description": "A comprehensive interactive guide for UiPath sales professionals with advanced optimizations",
-  "start_url": "/index-optimized.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#FA4616",
@@ -14,31 +14,31 @@
   
   "icons": [
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTIiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSIxMiIgeT0iMTIiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMiIgZmlsbD0iI0ZBNDYxNiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjEwIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Im0yMCAyNCAzIDMgNi02IiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+PC9zdmc+",
       "sizes": "48x48",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSIxOCIgeT0iMTgiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHJ4PSIxNiIgZmlsbD0iI0ZBNDYxNiIvPjxjaXJjbGUgY3g9IjM2IiBjeT0iMzYiIHI9IjE1IiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Im0zMCAzNiA0IDQgOC04IiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+PC9zdmc+",
       "sizes": "72x72",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHJ4PSIyMCIgZmlsbD0iI0ZBNDYxNiIvPjxjaXJjbGUgY3g9IjQ4IiBjeT0iNDgiIHI9IjIwIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Im00MCA0OCA2IDYgMTItMTIiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=",
       "sizes": "96x96",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iNDAiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSI0MCIgZmlsbD0iI0ZBNDYxNiIvPjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjQwIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNCIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Im04MCA5NiAxMiAxMiAyNC0yNCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTA0IiBmaWxsPSIjRkE0NjE2Ii8+CjxzdmcgeD0iMTI4IiB5PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiNmZmZmZmYiPgo8c3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiA8cGF0aCBkPSJNOSAxMmwyIDIgNC00Ii8+CiA8cGF0aCBkPSJNMjEgMTJjOSAwIDAtOS05LTlzLTkgOS05IDkgOSA5IDkgOWE5IDkgMCAwIDAgOS05eiIvPgogIDwvc3Ryb2tlPgo8L3N2Zz4KPC9zdmc+",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMDQiIGZpbGw9IiNGQTQ2MTYiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjEwMCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEwIiBmaWxsPSJub25lIi8+PHBhdGggZD0ibTIwMCAyNTYgMzIgMzIgNjQtNjQiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+PC9zdmc+",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "maskable any"
@@ -62,7 +62,7 @@
       "name": "Test Suite",
       "short_name": "Tests",
       "description": "Run the comprehensive test suite",
-      "url": "/test-optimized-suite.html",
+      "url": "/test-architecture.html",
       "icons": [
         {
           "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiMxMGI5ODEiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KICA8cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTkuNjYzIDE3aDQuNjczTTEyIDN2MW02LjM2NCAxLjYzNmwtLjcwNy43MDdNMjEgMTJoLTFNNCAxMkgzbTMuMzQzLTUuNjU3bC0uNzA3LS43MDdtMi44MjggOS45YTUgNSAwIDExNy4wNzIgMGwtLjU0OC41NDdBMy4zNzQgMy4zNzQgMCAwMDE0IDE4LjQ2OVYxOWEyIDIgMCAxMS00IDB2LS41MzFjMC0uODk1LS4zNTYtMS43NTQtLjk4OC0yLjM4NmwtLjU0OC0uNTQ3eiIvPgo8L3N2Zz4KPC9zdmc+",
@@ -92,14 +92,14 @@
 
   "protocol_handlers": [
     {
-      "protocol": "web+uipath-sales",
-      "url": "/index-optimized.html?data=%s"
+      "protocol": "web+uipathsales",
+      "url": "/?data=%s"
     }
   ],
 
   "file_handlers": [
     {
-      "action": "/index-optimized.html",
+      "action": "/",
       "accept": {
         "application/json": [".json"],
         "text/csv": [".csv"]

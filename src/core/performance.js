@@ -36,6 +36,18 @@ class PerformanceManager {
   }
 
   /**
+   * Start monitoring performance (alias for setupPerformanceMonitoring)
+   */
+  startMonitoring() {
+    if (this.initialized) {
+      // Already started during init, but can restart if needed
+      this.setupPerformanceMonitoring();
+    } else {
+      console.warn('⚠️ Performance Manager not initialized yet');
+    }
+  }
+
+  /**
    * Initialize Intersection Observer for lazy loading
    */
   initializeObservers() {
@@ -402,5 +414,11 @@ class PerformanceManager {
   }
 }
 
-// Export for use
-window.PerformanceManager = PerformanceManager;
+// ES6 Module Export
+export { PerformanceManager };
+export default PerformanceManager;
+
+// Also make available globally for backward compatibility
+if (typeof window !== 'undefined') {
+  window.PerformanceManager = PerformanceManager;
+}

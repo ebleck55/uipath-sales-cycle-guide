@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Module Test</title>
+</head>
+<body>
+    <h1>Simple Module Test</h1>
+    <div id="result"></div>
+    
+    <script type="module">
+        console.log('Starting test...');
+        
+        try {
+            const module = await import('./src/core/unified-data-manager.js');
+            console.log('Raw module object:', module);
+            console.log('Module keys:', Object.keys(module));
+            console.log('UnifiedDataManager property:', module.UnifiedDataManager);
+            console.log('Default property:', module.default);
+            
+            // Try to access it
+            const UDM = module.UnifiedDataManager || module.default;
+            console.log('Selected class:', UDM);
+            
+            if (UDM) {
+                const instance = new UDM();
+                console.log('Instance created:', instance);
+                document.getElementById('result').innerHTML = '✅ SUCCESS: Can create instance';
+            } else {
+                document.getElementById('result').innerHTML = '❌ FAIL: No class found';
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerHTML = `❌ ERROR: ${error.message}`;
+        }
+    </script>
+</body>
+</html>

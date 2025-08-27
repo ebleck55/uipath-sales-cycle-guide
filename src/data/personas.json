@@ -13,29 +13,13 @@
         "world": "Manages the bank's core engine. Oversees thousands of employees in operations, payments, and servicing, all while fighting fires and trying to drive digital transformation. Increasingly pressured to deliver AI-driven efficiency while maintaining operational risk controls.",
         "cares": "Reducing cost-to-serve, improving straight-through processing (STP) rates, ensuring business resilience, and meeting aggressive efficiency targets set by the board. Seeks measurable AI ROI while avoiding operational disruption.",
         "help": "Deploy agentic automation for complex, end-to-end processes like loan origination (reducing 5-day manual process to 1-day with AI decisioning), payment investigations with intelligent case routing, and KYC refreshes with automated adverse media screening and risk scoring.",
-        "tags": {
-          "primary": ["operations", "efficiency", "ai-transformation"],
-          "secondary": ["risk-management", "cost-reduction", "process-automation"],
-          "pain_points": ["operational-resilience", "stp-rates", "cost-to-serve"],
-          "interests": ["measurable-roi", "ai-decisioning", "end-to-end-automation"],
-          "ai_suggested": {
-            "business_function": ["digital-transformation", "operations", "cost-management", "risk-management"],
-            "technology_focus": ["robotic-process-automation", "artificial-intelligence", "document-processing", "analytics-insights"],
-            "industry_vertical": ["retail-banking", "commercial-banking"],
-            "process_characteristics": ["high-volume", "cross-system", "regulatory-sensitive"],
-            "value_drivers": ["cost-reduction", "operational-excellence", "risk-mitigation"],
-            "deployment_context": ["enterprise-grade", "center-of-excellence"],
-            "decision_factors": ["roi", "implementation-time", "regulatory-compliance", "operational-impact"],
-            "communication_style": ["strategic", "metrics-driven", "roi-focused"],
-            "success_metrics": ["cost-savings", "stp-rates", "operational-efficiency", "risk-reduction"],
-            "related_personas": ["banking-cio-cto", "banking-cco", "banking-payments-ops-head"],
-            "complementary_content": ["loan-origination-automation", "payment-processing", "kyc-automation"],
-            "seasonal_relevance": ["budget-planning", "year-end-efficiency", "digital-transformation-initiatives"],
-            "regulatory_context": ["operational-risk", "model-risk-management", "audit-readiness"],
-            "competitive_factors": ["fintech-disruption", "operational-excellence", "customer-experience"],
-            "innovation_readiness": ["ai-adoption", "automation-scaling", "digital-first-operations"]
-          }
-        },
+        "tags": [
+          "operations", "efficiency", "ai-transformation",
+          "risk-management", "cost-reduction", "process-automation",
+          "operational-resilience", "stp-rates", "cost-to-serve",
+          "measurable-roi", "ai-decisioning", "end-to-end-automation",
+          "digital-transformation", "c-suite", "banking"
+        ],
         "priority": "high",
         "influence": "decision-maker"
       },

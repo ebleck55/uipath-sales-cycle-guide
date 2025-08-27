@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="css/styles.css">
   
   <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json?v=2">
   
   <!-- Theme color for mobile browsers -->
   <meta name="theme-color" content="#FA4616">
@@ -130,10 +130,10 @@
         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
           <label class="block text-sm font-medium text-gray-700 mb-3">Vertical</label>
           <div class="space-y-2">
-            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="banking">
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-action="change-industry" data-industry="banking">
               Banking
             </button>
-            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="insurance">
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-action="change-industry" data-industry="insurance">
               Insurance
             </button>
           </div>
@@ -663,6 +663,25 @@
   <script src="js/data.js"></script>
   <!-- Load timeline application from new location -->
   <script src="src/components/timeline-app.js"></script>
+  
+  <!-- Remove admin search if it exists -->
+  <script>
+    // Remove admin search immediately and keep removing it
+    function removeAdminSearch() {
+      const adminSearch = document.getElementById('admin-search');
+      if (adminSearch) {
+        adminSearch.remove();
+        console.log('🗑️ Removed admin search element from main page');
+      }
+    }
+    
+    // Remove on DOM ready
+    document.addEventListener('DOMContentLoaded', removeAdminSearch);
+    
+    // Also remove periodically in case it gets re-added
+    setInterval(removeAdminSearch, 1000);
+  </script>
+  
   <!-- Initialize modular application -->
   <script type="module" src="src/app.js"></script>
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Admin Interface</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto py-8">
+    <h1 class="text-2xl font-bold mb-4">Admin Interface Debug</h1>
+    <div id="debug-output" class="bg-white p-4 rounded-lg shadow-sm">
+      <p>Loading admin interface...</p>
+    </div>
+  </div>
+
+  <script type="module">
+    const debugOutput = document.getElementById('debug-output');
+    
+    function log(message) {
+      debugOutput.innerHTML += `<div class="text-sm text-gray-600 mb-1">${message}</div>`;
+      console.log(message);
+    }
+    
+    try {
+      log('1. Starting admin interface test...');
+      
+      // Test if we can access the admin HTML
+      const response = await fetch('http://localhost:3001/src/admin/optimized-admin.html');
+      if (response.ok) {
+        log('✅ Admin HTML is accessible');
+      } else {
+        log('❌ Admin HTML not accessible: ' + response.status);
+      }
+      
+      // Test if we can load the admin JS
+      try {
+        const { AdminModule } = await import('./src/admin/optimized-admin.js');
+        log('✅ AdminModule imported successfully');
+        
+        // Test if we can load UnifiedDataManager
+        try {
+          const { UnifiedDataManager } = await import('./src/data/unifiedDataManager.js');
+          log('✅ UnifiedDataManager imported successfully');
+          
+          const dataManager = new UnifiedDataManager();
+          await dataManager.init();
+          log('✅ UnifiedDataManager initialized');
+          
+          const resources = dataManager.getResources();
+          log(`✅ Found ${resources.length} resources`);
+          
+        } catch (error) {
+          log('❌ UnifiedDataManager error: ' + error.message);
+        }
+        
+      } catch (error) {
+        log('❌ AdminModule error: ' + error.message);
+      }
+      
+    } catch (error) {
+      log('❌ General error: ' + error.message);
+    }
+  </script>
+</body>
+</html>

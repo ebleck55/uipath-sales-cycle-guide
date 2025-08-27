@@ -3,7 +3,7 @@
  * Prevents XSS attacks by sanitizing all dynamic HTML content
  */
 
-class HTMLSanitizer {
+class Sanitizer {
   constructor() {
     // Allowed HTML tags and attributes for different contexts
     this.allowedTags = {
@@ -189,10 +189,13 @@ class HTMLSanitizer {
   }
 }
 
-// Create singleton instance
-const sanitizer = new HTMLSanitizer();
+// Export the class for module system
+export { Sanitizer };
 
-// Export for module usage
+// Create singleton instance
+const sanitizer = new Sanitizer();
+
+// Export singleton as default for direct usage
 export default sanitizer;
 
 // Global fallback

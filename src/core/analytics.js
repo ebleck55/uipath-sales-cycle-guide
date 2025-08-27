@@ -656,5 +656,12 @@ class AnalyticsManager {
   }
 }
 
-// Export for use
-window.AnalyticsManager = AnalyticsManager;
+// Export for ES6 modules
+export { AnalyticsManager };
+export { AnalyticsManager as Analytics }; // Alias for module manager
+export default AnalyticsManager;
+
+// Global fallback
+if (typeof window !== 'undefined') {
+  window.AnalyticsManager = AnalyticsManager;
+}

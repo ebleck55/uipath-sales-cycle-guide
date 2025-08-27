@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Filter Rule Editing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Filter Rule Editing Test</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Instructions</h2>
+            <ol class="list-decimal list-inside space-y-2 text-sm">
+                <li>Open the browser console (F12) to see debug logs</li>
+                <li>Click "Create Test Data" to add sample filter rules</li>
+                <li>Click "Open Admin Interface" to test filter rule editing</li>
+                <li>Try editing a filter rule and verify dropdowns populate correctly</li>
+            </ol>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Test Actions</h2>
+            <div class="space-x-4">
+                <button onclick="createTestData()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Create Test Data
+                </button>
+                <button onclick="openAdminInterface()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Open Admin Interface
+                </button>
+                <button onclick="clearTestData()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    Clear Test Data
+                </button>
+            </div>
+            
+            <div id="status" class="mt-4 p-3 bg-gray-50 rounded text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        function createTestData() {
+            // Create sample unified categories
+            const unifiedCategories = {
+                industries: [
+                    { id: 'financial-services', name: 'Financial Services' },
+                    { id: 'healthcare', name: 'Healthcare' },
+                    { id: 'manufacturing', name: 'Manufacturing' }
+                ],
+                linesOfBusiness: {
+                    'financial-services': [
+                        { id: 'banking', name: 'Banking', enabled: true },
+                        { id: 'insurance', name: 'Insurance', enabled: true }
+                    ],
+                    'healthcare': [
+                        { id: 'hospitals', name: 'Hospitals', enabled: true },
+                        { id: 'pharmaceuticals', name: 'Pharmaceuticals', enabled: true }
+                    ],
+                    'manufacturing': [
+                        { id: 'automotive', name: 'Automotive', enabled: true },
+                        { id: 'electronics', name: 'Electronics', enabled: true }
+                    ],
+                    general: [
+                        { id: 'hr', name: 'Human Resources', enabled: true },
+                        { id: 'finance', name: 'Finance & Accounting', enabled: true }
+                    ]
+                }
+            };
+            
+            // Create sample filter rules
+            const filterRules = [
+                {
+                    id: 'rule-1',
+                    name: 'Financial Services Banking Rule',
+                    conditions: {
+                        vertical: 'financial-services',
+                        lob: 'banking',
+                        tags: ['automation', 'compliance']
+                    },
+                    actions: {
+                        showResources: true,
+                        showUseCases: true,
+                        showPersonas: false
+                    }
+                },
+                {
+                    id: 'rule-2',
+                    name: 'Healthcare General Rule',
+                    conditions: {
+                        vertical: 'healthcare',
+                        lob: 'hospitals',
+                        tags: ['patient-care', 'efficiency']
+                    },
+                    actions: {
+                        showResources: false,
+                        showUseCases: true,
+                        showPersonas: true
+                    }
+                }
+            ];
+            
+            // Save to localStorage
+            localStorage.setItem('unifiedCategories', JSON.stringify(unifiedCategories));
+            localStorage.setItem('filterRules', JSON.stringify(filterRules));
+            
+            updateStatus('✅ Test data created successfully!<br>' +
+                        '📋 Created 2 filter rules with hierarchical data<br>' +
+                        '🏢 Created 3 industry verticals with LOBs');
+        }
+        
+        function openAdminInterface() {
+            const currentUrl = window.location.href;
+            const adminUrl = currentUrl.replace('test-filter-rule-editing.html', 'src/admin/optimized-admin.html');
+            
+            updateStatus('🔗 Opening admin interface...<br>' +
+                        '📝 Navigate to Filter Management section<br>' +
+                        '✏️ Try editing the test filter rules');
+            
+            window.open(adminUrl, '_blank');
+        }
+        
+        function clearTestData() {
+            localStorage.removeItem('unifiedCategories');
+            localStorage.removeItem('filterRules');
+            localStorage.removeItem('customVerticals');
+            localStorage.removeItem('customLobs');
+            localStorage.removeItem('customProjectTypes');
+            
+            updateStatus('🧹 Test data cleared from localStorage');
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+        }
+        
+        // Check existing data on load
+        window.onload = function() {
+            const filterRules = localStorage.getItem('filterRules');
+            const unifiedCategories = localStorage.getItem('unifiedCategories');
+            
+            if (filterRules && unifiedCategories) {
+                updateStatus('📊 Existing test data found in localStorage<br>' +
+                            '🔄 Ready to test filter rule editing');
+            } else {
+                updateStatus('🆕 No test data found<br>' +
+                            '👆 Click "Create Test Data" to get started');
+            }
+        }
+    </script>
+</body>
+</html>

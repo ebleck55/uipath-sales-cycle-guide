@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Import</title>
+</head>
+<body>
+    <h1>Debug Import Test</h1>
+    <div id="results"></div>
+    
+    <script type="module">
+        async function testImport() {
+            const results = document.getElementById('results');
+            
+            try {
+                console.log('Testing UnifiedDataManager import...');
+                const module = await import('./src/core/unified-data-manager.js');
+                console.log('Module imported:', module);
+                console.log('Module keys:', Object.keys(module));
+                console.log('UnifiedDataManager class:', module.UnifiedDataManager);
+                console.log('Default export:', module.default);
+                
+                results.innerHTML = `
+                    <h3>Import Success!</h3>
+                    <p><strong>Module keys:</strong> ${Object.keys(module).join(', ')}</p>
+                    <p><strong>UnifiedDataManager available:</strong> ${!!module.UnifiedDataManager}</p>
+                    <p><strong>Default available:</strong> ${!!module.default}</p>
+                    <p><strong>Can instantiate:</strong> ${!!(module.UnifiedDataManager && new module.UnifiedDataManager())}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Import failed:', error);
+                results.innerHTML = `<h3>Import Failed:</h3><p>${error.message}</p>`;
+            }
+        }
+        
+        testImport();
+    </script>
+</body>
+</html>

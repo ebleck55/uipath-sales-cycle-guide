@@ -6,6 +6,7 @@
 
 class UnifiedDataManager {
   constructor() {
+    this.initialized = false;
     this.dataStore = {
       // Categories & Types (Admin-driven)
       categories: {
@@ -35,6 +36,17 @@ class UnifiedDataManager {
             { id: 'actuarial', label: 'Actuarial', enabled: true },
             { id: 'customer-service', label: 'Customer Service', enabled: true },
             { id: 'reinsurance', label: 'Reinsurance', enabled: true }
+          ],
+          general: [
+            { id: 'operations', label: 'Operations', enabled: true },
+            { id: 'finance', label: 'Finance', enabled: true },
+            { id: 'hr', label: 'Human Resources', enabled: true },
+            { id: 'procurement', label: 'Procurement', enabled: true },
+            { id: 'customer-service', label: 'Customer Service', enabled: true },
+            { id: 'it', label: 'Information Technology', enabled: true },
+            { id: 'legal', label: 'Legal & Compliance', enabled: true },
+            { id: 'marketing', label: 'Marketing', enabled: true },
+            { id: 'sales', label: 'Sales', enabled: true }
           ]
         },
         personaLevels: [
@@ -141,9 +153,24 @@ class UnifiedDataManager {
       const stored = localStorage.getItem('uipath-unified-data');
       if (stored) {
         const data = JSON.parse(stored);
-        // Check version compatibility
-        if (this.isValidDataStructure(data) && data.version === this.dataStore.version) {
-          this.dataStore = { ...this.dataStore, ...data };
+        // Temporarily force fresh load to clear any corrupted localStorage data
+        if (false && this.isValidDataStructure(data) && data.version === this.dataStore.version) {
+          // Merge data while preserving Map objects
+          Object.keys(data).forEach(key => {
+            if (key === 'personas' || key === 'resources' || key === 'useCases' || key === 'salesStages') {
+              // Convert stored arrays back to Maps
+              if (Array.isArray(data[key]) && data[key].length > 0 && Array.isArray(data[key][0]) && data[key][0].length === 2) {
+                // This looks like Map entries: [[key, value], [key, value], ...]
+                this.dataStore[key] = new Map(data[key]);
+                console.log(`📦 Restored ${key} Map with ${this.dataStore[key].size} entries from localStorage`);
+              } else if (data[key] && typeof data[key] === 'object') {
+                this.dataStore[key] = new Map(Object.entries(data[key]));
+                console.log(`📦 Converted ${key} object to Map with ${this.dataStore[key].size} entries from localStorage`);
+              }
+            } else {
+              this.dataStore[key] = data[key];
+            }
+          });
           console.log('📦 Loaded data from localStorage');
         } else {
           // Clear old/incompatible cached data
@@ -210,7 +237,7 @@ class UnifiedDataManager {
       
       for (const file of dataFiles) {
         try {
-          const response = await fetch(`src/data/${file}`);
+          const response = await fetch(`../../src/data/${file}`);
           if (response.ok) {
             const data = await response.json();
             this.mergeAdminData(file, data);
@@ -237,10 +264,16 @@ class UnifiedDataManager {
           Object.entries(data.personas).forEach(([industry, personas]) => {
             personas.forEach((persona, index) => {
               const personaId = `${industry}-${index}`;
+              // Extract the first LOB from the lob array, or use the industry as fallback
+              const primaryLob = Array.isArray(persona.lob) && persona.lob.length > 0 
+                ? (persona.lob[0] === 'all' ? '' : persona.lob[0])
+                : '';
+              
               this.dataStore.personas.set(personaId, {
                 ...persona,
                 id: personaId,
                 industry,
+                lob: primaryLob,
                 enabled: true
               });
             });
@@ -259,6 +292,7 @@ class UnifiedDataManager {
                   ...resource,
                   id: resourceId,
                   industry,
+                  lob,
                   enabled: true
                 });
               });
@@ -278,6 +312,7 @@ class UnifiedDataManager {
                   ...useCase,
                   id: useCaseId,
                   industry,
+                  lob,
                   enabled: true
                 });
               });
@@ -398,6 +433,40 @@ class UnifiedDataManager {
     }
     
     return personas;
+  }
+
+  /**
+   * Get use cases with filtering
+   */
+  getUseCases(filters = {}) {
+    let useCases = Array.from(this.dataStore.useCases.values());
+    
+    if (filters.industry) {
+      useCases = useCases.filter(uc => uc.industry === filters.industry);
+    }
+    
+    if (filters.lob) {
+      useCases = useCases.filter(uc => uc.lob === filters.lob);
+    }
+    
+    return useCases;
+  }
+
+  /**
+   * Get resources with filtering
+   */
+  getResources(filters = {}) {
+    let resources = Array.from(this.dataStore.resources.values());
+    
+    if (filters.industry) {
+      resources = resources.filter(r => r.industry === filters.industry);
+    }
+    
+    if (filters.lob) {
+      resources = resources.filter(r => r.lob === filters.lob);
+    }
+    
+    return resources;
   }
 
   /**
@@ -574,6 +643,9 @@ class UnifiedDataManager {
         personas: Array.from(this.dataStore.personas.entries()),
         resources: Array.from(this.dataStore.resources.entries()),
         useCases: Array.from(this.dataStore.useCases.entries()),
+        salesStages: Array.from(this.dataStore.salesStages.entries()),
+        currentIndustry: this.dataStore.currentIndustry,
+        currentLOB: this.dataStore.currentLOB,
         lastModified: this.dataStore.lastModified,
         version: this.dataStore.version
       };
@@ -686,10 +758,11 @@ class UnifiedDataManager {
   }
 }
 
-// Create global instance
-window.UnifiedDataManager = UnifiedDataManager;
+// Export for ES6 modules
+export default UnifiedDataManager;
+export { UnifiedDataManager };
 
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { UnifiedDataManager };
+// Make available globally
+if (typeof window !== 'undefined') {
+  window.UnifiedDataManager = UnifiedDataManager;
 }

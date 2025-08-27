@@ -468,12 +468,6 @@
                 <option value="IDP + Agentic">IDP + Agentic</option>
                 <option value="Maestro">Maestro</option>
               </select>
-              <select id="use-case-complexity-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500">
-                <option value="">All Complexity</option>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
             </div>
 
             <!-- Use Cases List -->
@@ -2358,7 +2352,7 @@
         console.log('🔄 Loading admin interface...');
         
         // Load Unified Data Manager first
-        await import('../unified-data-manager.js');
+        await import('../core/unified-data-manager.js');
         // UnifiedDataManager is now available as window.UnifiedDataManager
         window.unifiedDataManager = new window.UnifiedDataManager();
         await window.unifiedDataManager.init();
@@ -2370,7 +2364,7 @@
         console.log('✅ ContentAPI loaded');
         
         // Load AdminInterface
-        const { AdminInterface } = await import('./admin.js');
+        const { AdminInterface } = await import('./optimized-admin.js');
         console.log('✅ AdminInterface loaded');
         
         // Initialize admin interface

@@ -97,15 +97,25 @@ class ModuleManager {
         return this.modules.get(name);
       }
 
-      // Import the module
-      const moduleExport = await import(`../../${path}`);
-      const ModuleClass = moduleExport[className] || moduleExport.default;
+      // Import the module with cache busting for analytics
+      const cacheBuster = name === 'analytics' ? `?v=${Date.now()}` : '';
+      const moduleExport = await import(`../../${path}${cacheBuster}`);
+      let ModuleClass = moduleExport[className] || moduleExport.default;
       
+      // Special handling for singleton modules like sanitizer
       if (!ModuleClass) {
         throw new Error(`Class ${className} not found in ${path}`);
       }
+      
+      // If we get an instance instead of a class (singleton pattern), use it directly
+      if (typeof ModuleClass === 'object' && ModuleClass.constructor && typeof ModuleClass.constructor === 'function') {
+        // For singleton modules, store the instance directly
+        this.modules.set(name, ModuleClass);
+        console.log(`✅ Module ${name} loaded successfully (singleton)`);
+        return ModuleClass;
+      }
 
-      // Initialize the module
+      // Initialize the module normally
       const moduleInstance = new ModuleClass();
       
       // Initialize if it has an init method

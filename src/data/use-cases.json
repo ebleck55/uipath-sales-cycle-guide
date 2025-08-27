@@ -17,12 +17,12 @@
           "processes": ["Customer data entry", "Document verification", "System provisioning", "Welcome communications"],
           "page": 10,
           "link": "",
-          "tags": {
-            "primary": ["account-opening", "customer-onboarding", "document-processing"],
-            "secondary": ["data-entry", "verification", "system-integration"],
-            "outcomes": ["faster-onboarding", "improved-accuracy", "better-customer-experience"],
-            "pain_points": ["manual-data-entry", "document-delays", "system-fragmentation"]
-          },
+          "tags": [
+            "account-opening", "customer-onboarding", "document-processing",
+            "data-entry", "verification", "system-integration",
+            "faster-onboarding", "improved-accuracy", "better-customer-experience",
+            "manual-data-entry", "document-delays", "system-fragmentation"
+          ],
           "priority": "high",
           "estimatedROI": "300%"
         },
@@ -38,12 +38,12 @@
           "timeToValue": "8-12 weeks",
           "processes": ["Application intake", "Document extraction", "Credit scoring", "Underwriting decisions"],
           "page": 15,
-          "tags": {
-            "primary": ["loan-processing", "document-extraction", "credit-analysis", "ai-decisioning"],
-            "secondary": ["underwriting", "risk-assessment", "application-automation"],
-            "outcomes": ["faster-approvals", "maintained-risk-standards", "improved-throughput"],
-            "pain_points": ["manual-processing", "slow-approvals", "document-bottlenecks"]
-          },
+          "tags": [
+            "loan-processing", "document-extraction", "credit-analysis", "ai-decisioning",
+            "underwriting", "risk-assessment", "application-automation",
+            "faster-approvals", "maintained-risk-standards", "improved-throughput",
+            "manual-processing", "slow-approvals", "document-bottlenecks"
+          ],
           "priority": "high",
           "estimatedROI": "450%"
         },

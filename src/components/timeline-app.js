@@ -178,6 +178,7 @@ class OptimizedTimelineApp {
     // Initialize modules if classes are available
     if (typeof PerformanceManager !== 'undefined' && this.features.performance) {
       const perfManager = new PerformanceManager();
+      await perfManager.init(); // Initialize the performance manager
       this.modules.set('performance', perfManager);
       console.log('✅ Performance Manager initialized');
     }
@@ -254,6 +255,12 @@ class OptimizedTimelineApp {
         console.log('📦 Loaded legacy data');
       }
       
+      // Initial render and setup
+      await this.render();
+      
+      // Set initial industry state (trigger changeIndustry to set up UI properly)  
+      this.changeIndustry(this.currentIndustry);
+      
     } catch (error) {
       console.error('Failed to load application data:', error);
       this.appData = { lobOptions: {}, personasDatabase: {} };
@@ -264,6 +271,9 @@ class OptimizedTimelineApp {
    * Setup event listeners
    */
   setupEventListeners() {
+    // Setup collapsible sections
+    this.setupCollapsibleSections();
+    
     // Optimized event delegation
     document.addEventListener('click', this.handleClick.bind(this));
     document.addEventListener('change', this.handleChange.bind(this));
@@ -282,6 +292,30 @@ class OptimizedTimelineApp {
     // Performance monitoring
     window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
     document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+  }
+
+  /**
+   * Setup collapsible sections functionality
+   */
+  setupCollapsibleSections() {
+    // Show sections by default
+    document.querySelectorAll('.collapsible-content').forEach(content => {
+      content.classList.remove('hidden');
+    });
+
+    // Add click handlers for collapsible headers
+    document.querySelectorAll('.collapsible-header').forEach(header => {
+      header.addEventListener('click', (e) => {
+        const section = e.currentTarget.getAttribute('data-section');
+        const content = document.querySelector(`#${section} .collapsible-content`);
+        const chevron = e.currentTarget.querySelector('.chevron-icon');
+        
+        if (content) {
+          content.classList.toggle('hidden');
+          chevron?.classList.toggle('rotate-90');
+        }
+      });
+    });
   }
 
   /**
@@ -500,12 +534,17 @@ class OptimizedTimelineApp {
     if (this.dataManager) {
       // Use unified data manager
       personasData = this.dataManager.getPersonas({ industry: industry });
+      console.log(`🔍 Personas for ${industry}:`, personasData?.length || 0, personasData);
     } else {
       // Fall back to legacy data
       personasData = this.appData.personasDatabase?.[industry];
+      console.log(`🔍 Legacy personas for ${industry}:`, personasData?.length || 0);
     }
     
-    if (!personasData || personasData.length === 0) return null;
+    if (!personasData || personasData.length === 0) {
+      console.log(`⚠️ No personas found for ${industry}`);
+      return null;
+    }
     
     const section = document.createElement('section');
     section.className = `personas-section personas-${industry}`;
@@ -931,6 +970,17 @@ class OptimizedTimelineApp {
     if (industrySelector) {
       industrySelector.value = industry;
     }
+    
+    // Update industry button visual state
+    this.$$('.industry-btn').forEach(btn => {
+      if (btn.getAttribute('data-industry') === industry) {
+        btn.classList.add('border-orange-500', 'bg-orange-50', 'text-orange-700');
+        btn.classList.remove('border-gray-200');
+      } else {
+        btn.classList.remove('border-orange-500', 'bg-orange-50', 'text-orange-700');
+        btn.classList.add('border-gray-200');
+      }
+    });
     
     // Update visible personas
     this.$$('.personas-section').forEach(section => {
