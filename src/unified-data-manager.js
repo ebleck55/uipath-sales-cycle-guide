@@ -210,7 +210,7 @@ class UnifiedDataManager {
       
       for (const file of dataFiles) {
         try {
-          const response = await fetch(`/src/data/${file}`);
+          const response = await fetch(`src/data/${file}`);
           if (response.ok) {
             const data = await response.json();
             this.mergeAdminData(file, data);
@@ -222,6 +222,73 @@ class UnifiedDataManager {
       
     } catch (error) {
       console.log('Info: Admin data directory not accessible, using defaults');
+    }
+  }
+
+  /**
+   * Merge admin data files into the data store
+   */
+  mergeAdminData(filename, data) {
+    console.log(`📥 Loading ${filename}...`);
+    
+    switch (filename) {
+      case 'personas.json':
+        if (data.personas) {
+          Object.entries(data.personas).forEach(([industry, personas]) => {
+            personas.forEach((persona, index) => {
+              const personaId = `${industry}-${index}`;
+              this.dataStore.personas.set(personaId, {
+                ...persona,
+                id: personaId,
+                industry,
+                enabled: true
+              });
+            });
+          });
+          console.log(`✅ Loaded ${this.dataStore.personas.size} personas`);
+        }
+        break;
+        
+      case 'resources.json':
+        if (data.resources) {
+          Object.entries(data.resources).forEach(([industry, lobResources]) => {
+            Object.entries(lobResources).forEach(([lob, resources]) => {
+              resources.forEach((resource, index) => {
+                const resourceId = `${industry}-${lob}-${index}`;
+                this.dataStore.resources.set(resourceId, {
+                  ...resource,
+                  id: resourceId,
+                  industry,
+                  enabled: true
+                });
+              });
+            });
+          });
+          console.log(`✅ Loaded ${this.dataStore.resources.size} resources`);
+        }
+        break;
+        
+      case 'use-cases.json':
+        if (data.useCases) {
+          Object.entries(data.useCases).forEach(([industry, lobUseCases]) => {
+            Object.entries(lobUseCases).forEach(([lob, useCases]) => {
+              useCases.forEach((useCase, index) => {
+                const useCaseId = `${industry}-${lob}-${index}`;
+                this.dataStore.useCases.set(useCaseId, {
+                  ...useCase,
+                  id: useCaseId,
+                  industry,
+                  enabled: true
+                });
+              });
+            });
+          });
+          console.log(`✅ Loaded ${this.dataStore.useCases.size} use cases`);
+        }
+        break;
+        
+      default:
+        console.warn(`Unknown data file: ${filename}`);
     }
   }
 
