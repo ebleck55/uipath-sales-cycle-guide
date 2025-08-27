@@ -2358,8 +2358,9 @@
         console.log('🔄 Loading admin interface...');
         
         // Load Unified Data Manager first
-        const { UnifiedDataManager } = await import('../unified-data-manager.js');
-        window.unifiedDataManager = new UnifiedDataManager();
+        await import('../unified-data-manager.js');
+        // UnifiedDataManager is now available as window.UnifiedDataManager
+        window.unifiedDataManager = new window.UnifiedDataManager();
         await window.unifiedDataManager.init();
         console.log('✅ UnifiedDataManager loaded');
         
