@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Cycle Guide - Timeline Edition</title>
+  
+  <!-- Preconnect to external domains for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Theme color for mobile browsers -->
+  <meta name="theme-color" content="#FA4616">
+  
+  <!-- Security note: CSP will be applied via JavaScript for GitHub Pages compatibility -->
+  
+  <!-- Preload critical resources -->
+  <link rel="modulepreload" href="src/app.js">
+  <link rel="modulepreload" href="src/security/csp-config.js">
+  
+  <!-- SVG Icons (embedded for performance and security) -->
+  <svg style="display: none;">
+    <defs>
+      <g id="edit-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
+      </g>
+      <g id="chevron-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </g>
+      <g id="copy-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+      </g>
+      <g id="trash-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </g>
+      <g id="menu-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </g>
+      <g id="close-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </g>
+    </defs>
+  </svg>
+</head>
+<body class="font-inter bg-gray-50 text-gray-900">
+  <!-- Loading Indicator -->
+  <div id="app-loading" class="loading-indicator fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="spinner border-4 border-orange-200 border-t-orange-600 rounded-full w-12 h-12 mx-auto mb-4 animate-spin"></div>
+      <p class="text-gray-600">Loading UiPath Sales Guide...</p>
+    </div>
+  </div>
+
+  <!-- Security Warning (will be hidden if security is properly initialized) -->
+  <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 text-center">
+    ⚠️ Security features are initializing. Please wait...
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Title -->
+        <div class="flex items-center">
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">Sales Cycle Guide</h1>
+          </div>
+        </div>
+
+        <!-- Admin and App Buttons -->
+        <div class="flex items-center space-x-3">
+          <!-- Admin Access Button -->
+          <a href="src/admin/admin.html" target="_blank" 
+             class="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center">
+            ⚙️ Admin
+          </a>
+          
+          <!-- PWA Install Button (hidden by default) -->
+          <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
+            Install App
+          </button>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <use href="#menu-icon"></use>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu - Navigation only -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+      <div class="px-4 py-3">
+        <p class="text-sm text-gray-500 text-center">Use the Customer Information section below to configure your sales context</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Customer Information Section -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-gray-700">Customer Information</h2>
+        <button id="update-content-btn" class="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors">
+          Update Content
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- 1. Vertical -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Vertical</label>
+          <div class="space-y-2">
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="banking">
+              Banking
+            </button>
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="insurance">
+              Insurance
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Line of Business -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Line of Business</label>
+          <select id="lob-selector" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+            <option value="">Select Vertical first</option>
+          </select>
+        </div>
+
+        <!-- 3. Project Type -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Project Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="rpa">
+              RPA
+            </button>
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="idp">
+              IDP
+            </button>
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="agentic">
+              Agentic
+            </button>
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="maestro">
+              Maestro
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Customer Type -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Customer Type</label>
+          <div class="space-y-2">
+            <button class="customer-type-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="new-logo">
+              New Logo
+            </button>
+            <button class="customer-type-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="existing">
+              Existing
+            </button>
+          </div>
+          
+          <!-- Deployment (shows when customer type is selected) -->
+          <div id="deployment-container" class="hidden mt-3">
+            <label class="block text-sm font-medium text-gray-600 mb-2">Deployment</label>
+            <select id="deployment-type" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <option value="">Select Deployment</option>
+              <option value="on-prem">On-Premises</option>
+              <option value="automation-suite">Automation Suite</option>
+              <option value="automation-cloud">Automation Cloud</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LLM Prompt Bar -->
+  <div id="llm-prompt-bar" class="shadow-lg sticky top-16 z-30 transition-all duration-300" style="background-color: #182126;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex items-center space-x-4">
+        <!-- Prompt Input -->
+        <div class="flex-1 relative">
+          <input 
+            type="text" 
+            id="llm-prompt-input"
+            placeholder="Ask AI about sales strategies, objections, personas, or anything else..."
+            class="w-full px-4 py-2 pl-4 pr-24 bg-white bg-opacity-90 backdrop-blur-sm rounded-full border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:bg-white placeholder-gray-500 text-gray-900"
+          />
+          
+          <!-- Send Button -->
+          <button 
+            id="llm-send-btn"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
+          >
+            Ask
+          </button>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="hidden lg:flex items-center space-x-2">
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="How do I handle objections for this topic?">
+            Objection Handling
+          </button>
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="What business processes are most relevant here?">
+            Business Process
+          </button>
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="Find relevant content and resources for this context">
+            Find Content
+          </button>
+          <button class="llm-quick-btn company-research-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
+            Company Research
+          </button>
+          <button class="llm-quick-btn competitive-analysis-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
+            Competitive
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Research Modal -->
+  <div id="company-research-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">🏢 Company Research</h3>
+          <button id="company-research-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="company-url-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Company Website URL
+          </label>
+          <input 
+            type="url" 
+            id="company-url-input"
+            placeholder="https://example.com"
+            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Enter the company's main website URL for comprehensive research
+          </p>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            id="company-research-cancel"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="company-research-start"
+            class="flex-1 px-4 py-2 text-white rounded-full transition-colors"
+            style="background-color: #182126;"
+          >
+            <span class="research-btn-text">Start Research</span>
+            <span class="research-btn-loading hidden">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Researching...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Competitive Analysis Modal -->
+  <div id="competitive-analysis-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">⚔️ Competitive Analysis</h3>
+          <button id="competitive-analysis-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="competitor-name-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Competitor Name
+          </label>
+          <input 
+            type="text" 
+            id="competitor-name-input"
+            placeholder="e.g., Blue Prism, Automation Anywhere, Microsoft Power Platform"
+            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Enter competitor name for contextual competitive analysis based on your customer info
+          </p>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            id="competitive-analysis-cancel"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="competitive-analysis-start"
+            class="flex-1 px-4 py-2 text-white rounded-full transition-colors"
+            style="background-color: #182126;"
+          >
+            <span class="competitive-btn-text">Analyze</span>
+            <span class="competitive-btn-loading hidden">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Analyzing...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Status Bar -->
+  <div id="admin-status" class="hidden bg-orange-100 border-b border-orange-200 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="h-5 w-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <use href="#edit-icon"></use>
+        </svg>
+        <span class="text-sm font-medium text-orange-800">Edit Mode Active</span>
+      </div>
+      <div class="text-sm text-orange-700">
+        Click pencil icons to edit content
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Profile Completion Bar -->
+  <div id="profile-completion-bar" class="bg-white border-b border-gray-200 shadow-sm sticky top-[120px] z-20 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+      <div class="flex items-center justify-between">
+        <!-- Progress Section -->
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Customer Profile</span>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="flex-1 max-w-xs">
+            <div class="flex items-center space-x-2">
+              <div class="flex-1 bg-gray-200 rounded-full h-2">
+                <div id="profile-progress" class="bg-gradient-to-r from-orange-500 to-blue-600 h-2 rounded-full transition-all duration-500" style="width: 20%"></div>
+              </div>
+              <span id="profile-percentage" class="text-xs font-medium text-gray-600 min-w-[30px]">20%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Missing Items -->
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-gray-500">Complete your profile for better AI recommendations:</span>
+          <div id="missing-items" class="flex items-center space-x-1">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              🏢 Customer Type
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              📋 LOB
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              ⚙️ Project Type
+            </span>
+          </div>
+          <button id="dismiss-profile-bar" class="p-1 text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Timeline Navigation -->
+    <section id="timeline-section" class="mb-8">
+      <div class="bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl p-8 shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Sales Cycle Journey</h2>
+        <div id="timeline-container">
+          <!-- Timeline will be rendered here by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Stage Content Area -->
+    <section id="stage-content-section">
+      <div id="stage-content">
+        <!-- Stage content will be rendered here dynamically -->
+      </div>
+    </section>
+
+    <!-- Two Column Layout for Personas and Use Cases -->
+    <div class="mt-12 grid lg:grid-cols-2 gap-8">
+      <!-- Left Column: Decision Makers & Personas -->
+      <section id="personas-section">
+        <div class="bg-white rounded-lg shadow-lg">
+          <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="personas-section">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                  </svg>
+                  Decision Makers & Personas
+                </h2>
+              </div>
+            </div>
+          </div>
+          <div class="collapsible-content hidden px-6 pb-6">
+            <div id="personas-container" class="grid gap-4">
+              <!-- Personas will be rendered here by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Right Column: LOB Use Cases -->
+      <section id="use-cases-section">
+        <div class="bg-white rounded-lg shadow-lg">
+          <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="use-cases-section">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  LOB Use Cases
+                </h2>
+              </div>
+            </div>
+          </div>
+          <div class="collapsible-content hidden px-6 pb-6">
+            <div id="use-cases-container">
+              <!-- Use cases will be dynamically populated based on industry toggle -->
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900">Edit Content</h3>
+        <button class="modal-close text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <use href="#close-icon"></use>
+          </svg>
+        </button>
+      </div>
+      <div id="modal-content-area" class="mt-2 px-2 py-3">
+        <!-- Rich Text Editor -->
+        <div id="editor-container" class="hidden">
+          <div id="editor" class="bg-white" style="height: 300px;"></div>
+        </div>
+        <!-- Fallback textarea for basic editing -->
+        <textarea id="modal-textarea" class="hidden w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" rows="10" placeholder="Enter your content here..."></textarea>
+      </div>
+      <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
+        <button id="modal-cancel" class="modal-close px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+          Cancel
+        </button>
+        <button id="modal-save" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Container -->
+  <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2">
+    <!-- Notifications will be inserted here by JavaScript -->
+  </div>
+
+  <!-- AI Chatbot -->
+  <div id="ai-chatbot" class="fixed bottom-6 right-6 z-40">
+    <!-- Chat Toggle Button -->
+    <button id="chat-toggle" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 transform hover:scale-105">
+      <svg id="chat-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+      </svg>
+      <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chat-window" class="hidden absolute bottom-16 right-0 w-96 h-[500px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col">
+      <!-- Chat Header -->
+      <div class="bg-blue-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold">UiPath Sales Assistant</h3>
+            <p class="text-xs text-blue-100">AI-powered sales guidance</p>
+          </div>
+        </div>
+        <button id="chat-close" class="text-blue-100 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Chat Messages -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <!-- Welcome message -->
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+            <p class="text-sm text-gray-800">Hi! I'm your UiPath Sales Assistant. I can help you find content, answer questions about sales processes, personas, objections, and more. What would you like to know?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="p-4 border-t border-gray-200">
+        <div class="flex space-x-2">
+          <input 
+            type="text" 
+            id="chat-input" 
+            placeholder="Ask me about sales processes, personas, objections..." 
+            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            maxlength="500"
+          >
+          <button 
+            id="chat-send" 
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <p class="text-xs text-gray-500">
+            <span id="char-count">0</span>/500 characters
+          </p>
+          <div class="flex items-center space-x-2">
+            <button id="clear-chat" class="text-xs text-gray-500 hover:text-gray-700">Clear chat</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="hidden p-4 border-t border-gray-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <div class="bg-gray-100 rounded-lg p-3">
+            <div class="flex space-x-1">
+              <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+              <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+              <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions (shown when chat is closed) -->
+    <div id="quick-actions" class="absolute bottom-16 right-0 space-y-2 hidden">
+      <button class="quick-action-btn bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-lg hover:shadow-xl transition-all text-sm text-gray-700 hover:bg-gray-50" data-action="search-personas">
+        Find Personas
+      </button>
+      <button class="quick-action-btn bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-lg hover:shadow-xl transition-all text-sm text-gray-700 hover:bg-gray-50" data-action="search-objections">
+        Handle Objections
+      </button>
+      <button class="quick-action-btn bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-lg hover:shadow-xl transition-all text-sm text-gray-700 hover:bg-gray-50" data-action="search-questions">
+        Discovery Questions
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center mb-4 md:mb-0">
+          <span class="text-sm text-gray-600">Sales Cycle Guide v2.0</span>
+        </div>
+        <div class="flex items-center space-x-4 text-sm text-gray-600">
+          <span id="app-status" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+            ✓ Secure
+          </span>
+          <span id="connection-status" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+            Online
+          </span>
+          <!-- Edit Mode Toggle -->
+          <button id="admin-mode-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Enter Edit Mode
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <!-- Load data first -->
+  <script src="js/data.js"></script>
+  <!-- Load timeline application -->
+  <script src="timeline-app.js"></script>
+
+  <!-- Hide loading indicator once app is ready -->
+  <script>
+    document.addEventListener('app:ready', () => {
+      const loading = document.getElementById('app-loading');
+      const securityWarning = document.getElementById('security-warning');
+      
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      if (securityWarning) {
+        securityWarning.style.display = 'none';
+      }
+      
+      // Update app status
+      const appStatus = document.getElementById('app-status');
+      if (appStatus) {
+        appStatus.textContent = '✓ Ready';
+        appStatus.className = 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs';
+      }
+    });
+
+    // Update connection status
+    window.addEventListener('online', () => {
+      const status = document.getElementById('connection-status');
+      if (status) {
+        status.textContent = 'Online';
+        status.className = 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs';
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      const status = document.getElementById('connection-status');
+      if (status) {
+        status.textContent = 'Offline';
+        status.className = 'px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs';
+      }
+    });
+
+    // Handle any module loading errors
+    window.addEventListener('error', (event) => {
+      if (event.filename && event.filename.includes('src/')) {
+        console.error('Module loading error:', event);
+        document.getElementById('app-loading').innerHTML = `
+          <div class="text-center">
+            <div class="text-red-600 text-xl mb-4">⚠️</div>
+            <p class="text-red-600 font-medium">Failed to load application modules</p>
+            <p class="text-gray-600 text-sm mt-2">Please refresh the page and try again</p>
+            <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+              Refresh Page
+            </button>
+          </div>
+        `;
+      }
+    });
+  </script>
+
+  <!-- Admin Integration -->
+  <!-- Admin Toggle Button (Bottom Right) -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <button id="admin-toggle-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center space-x-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <use href="#edit-icon"/>
+      </svg>
+      <span id="admin-toggle-text">Enter Admin Mode</span>
+    </button>
+  </div>
+
+  <!-- Admin Status Bar -->
+  <div id="admin-status-bar" class="fixed top-0 left-0 right-0 bg-orange-600 text-white px-4 py-2 text-sm font-medium text-center z-40 hidden">
+    🔧 Admin Mode Active - Content changes will be reflected in timeline
+    <button id="open-admin-panel-btn" class="ml-4 bg-orange-700 hover:bg-orange-800 px-3 py-1 rounded text-xs">
+      Open Full Admin Panel
+    </button>
+  </div>
+
+  <!-- Admin Panel (Full Screen Overlay) -->
+  <div id="admin-panel-overlay" class="fixed inset-0 bg-white z-50 hidden overflow-auto">
+    <div id="admin-interface-container">
+      <!-- Full admin interface will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Admin Integration Script -->
+  <script type="module">
+    // Admin Integration for Timeline App
+    class AdminIntegration {
+      constructor() {
+        this.adminMode = false;
+        this.adminInterface = null;
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        // Admin toggle
+        document.getElementById('admin-toggle-btn').addEventListener('click', () => {
+          this.toggleAdminMode();
+        });
+
+        // Open admin panel
+        document.getElementById('open-admin-panel-btn').addEventListener('click', () => {
+          this.openAdminPanel();
+        });
+      }
+
+      toggleAdminMode() {
+        this.adminMode = !this.adminMode;
+        
+        const toggleBtn = document.getElementById('admin-toggle-btn');
+        const toggleText = document.getElementById('admin-toggle-text');
+        const statusBar = document.getElementById('admin-status-bar');
+
+        if (this.adminMode) {
+          // Enter admin mode
+          toggleBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+          toggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+          toggleText.textContent = 'Exit Admin Mode';
+          statusBar.classList.remove('hidden');
+          console.log('✅ Admin mode activated');
+        } else {
+          // Exit admin mode
+          toggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+          toggleBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+          toggleText.textContent = 'Enter Admin Mode';
+          statusBar.classList.add('hidden');
+          document.getElementById('admin-panel-overlay').classList.add('hidden');
+          console.log('✅ Admin mode deactivated');
+        }
+      }
+
+      async openAdminPanel() {
+        try {
+          console.log('🔧 Loading full admin panel...');
+          
+          if (!this.adminInterface) {
+            await this.loadAdminInterface();
+          }
+
+          document.getElementById('admin-panel-overlay').classList.remove('hidden');
+          console.log('✅ Admin panel opened');
+          
+        } catch (error) {
+          console.error('❌ Failed to load admin panel:', error);
+          alert('Failed to load admin interface: ' + error.message);
+        }
+      }
+
+      async loadAdminInterface() {
+        try {
+          // Load admin HTML content
+          const adminResponse = await fetch('./src/admin/admin.html');
+          const adminHtml = await adminResponse.text();
+          
+          // Parse and modify admin content
+          const parser = new DOMParser();
+          const adminDoc = parser.parseFromString(adminHtml, 'text/html');
+          let adminBody = adminDoc.body.innerHTML;
+          
+          // Add close button
+          adminBody = adminBody.replace(
+            '<a href="../../index.html" class="btn-secondary" style="text-decoration: none;">',
+            `<button id="close-admin-panel-btn" class="btn-secondary" style="background: #ef4444; color: white; border: none;">
+              ✕ Close Admin
+            </button>
+            <a href="../../index.html" class="btn-secondary" style="text-decoration: none; display: none;">`
+          );
+          
+          // Insert admin content
+          document.getElementById('admin-interface-container').innerHTML = adminBody;
+          
+          // Load ContentAPI first
+          const { ContentAPI } = await import('./src/api/contentAPI.js');
+          window.ContentAPI = ContentAPI;
+          
+          // Load and initialize admin interface
+          const { AdminInterface } = await import('./src/admin/admin.js');
+          this.adminInterface = new AdminInterface();
+          
+          // Bind close button
+          document.getElementById('close-admin-panel-btn')?.addEventListener('click', () => {
+            document.getElementById('admin-panel-overlay').classList.add('hidden');
+          });
+          
+          console.log('✅ Admin interface loaded successfully');
+          
+        } catch (error) {
+          console.error('❌ Failed to load admin interface:', error);
+          throw error;
+        }
+      }
+    }
+
+    // Initialize admin integration
+    document.addEventListener('DOMContentLoaded', () => {
+      window.adminIntegration = new AdminIntegration();
+      console.log('✅ Admin integration initialized');
+    });
+  </script>
+</body>
+</html>

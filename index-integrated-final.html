@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Cycle Guide - Complete System</title>
+  
+  <!-- External dependencies -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FA4616">
+  
+  <link rel="modulepreload" href="src/app.js">
+  <link rel="modulepreload" href="src/api/contentAPI.js">
+  <link rel="modulepreload" href="src/admin/admin.js">
+
+  <!-- SVG Icons -->
+  <svg style="display: none;">
+    <defs>
+      <g id="edit-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
+      </g>
+      <g id="close-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </g>
+      <g id="settings-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </g>
+    </defs>
+  </svg>
+</head>
+
+<body class="font-inter bg-gray-50 text-gray-900">
+  <!-- Loading Screen -->
+  <div id="app-loading" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-600 mx-auto mb-4"></div>
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">Loading UiPath Sales Guide</h2>
+      <p class="text-gray-500">Initializing frontend and admin systems...</p>
+    </div>
+  </div>
+
+  <!-- Admin Toggle (Bottom Right) -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <button id="admin-toggle" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center space-x-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <use href="#settings-icon"/>
+      </svg>
+      <span id="admin-toggle-text">Enter Admin Mode</span>
+    </button>
+  </div>
+
+  <!-- Admin Status Bar -->
+  <div id="admin-status-bar" class="fixed top-0 left-0 right-0 bg-orange-600 text-white px-4 py-2 text-sm font-medium text-center z-30 hidden">
+    🔧 Admin Mode Active - Content changes will be reflected immediately
+    <button id="open-admin-panel" class="ml-4 bg-orange-700 hover:bg-orange-800 px-3 py-1 rounded text-xs">
+      Open Admin Panel
+    </button>
+  </div>
+
+  <!-- Frontend Application (Timeline) -->
+  <div id="frontend-app">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <img class="h-8 w-auto" src="https://www.uipath.com/hubfs/2023_Rebrand/Logos/UiPath-Logo.svg" alt="UiPath" loading="lazy">
+            <div class="ml-4">
+              <h1 class="text-xl font-bold text-gray-900">Sales Cycle Guide</h1>
+              <p class="text-sm text-gray-500">Complete System</p>
+            </div>
+          </div>
+          
+          <!-- Industry Switcher -->
+          <div class="hidden md:flex bg-gray-100 rounded-lg p-1">
+            <button class="industry-btn px-3 py-1 text-sm font-medium rounded-md transition-colors bg-white text-gray-900 shadow-sm" data-industry="banking">
+              Banking
+            </button>
+            <button class="industry-btn px-3 py-1 text-sm font-medium rounded-md transition-colors text-gray-600 hover:text-gray-900" data-industry="insurance">
+              Insurance
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Personas Section -->
+      <section id="personas-section" class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">Key Decision Makers & Personas</h2>
+          <button id="refresh-content" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            🔄 Refresh Content
+          </button>
+        </div>
+        <div id="personas-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Personas will be rendered here -->
+        </div>
+      </section>
+
+      <!-- Sales Stages Section -->
+      <section id="stages-section">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Sales Cycle Stages</h2>
+        <div class="space-y-8" id="stages-container">
+          <!-- Stages will be rendered here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Admin Panel (Full Screen Overlay) -->
+  <div id="admin-panel" class="fixed inset-0 bg-white z-50 hidden overflow-auto">
+    <div id="admin-container">
+      <!-- Admin interface will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Integration Scripts -->
+  <script type="module">
+    // Integrated Sales Guide Application
+    class IntegratedSalesGuide {
+      constructor() {
+        this.contentAPI = null;
+        this.adminInterface = null;
+        this.adminMode = false;
+        this.currentData = {
+          personas: [],
+          resources: [],
+          useCases: []
+        };
+        
+        this.initialize();
+      }
+
+      async initialize() {
+        try {
+          console.log('🚀 Initializing Integrated Sales Guide...');
+
+          // Load ContentAPI
+          const { ContentAPI } = await import('./src/api/contentAPI.js');
+          this.contentAPI = new ContentAPI();
+          window.ContentAPI = ContentAPI; // Make available globally
+          console.log('✅ ContentAPI loaded');
+
+          // Load initial data
+          await this.loadAllData();
+          
+          // Render frontend
+          this.renderFrontend();
+          
+          // Bind events
+          this.bindEvents();
+          
+          // Hide loading
+          document.getElementById('app-loading').style.display = 'none';
+          
+          console.log('✅ Integrated Sales Guide initialized successfully');
+          
+        } catch (error) {
+          console.error('❌ Failed to initialize:', error);
+          this.showError(error.message);
+        }
+      }
+
+      async loadAllData() {
+        try {
+          this.currentData.personas = await this.contentAPI.getPersonas();
+          this.currentData.resources = await this.contentAPI.getResources();
+          this.currentData.useCases = await this.contentAPI.getUseCases();
+          console.log('✅ All data loaded:', this.currentData);
+        } catch (error) {
+          console.error('❌ Failed to load data:', error);
+        }
+      }
+
+      renderFrontend() {
+        this.renderPersonas();
+        this.renderStages();
+      }
+
+      renderPersonas() {
+        const container = document.getElementById('personas-container');
+        const personas = this.currentData.personas.slice(0, 6); // Show first 6
+        
+        container.innerHTML = personas.map(persona => `
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">${persona.title}</h3>
+                <p class="text-sm text-gray-600">${persona.level}</p>
+              </div>
+              ${this.adminMode ? `<button class="text-blue-600 hover:text-blue-800 text-sm" onclick="window.integratedApp.editPersona('${persona.id}')">✏️ Edit</button>` : ''}
+            </div>
+            
+            <!-- Who They Are -->
+            <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+              <div class="flex items-center mb-2">
+                <span class="text-blue-600 mr-2">👤</span>
+                <h4 class="text-sm font-medium text-blue-900">Who They Are</h4>
+              </div>
+              <p class="text-sm text-blue-800">${persona.world}</p>
+            </div>
+            
+            <!-- What They Care About -->
+            <div class="mb-4 p-3 bg-green-50 rounded-lg">
+              <div class="flex items-center mb-2">
+                <span class="text-green-600 mr-2">💚</span>
+                <h4 class="text-sm font-medium text-green-900">What They Care About</h4>
+              </div>
+              <p class="text-sm text-green-800">${persona.cares}</p>
+            </div>
+            
+            <!-- How UiPath Can Help -->
+            <div class="p-3 bg-orange-50 rounded-lg">
+              <div class="flex items-center mb-2">
+                <span class="text-orange-600 mr-2">⚡</span>
+                <h4 class="text-sm font-medium text-orange-900">How UiPath Can Help</h4>
+              </div>
+              <p class="text-sm text-orange-800">${persona.help}</p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      renderStages() {
+        const container = document.getElementById('stages-container');
+        const stages = [
+          { id: 'discovery', name: 'Discovery', description: 'Understanding customer needs and challenges' },
+          { id: 'demo', name: 'Technical Demonstration', description: 'Showing UiPath capabilities and fit' },
+          { id: 'business-case', name: 'Business Case Development', description: 'Building ROI and value proposition' },
+          { id: 'procurement', name: 'Procurement & Negotiation', description: 'Contract discussions and finalization' },
+          { id: 'implementation', name: 'Implementation Planning', description: 'Preparing for successful deployment' }
+        ];
+
+        container.innerHTML = stages.map((stage, index) => `
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                  <span class="text-orange-600 font-semibold">${index + 1}</span>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">${stage.name}</h3>
+                  <p class="text-sm text-gray-600">${stage.description}</p>
+                </div>
+              </div>
+              ${this.adminMode ? `<button class="text-blue-600 hover:text-blue-800 text-sm" onclick="window.integratedApp.editStage('${stage.id}')">✏️ Edit</button>` : ''}
+            </div>
+            
+            <!-- Stage Resources -->
+            <div class="mt-4">
+              <h4 class="text-sm font-medium text-gray-900 mb-2">Relevant Resources:</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="stage-resources-${stage.id}">
+                ${this.getStageResources(stage.id).slice(0, 4).map(resource => `
+                  <div class="bg-gray-50 p-3 rounded border">
+                    <div class="font-medium text-sm text-gray-900">${resource.name}</div>
+                    <div class="text-xs text-gray-600">${resource.type}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      getStageResources(stageId) {
+        // Return relevant resources based on stage
+        return this.currentData.resources.filter(resource => 
+          resource.relevance?.includes(stageId) || Math.random() > 0.5
+        ).slice(0, 4);
+      }
+
+      bindEvents() {
+        // Admin toggle
+        document.getElementById('admin-toggle').addEventListener('click', () => {
+          this.toggleAdminMode();
+        });
+
+        // Open admin panel
+        document.getElementById('open-admin-panel').addEventListener('click', () => {
+          this.openAdminPanel();
+        });
+
+        // Refresh content
+        document.getElementById('refresh-content').addEventListener('click', () => {
+          this.refreshContent();
+        });
+
+        // Industry switcher
+        document.querySelectorAll('.industry-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            this.switchIndustry(e.target.dataset.industry);
+          });
+        });
+      }
+
+      toggleAdminMode() {
+        this.adminMode = !this.adminMode;
+        
+        const toggle = document.getElementById('admin-toggle');
+        const text = document.getElementById('admin-toggle-text');
+        const statusBar = document.getElementById('admin-status-bar');
+
+        if (this.adminMode) {
+          toggle.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+          toggle.classList.add('bg-red-600', 'hover:bg-red-700');
+          text.textContent = 'Exit Admin Mode';
+          statusBar.classList.remove('hidden');
+        } else {
+          toggle.classList.remove('bg-red-600', 'hover:bg-red-700');
+          toggle.classList.add('bg-blue-600', 'hover:bg-blue-700');
+          text.textContent = 'Enter Admin Mode';
+          statusBar.classList.add('hidden');
+          document.getElementById('admin-panel').classList.add('hidden');
+        }
+
+        // Re-render to show/hide edit buttons
+        this.renderFrontend();
+      }
+
+      async openAdminPanel() {
+        try {
+          console.log('🔧 Opening admin panel...');
+          
+          // Load admin interface if not already loaded
+          if (!this.adminInterface) {
+            await this.loadAdminInterface();
+          }
+
+          // Show admin panel
+          document.getElementById('admin-panel').classList.remove('hidden');
+          
+        } catch (error) {
+          console.error('❌ Failed to open admin panel:', error);
+          alert('Failed to load admin panel: ' + error.message);
+        }
+      }
+
+      async loadAdminInterface() {
+        try {
+          // Load admin HTML
+          const response = await fetch('./src/admin/admin.html');
+          const adminHtml = await response.text();
+          
+          // Parse and inject admin content
+          const parser = new DOMParser();
+          const adminDoc = parser.parseFromString(adminHtml, 'text/html');
+          let adminBody = adminDoc.body.innerHTML;
+          
+          // Add close button to admin header
+          adminBody = adminBody.replace(
+            '<a href="../../index.html" class="btn-secondary" style="text-decoration: none;">',
+            `<button id="close-admin-panel" class="btn-secondary" style="background: #ef4444; color: white; border: none;">
+              ✕ Close Admin
+            </button>
+            <a href="../../index.html" class="btn-secondary" style="text-decoration: none; display: none;">`
+          );
+          
+          // Insert admin content
+          document.getElementById('admin-container').innerHTML = adminBody;
+          
+          // Load admin JavaScript
+          const { AdminInterface } = await import('./src/admin/admin.js');
+          this.adminInterface = new AdminInterface();
+          
+          // Bind close button
+          document.getElementById('close-admin-panel')?.addEventListener('click', () => {
+            document.getElementById('admin-panel').classList.add('hidden');
+          });
+          
+          // Listen for data changes
+          this.setupDataSync();
+          
+          console.log('✅ Admin interface loaded');
+          
+        } catch (error) {
+          console.error('❌ Failed to load admin interface:', error);
+          throw error;
+        }
+      }
+
+      setupDataSync() {
+        // Set up event listeners for when admin changes data
+        // This allows real-time updates to the frontend
+        
+        // Listen for content updates from admin
+        document.addEventListener('admin-content-updated', (event) => {
+          console.log('📡 Admin updated content:', event.detail);
+          this.refreshContent();
+        });
+        
+        // Override admin's save methods to trigger frontend updates
+        if (this.adminInterface) {
+          const originalSaveResource = this.adminInterface.saveResource;
+          this.adminInterface.saveResource = (...args) => {
+            const result = originalSaveResource.apply(this.adminInterface, args);
+            this.refreshContent();
+            return result;
+          };
+        }
+      }
+
+      async refreshContent() {
+        console.log('🔄 Refreshing content from data source...');
+        await this.loadAllData();
+        this.renderFrontend();
+        console.log('✅ Content refreshed');
+      }
+
+      switchIndustry(industry) {
+        // Update industry buttons
+        document.querySelectorAll('.industry-btn').forEach(btn => {
+          btn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+          btn.classList.add('text-gray-600', 'hover:text-gray-900');
+        });
+        
+        const activeBtn = document.querySelector(`[data-industry="${industry}"]`);
+        activeBtn.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+        activeBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+        
+        console.log(`🏢 Switched to ${industry} industry`);
+        // Here you could filter content by industry
+      }
+
+      // Methods called from admin edit buttons
+      editPersona(personaId) {
+        console.log('✏️ Edit persona:', personaId);
+        this.openAdminPanel();
+        // Navigate to personas section in admin
+      }
+
+      editStage(stageId) {
+        console.log('✏️ Edit stage:', stageId);
+        this.openAdminPanel();
+        // Navigate to relevant section in admin
+      }
+
+      showError(message) {
+        document.getElementById('app-loading').innerHTML = `
+          <div class="text-center">
+            <div class="text-red-600 text-4xl mb-4">⚠️</div>
+            <h2 class="text-xl font-semibold text-red-600 mb-2">System Error</h2>
+            <p class="text-gray-600 mb-4">${message}</p>
+            <button onclick="window.location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+              Restart Application
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Initialize the integrated application
+    window.integratedApp = new IntegratedSalesGuide();
+  </script>
+</body>
+</html>
