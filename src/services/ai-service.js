@@ -55,6 +55,7 @@ class AIService {
    */
   async generateResponse(prompt, options = {}) {
     const settings = { ...this.defaultSettings, ...options };
+    const startTime = Date.now();
     
     const requestBody = {
       model: settings.model || this.defaultModel,
@@ -81,12 +82,114 @@ class AIService {
       }
 
       const data = await response.json();
-      return data.content[0].text;
+      const responseText = data.content[0].text;
+      const responseTime = Date.now() - startTime;
+      
+      // Track prompt with analytics if available
+      this.trackPromptUsage(prompt, responseText, options, responseTime);
+      
+      return responseText;
       
     } catch (error) {
       console.error('AI generation error:', error);
+      // Track failed prompt
+      this.trackPromptUsage(prompt, null, options, Date.now() - startTime, error.message);
       throw new Error(`Failed to generate AI response: ${error.message}`);
     }
+  }
+
+  /**
+   * Track prompt usage for analytics
+   * @param {string} prompt - Original prompt
+   * @param {string|null} response - AI response or null if failed
+   * @param {Object} options - Request options
+   * @param {number} responseTime - Response time in ms
+   * @param {string} error - Error message if failed
+   */
+  trackPromptUsage(prompt, response, options = {}, responseTime = 0, error = null) {
+    if (typeof window !== 'undefined' && window.siteAnalytics && window.siteAnalytics.trackPrompt) {
+      // Extract context from options or prompt content
+      const context = options.context || this.inferContextFromPrompt(prompt);
+      
+      // Extract keywords from prompt
+      const keywords = this.extractKeywords(prompt);
+      
+      // Assess response quality
+      const responseQuality = response ? this.assessResponseQuality(response, prompt) : 'failed';
+      
+      window.siteAnalytics.trackPrompt(context, prompt, response, responseQuality, {
+        keywords: keywords,
+        responseTime: responseTime,
+        responseLength: response ? response.length : 0,
+        model: options.model || this.defaultModel,
+        temperature: options.temperature || this.defaultSettings.temperature,
+        error: error
+      });
+    }
+  }
+
+  /**
+   * Infer context from prompt content
+   * @param {string} prompt - Prompt text
+   * @returns {string} Inferred context
+   */
+  inferContextFromPrompt(prompt) {
+    const lowerPrompt = prompt.toLowerCase();
+    
+    if (lowerPrompt.includes('compet') || lowerPrompt.includes('versus') || lowerPrompt.includes('vs ') || lowerPrompt.includes('alternative')) {
+      return 'competitive';
+    }
+    if (lowerPrompt.includes('objection') || lowerPrompt.includes('concern') || lowerPrompt.includes('pushback') || lowerPrompt.includes('hesitant')) {
+      return 'objection';
+    }
+    if (lowerPrompt.includes('uipath') || lowerPrompt.includes('our company') || lowerPrompt.includes('our product') || lowerPrompt.includes('our solution')) {
+      return 'company';
+    }
+    if (lowerPrompt.includes('discover') || lowerPrompt.includes('question') || lowerPrompt.includes('ask') || lowerPrompt.includes('understand')) {
+      return 'discovery';
+    }
+    
+    return 'general';
+  }
+
+  /**
+   * Extract keywords from prompt
+   * @param {string} prompt - Prompt text
+   * @returns {Array} Array of keywords
+   */
+  extractKeywords(prompt) {
+    const commonWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'can', 'may', 'might', 'must', 'what', 'when', 'where', 'why', 'how', 'who', 'which', 'that', 'this', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his', 'her', 'its', 'our', 'their']);
+    
+    return prompt.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !commonWords.has(word))
+      .slice(0, 10); // Limit to top 10 keywords
+  }
+
+  /**
+   * Assess response quality
+   * @param {string} response - AI response
+   * @param {string} prompt - Original prompt
+   * @returns {string} Quality assessment
+   */
+  assessResponseQuality(response, prompt) {
+    if (!response || response.length < 50) {
+      return 'weak';
+    }
+    
+    const responseLength = response.length;
+    const hasSpecifics = /\b(uipath|automation|rpa|enterprise|solution|process|workflow|ai|intelligent|robot|bot)\b/i.test(response);
+    const hasStructure = response.includes('\n') || response.match(/\d+\./) || response.includes('•') || response.includes('-');
+    
+    if (responseLength > 300 && hasSpecifics && hasStructure) {
+      return 'strong';
+    }
+    if (responseLength > 150 && (hasSpecifics || hasStructure)) {
+      return 'moderate';
+    }
+    
+    return 'weak';
   }
 
   /**

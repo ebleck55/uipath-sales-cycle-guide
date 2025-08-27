@@ -97,6 +97,261 @@ class APISecurityManager {
 
 const apiSecurity = new APISecurityManager();
 
+// ==================== DOM UTILITIES ====================
+
+function $(selector) {
+  return document.querySelector(selector);
+}
+
+function $$(selector) {
+  return document.querySelectorAll(selector);
+}
+
+async function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    // Fallback
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    const success = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return success;
+  } catch (error) {
+    console.warn('Copy to clipboard failed:', error);
+    return false;
+  }
+}
+
+// ==================== ANALYTICS SERVICE ====================
+
+class AnalyticsService {
+  constructor() {
+    this.sessionId = this.generateSessionId();
+    this.sessionStart = new Date();
+    this.events = [];
+    this.initialized = false;
+  }
+
+  initialize() {
+    if (this.initialized) return;
+    
+    this.loadStoredEvents();
+    this.exposeGlobalInterface();
+    this.initialized = true;
+    
+    console.log('Analytics service initialized');
+  }
+
+  generateSessionId() {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+  }
+
+  loadStoredEvents() {
+    try {
+      const stored = localStorage.getItem('site_analytics_events');
+      this.events = stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.warn('Failed to load stored analytics events:', error);
+      this.events = [];
+    }
+  }
+
+  storeEvents() {
+    try {
+      if (this.events.length > 1000) {
+        this.events = this.events.slice(-1000);
+      }
+      localStorage.setItem('site_analytics_events', JSON.stringify(this.events));
+    } catch (error) {
+      console.warn('Failed to store analytics events:', error);
+    }
+  }
+
+  trackEvent(eventType, eventData = {}) {
+    const event = {
+      id: 'event_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9),
+      timestamp: new Date().toISOString(),
+      sessionId: this.sessionId,
+      type: eventType,
+      data: { ...eventData }
+    };
+    
+    this.events.push(event);
+    this.storeEvents();
+  }
+
+  trackPrompt(context, prompt, response, responseQuality, additionalData = {}) {
+    this.trackEvent('prompt_submission', {
+      context: context,
+      prompt: prompt,
+      response: response,
+      responseQuality: responseQuality,
+      timestamp: new Date().toISOString(),
+      ...additionalData
+    });
+  }
+
+  getEvents(timePeriod = 'all') {
+    if (timePeriod === 'all') return this.events;
+    
+    const now = new Date();
+    let cutoff;
+    
+    switch (timePeriod) {
+      case '24h': cutoff = new Date(now.getTime() - (24 * 60 * 60 * 1000)); break;
+      case '7d': cutoff = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)); break;
+      case '30d': cutoff = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)); break;
+      default: return this.events;
+    }
+    
+    return this.events.filter(event => new Date(event.timestamp) >= cutoff);
+  }
+
+  exposeGlobalInterface() {
+    if (typeof window !== 'undefined') {
+      window.siteAnalytics = {
+        trackEvent: this.trackEvent.bind(this),
+        trackPrompt: this.trackPrompt.bind(this),
+        getEvents: this.getEvents.bind(this)
+      };
+    }
+  }
+}
+
+const analyticsService = new AnalyticsService();
+
+// ==================== AI SERVICE ====================
+
+class AIService {
+  constructor() {
+    this.apiEndpoint = 'https://api.anthropic.com/v1/messages';
+    this.defaultModel = 'claude-3-haiku-20240307';
+    this.defaultSettings = {
+      temperature: 0.7,
+      maxTokens: 1000
+    };
+  }
+
+  async generateResponse(prompt, options = {}) {
+    const apiKey = apiSecurity.getStoredApiKey();
+    if (!apiKey) {
+      throw new Error('API key not configured. Please set up your Claude API key first.');
+    }
+
+    if (apiSecurity.isRateLimited('ai-generation', 10)) {
+      throw new Error('Too many requests. Please wait a moment before trying again.');
+    }
+
+    const settings = { ...this.defaultSettings, ...options };
+    const startTime = Date.now();
+    
+    const requestBody = {
+      model: settings.model || this.defaultModel,
+      max_tokens: settings.maxTokens,
+      temperature: settings.temperature,
+      messages: [{
+        role: 'user',
+        content: prompt
+      }]
+    };
+
+    try {
+      const response = await fetch(this.apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+      }
+
+      const data = await response.json();
+      const responseText = data.content[0].text;
+      const responseTime = Date.now() - startTime;
+      
+      // Track prompt with analytics
+      this.trackPromptUsage(prompt, responseText, options, responseTime);
+      
+      return responseText;
+      
+    } catch (error) {
+      console.error('AI generation error:', error);
+      this.trackPromptUsage(prompt, null, options, Date.now() - startTime, error.message);
+      throw error;
+    }
+  }
+
+  trackPromptUsage(prompt, response, options = {}, responseTime = 0, error = null) {
+    if (window.siteAnalytics && window.siteAnalytics.trackPrompt) {
+      const context = options.context || this.inferContextFromPrompt(prompt);
+      const keywords = this.extractKeywords(prompt);
+      const responseQuality = response ? this.assessResponseQuality(response, prompt) : 'failed';
+      
+      window.siteAnalytics.trackPrompt(context, prompt, response, responseQuality, {
+        keywords: keywords,
+        responseTime: responseTime,
+        responseLength: response ? response.length : 0,
+        model: options.model || this.defaultModel,
+        error: error
+      });
+    }
+  }
+
+  inferContextFromPrompt(prompt) {
+    const lowerPrompt = prompt.toLowerCase();
+    
+    if (lowerPrompt.includes('compet') || lowerPrompt.includes('versus') || lowerPrompt.includes('vs ') || lowerPrompt.includes('alternative')) {
+      return 'competitive';
+    }
+    if (lowerPrompt.includes('objection') || lowerPrompt.includes('concern') || lowerPrompt.includes('pushback')) {
+      return 'objection';
+    }
+    if (lowerPrompt.includes('uipath') || lowerPrompt.includes('our company') || lowerPrompt.includes('our product')) {
+      return 'company';
+    }
+    if (lowerPrompt.includes('discover') || lowerPrompt.includes('question') || lowerPrompt.includes('ask')) {
+      return 'discovery';
+    }
+    
+    return 'general';
+  }
+
+  extractKeywords(prompt) {
+    const commonWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by']);
+    
+    return prompt.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !commonWords.has(word))
+      .slice(0, 10);
+  }
+
+  assessResponseQuality(response, prompt) {
+    if (!response || response.length < 50) return 'weak';
+    
+    const responseLength = response.length;
+    const hasSpecifics = /\b(uipath|automation|rpa|enterprise|solution|process)\b/i.test(response);
+    const hasStructure = response.includes('\n') || response.match(/\d+\./) || response.includes('•');
+    
+    if (responseLength > 300 && hasSpecifics && hasStructure) return 'strong';
+    if (responseLength > 150 && (hasSpecifics || hasStructure)) return 'moderate';
+    return 'weak';
+  }
+}
+
+const aiService = new AIService();
+
 // ==================== STATE MANAGEMENT ====================
 
 class AppState {
@@ -237,11 +492,17 @@ class HardenedUiPathApp {
       // Initialize security
       this.initializeSecurity();
       
+      // Initialize analytics
+      analyticsService.initialize();
+      
       // Initialize UI
       this.initializeUI();
       
       // Initialize event listeners
       this.initializeEventListeners();
+      
+      // Initialize admin functionality
+      this.initializeAdmin();
       
       // Load and render data
       this.loadData();
@@ -316,10 +577,59 @@ class HardenedUiPathApp {
       // Handle admin mode toggle
       if (e.target.closest('#admin-mode-btn') || e.target.closest('#mobile-admin-btn')) {
         e.preventDefault();
-        this.toggleAdminMode();
+        this.handleAdminToggle();
       }
       
-      // Handle industry switcher
+      // Handle admin panel toggle
+      if (e.target.closest('#show-admin-panel')) {
+        e.preventDefault();
+        this.showAdminPanel();
+      }
+      
+      if (e.target.closest('#close-admin-panel')) {
+        e.preventDefault();
+        this.hideAdminPanel();
+      }
+      
+      // Handle admin tab switching
+      if (e.target.closest('.admin-tab-btn')) {
+        e.preventDefault();
+        const tab = e.target.closest('.admin-tab-btn').dataset.tab;
+        this.switchAdminTab(tab);
+      }
+      
+      // Handle admin controls
+      if (e.target.closest('#save-api-key')) {
+        e.preventDefault();
+        this.saveApiKey();
+      }
+      
+      if (e.target.closest('#test-api-connection')) {
+        e.preventDefault();
+        this.testApiConnection();
+      }
+      
+      if (e.target.closest('#clear-api-key')) {
+        e.preventDefault();
+        this.clearApiKey();
+      }
+      
+      if (e.target.closest('#toggle-api-visibility')) {
+        e.preventDefault();
+        this.toggleApiKeyVisibility();
+      }
+      
+      if (e.target.closest('#export-analytics')) {
+        e.preventDefault();
+        this.exportAnalytics();
+      }
+      
+      if (e.target.closest('#clear-analytics')) {
+        e.preventDefault();
+        this.clearAnalytics();
+      }
+      
+      // Handle industry switching
       if (e.target.closest('.industry-btn')) {
         e.preventDefault();
         const btn = e.target.closest('.industry-btn');
@@ -747,6 +1057,246 @@ class HardenedUiPathApp {
   showError(message) {
     this.showNotification(message, 'error');
   }
+
+  // ==================== ADMIN METHODS ====================
+
+  initializeAdmin() {
+    // Add analytics time filter listener
+    const analyticsTimeFilter = $('#analytics-time-filter');
+    if (analyticsTimeFilter) {
+      analyticsTimeFilter.addEventListener('change', () => {
+        this.updateAnalyticsDisplay();
+      });
+    }
+    
+    // Initialize admin mode state tracking
+    appState.subscribe('adminMode', (enabled) => {
+      this.updateAdminModeUI(enabled);
+    });
+  }
+
+  updateAdminModeUI(enabled) {
+    const adminStatus = $('#admin-status');
+    const adminBtn = $('#admin-mode-btn');
+    const mobileAdminBtn = $('#mobile-admin-btn');
+    
+    if (adminStatus) {
+      adminStatus.classList.toggle('hidden', !enabled);
+    }
+    
+    if (adminBtn) {
+      adminBtn.textContent = enabled ? 'Exit Edit Mode' : 'Enter Edit Mode';
+      adminBtn.classList.toggle('bg-red-100', enabled);
+      adminBtn.classList.toggle('text-red-800', enabled);
+      adminBtn.classList.toggle('border-red-300', enabled);
+    }
+    
+    if (mobileAdminBtn) {
+      mobileAdminBtn.textContent = enabled ? 'Exit Edit Mode' : 'Enter Edit Mode';
+      mobileAdminBtn.classList.toggle('bg-red-100', enabled);
+      mobileAdminBtn.classList.toggle('text-red-800', enabled);
+    }
+  }
+
+  handleAdminToggle() {
+    const isAdmin = appState.get('adminMode');
+    appState.set('adminMode', !isAdmin);
+  }
+
+  showAdminPanel() {
+    const panel = $('#admin-panel');
+    if (panel) {
+      panel.classList.remove('hidden');
+      this.updateAnalyticsDisplay();
+    }
+  }
+
+  hideAdminPanel() {
+    const panel = $('#admin-panel');
+    if (panel) {
+      panel.classList.add('hidden');
+    }
+  }
+
+  switchAdminTab(tab) {
+    // Update tab buttons
+    $$('.admin-tab-btn').forEach(btn => {
+      btn.classList.remove('border-blue-500', 'text-blue-600');
+      btn.classList.add('border-transparent', 'text-gray-500');
+    });
+
+    const activeBtn = $(`.admin-tab-btn[data-tab="${tab}"]`);
+    if (activeBtn) {
+      activeBtn.classList.remove('border-transparent', 'text-gray-500');
+      activeBtn.classList.add('border-blue-500', 'text-blue-600');
+    }
+
+    // Update tab content
+    $$('.admin-tab-content').forEach(content => {
+      content.classList.add('hidden');
+    });
+
+    const activeTab = $(`#${tab}-tab`);
+    if (activeTab) {
+      activeTab.classList.remove('hidden');
+      
+      // Update content based on tab
+      if (tab === 'analytics') {
+        this.updateAnalyticsDisplay();
+      } else if (tab === 'ai-settings') {
+        this.loadApiKeyDisplay();
+      }
+    }
+  }
+
+  updateAnalyticsDisplay() {
+    const events = analyticsService.getEvents('7d');
+    const promptEvents = events.filter(e => e.type === 'prompt_submission');
+    
+    // Update metrics
+    const totalPrompts = $('#total-prompts');
+    const strongResponses = $('#strong-responses');
+    const weakResponses = $('#weak-responses');
+
+    if (totalPrompts) totalPrompts.textContent = promptEvents.length;
+    
+    const strong = promptEvents.filter(e => e.data.responseQuality === 'strong').length;
+    const weak = promptEvents.filter(e => e.data.responseQuality === 'weak').length;
+    
+    if (strongResponses) strongResponses.textContent = strong;
+    if (weakResponses) weakResponses.textContent = weak;
+
+    // Update recent prompts
+    const recentList = $('#recent-prompts-list');
+    if (recentList && promptEvents.length > 0) {
+      const recent = promptEvents
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 10);
+
+      recentList.innerHTML = recent.map(event => `
+        <div class="border-l-4 border-blue-400 pl-3 py-2 bg-white rounded">
+          <div class="flex justify-between items-start mb-1">
+            <span class="text-xs font-medium text-gray-500">${event.data.context || 'general'}</span>
+            <span class="text-xs text-gray-400">${new Date(event.timestamp).toLocaleDateString()}</span>
+          </div>
+          <p class="text-sm text-gray-800 line-clamp-2">${sanitizer.escapeHtml(event.data.prompt.substring(0, 100))}</p>
+          <div class="mt-1">
+            <span class="text-xs px-2 py-0.5 rounded ${
+              event.data.responseQuality === 'strong' ? 'bg-green-100 text-green-800' :
+              event.data.responseQuality === 'weak' ? 'bg-red-100 text-red-800' :
+              'bg-yellow-100 text-yellow-800'
+            }">${event.data.responseQuality || 'Unknown'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  saveApiKey() {
+    const input = $('#admin-api-key');
+    const status = $('#api-status');
+    
+    if (!input || !input.value.trim()) {
+      this.showApiStatus('Please enter an API key', 'error');
+      return;
+    }
+
+    try {
+      apiSecurity.storeApiKey(input.value.trim());
+      this.showApiStatus('API key saved successfully', 'success');
+      input.value = '';
+    } catch (error) {
+      this.showApiStatus('Failed to save API key', 'error');
+    }
+  }
+
+  async testApiConnection() {
+    const status = $('#api-status');
+    
+    try {
+      this.showApiStatus('Testing connection...', 'info');
+      
+      const response = await aiService.generateResponse(
+        'Respond with "Connection successful" if you receive this message.',
+        { maxTokens: 50, temperature: 0.1 }
+      );
+      
+      if (response.includes('Connection successful')) {
+        this.showApiStatus('Connection successful! API key is working.', 'success');
+      } else {
+        this.showApiStatus('Connection test failed. Please check your API key.', 'error');
+      }
+    } catch (error) {
+      this.showApiStatus(`Connection failed: ${error.message}`, 'error');
+    }
+  }
+
+  clearApiKey() {
+    if (confirm('Are you sure you want to clear the API key?')) {
+      apiSecurity.clearStoredApiKey();
+      this.showApiStatus('API key cleared', 'success');
+    }
+  }
+
+  toggleApiKeyVisibility() {
+    const input = $('#admin-api-key');
+    if (input) {
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+  }
+
+  loadApiKeyDisplay() {
+    const input = $('#admin-api-key');
+    const hasKey = !!apiSecurity.getStoredApiKey();
+    
+    if (input && hasKey) {
+      input.placeholder = 'API key is configured';
+    }
+  }
+
+  showApiStatus(message, type) {
+    const status = $('#api-status');
+    if (status) {
+      status.className = `p-4 rounded-lg ${
+        type === 'success' ? 'bg-green-100 text-green-800' :
+        type === 'error' ? 'bg-red-100 text-red-800' :
+        'bg-blue-100 text-blue-800'
+      }`;
+      status.textContent = message;
+      status.classList.remove('hidden');
+      
+      setTimeout(() => {
+        if (type !== 'error') {
+          status.classList.add('hidden');
+        }
+      }, 3000);
+    }
+  }
+
+  exportAnalytics() {
+    const events = analyticsService.getEvents('all');
+    const data = analyticsService.exportData('json', 'all');
+    
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `uipath-sales-analytics-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    this.showNotification('Analytics data exported', 'success');
+  }
+
+  clearAnalytics() {
+    if (confirm('Are you sure you want to clear all analytics data? This cannot be undone.')) {
+      analyticsService.clearData();
+      this.updateAnalyticsDisplay();
+      this.showNotification('Analytics data cleared', 'success');
+    }
+  }
 }
 
 // Initialize application
@@ -757,4 +1307,6 @@ if (typeof window !== 'undefined') {
   window.HardenedApp = hardenedApp;
   window.appState = appState;
   window.apiSecurity = apiSecurity;
+  window.aiService = aiService;
+  window.analyticsService = analyticsService;
 }

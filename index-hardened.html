@@ -144,10 +144,141 @@
         <svg class="h-5 w-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <use href="#edit-icon"></use>
         </svg>
-        <span class="text-sm font-medium text-orange-800">Edit Mode Active</span>
+        <span class="text-sm font-medium text-orange-800">Admin Mode Active</span>
       </div>
-      <div class="text-sm text-orange-700">
-        Click pencil icons to edit content
+      <div class="flex items-center space-x-4">
+        <button id="show-admin-panel" class="px-3 py-1 text-xs font-medium text-orange-700 border border-orange-300 rounded hover:bg-orange-50">
+          Admin Panel
+        </button>
+        <div class="text-sm text-orange-700">
+          Click pencil icons to edit content
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel (Hidden by default) -->
+  <div id="admin-panel" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4">
+      <div class="w-full max-w-6xl bg-white rounded-lg shadow-xl">
+        <!-- Admin Panel Header -->
+        <div class="bg-blue-600 px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <h2 class="text-xl font-semibold text-white">UiPath Sales Guide - Admin Panel</h2>
+          <button id="close-admin-panel" class="text-white hover:text-gray-200">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <use href="#close-icon"></use>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Admin Panel Content -->
+        <div class="p-6">
+          <!-- Tab Navigation -->
+          <div class="border-b border-gray-200 mb-6">
+            <nav class="flex space-x-8">
+              <button class="admin-tab-btn py-2 px-1 border-b-2 border-blue-500 text-blue-600 font-medium text-sm" data-tab="analytics">
+                Site Analytics
+              </button>
+              <button class="admin-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="ai-settings">
+                AI Settings
+              </button>
+              <button class="admin-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="content">
+                Content Management
+              </button>
+            </nav>
+          </div>
+
+          <!-- Tab Contents -->
+          <div id="admin-tab-contents">
+            
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="admin-tab-content">
+              <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <h3 class="text-lg font-medium text-blue-900 mb-2">Total Prompts</h3>
+                  <p id="total-prompts" class="text-3xl font-bold text-blue-600">-</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                  <h3 class="text-lg font-medium text-green-900 mb-2">Strong Responses</h3>
+                  <p id="strong-responses" class="text-3xl font-bold text-green-600">-</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                  <h3 class="text-lg font-medium text-red-900 mb-2">Weak Responses</h3>
+                  <p id="weak-responses" class="text-3xl font-bold text-red-600">-</p>
+                </div>
+              </div>
+
+              <!-- Time Period Filter -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+                <select id="analytics-time-filter" class="border border-gray-300 rounded px-3 py-2">
+                  <option value="24h">Last 24 Hours</option>
+                  <option value="7d" selected>Last 7 Days</option>
+                  <option value="30d">Last 30 Days</option>
+                  <option value="all">All Time</option>
+                </select>
+              </div>
+
+              <!-- Recent Prompts -->
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-medium text-gray-900 mb-3">Recent AI Prompts</h4>
+                <div id="recent-prompts-list" class="space-y-2 max-h-60 overflow-y-auto">
+                  <p class="text-sm text-gray-500">No prompts submitted yet</p>
+                </div>
+              </div>
+
+              <!-- Export Controls -->
+              <div class="mt-6 flex space-x-4">
+                <button id="export-analytics" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                  Export Analytics
+                </button>
+                <button id="clear-analytics" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                  Clear Data
+                </button>
+              </div>
+            </div>
+
+            <!-- AI Settings Tab -->
+            <div id="ai-settings-tab" class="admin-tab-content hidden">
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Claude API Key</label>
+                  <div class="flex">
+                    <input type="password" id="admin-api-key" class="flex-1 border border-gray-300 rounded-l px-3 py-2" placeholder="Enter your Claude API key">
+                    <button id="toggle-api-visibility" class="px-3 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r hover:bg-gray-200">
+                      👁️
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="flex space-x-4">
+                  <button id="save-api-key" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Save API Key
+                  </button>
+                  <button id="test-api-connection" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Test Connection
+                  </button>
+                  <button id="clear-api-key" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                    Clear Key
+                  </button>
+                </div>
+
+                <div id="api-status" class="hidden p-4 rounded-lg">
+                  <!-- Status messages will appear here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Management Tab -->
+            <div id="content-tab" class="admin-tab-content hidden">
+              <div class="text-center py-8 text-gray-500">
+                <p>Content management features will be available soon.</p>
+                <p class="text-sm mt-2">Use Edit Mode to modify individual content pieces.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -303,6 +434,17 @@
         `;
       }
     });
+    
+    // Add validation script loader for development
+    if (window.location.search.includes('validate=true') || window.location.hostname === 'localhost') {
+      const script = document.createElement('script');
+      script.src = 'validate-integration.js';
+      script.onload = () => {
+        console.log('🔧 Development mode: validation script loaded');
+        console.log('💡 Run validateIntegration() in console to test');
+      };
+      document.head.appendChild(script);
+    }
   </script>
 </body>
 </html>

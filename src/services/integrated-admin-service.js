@@ -73,9 +73,9 @@ export class IntegratedAdminService {
 
     if (this.adminMode) {
       // Enter admin mode
-      toggle.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
-      toggle.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-      text.textContent = 'Exit Admin';
+      toggle.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+      toggle.classList.add('bg-red-600', 'hover:bg-red-700');
+      text.textContent = 'Exit Edit Mode';
       
       if (statusBar) {
         statusBar.classList.remove('hidden');
@@ -86,9 +86,9 @@ export class IntegratedAdminService {
       this.trackActivity('Admin mode activated');
     } else {
       // Exit admin mode
-      toggle.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-      toggle.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
-      text.textContent = 'Admin Mode';
+      toggle.classList.remove('bg-red-600', 'hover:bg-red-700');
+      toggle.classList.add('bg-blue-600', 'hover:bg-blue-700');
+      text.textContent = 'Enter Edit Mode';
       
       if (statusBar) {
         statusBar.classList.add('hidden');

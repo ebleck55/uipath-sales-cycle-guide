@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Debug Test</title>
+</head>
+<body>
+    <h1>Admin Debug Test</h1>
+    <div id="status">Loading...</div>
+    <div id="results"></div>
+
+    <script src="../api/contentAPI.js"></script>
+    <script>
+        async function test() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                statusDiv.textContent = 'Testing ContentAPI...';
+                
+                const contentAPI = new ContentAPI();
+                // Override base URL for admin interface
+                contentAPI.baseUrl = '../data/';
+                
+                statusDiv.textContent = 'Loading resources...';
+                const resources = await contentAPI.getResources();
+                
+                statusDiv.textContent = 'Success!';
+                resultsDiv.innerHTML = `
+                    <h2>Results:</h2>
+                    <p>Loaded ${resources.length} resources</p>
+                    <ul>
+                        ${resources.slice(0, 3).map(r => `<li>${r.name} (${r.type})</li>`).join('')}
+                    </ul>
+                `;
+                
+            } catch (error) {
+                statusDiv.textContent = 'Error: ' + error.message;
+                resultsDiv.innerHTML = `
+                    <h2>Error Details:</h2>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', test);
+    </script>
+</body>
+</html>

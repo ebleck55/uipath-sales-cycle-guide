@@ -157,14 +157,48 @@ class AppState {
    */
   async initializeFromData() {
     try {
-      // Import data dynamically to avoid dependency issues
-      const { SALES_CYCLE_DATA } = await import('../../js/data.js');
+      // Load enhanced personas data with AI-suggested tags
+      const personasResponse = await fetch('./src/data/personas.json');
+      const personasData = await personasResponse.json();
       
-      this.set('personas', SALES_CYCLE_DATA.personas);
-      this.set('stages', SALES_CYCLE_DATA.stages);
-      this.set('currentIndustry', SALES_CYCLE_DATA.industry);
+      // Load use cases data
+      const useCasesResponse = await fetch('./src/data/use-cases.json');
+      const useCasesData = await useCasesResponse.json();
+      
+      // Load resources data  
+      const resourcesResponse = await fetch('./src/data/resources.json');
+      const resourcesData = await resourcesResponse.json();
+      
+      // Set enhanced personas data
+      this.set('personas', personasData.personas);
+      this.set('useCases', useCasesData.useCases);
+      this.set('resources', resourcesData.resources);
+      
+      // Fallback to original data structure for stages if needed
+      try {
+        const { SALES_CYCLE_DATA } = await import('../../js/data.js');
+        this.set('stages', SALES_CYCLE_DATA.stages);
+        this.set('currentIndustry', personasData.defaultIndustry || SALES_CYCLE_DATA.industry || 'banking');
+      } catch (fallbackError) {
+        console.warn('Fallback data not available, using minimal configuration');
+        this.set('currentIndustry', 'banking');
+        this.set('stages', []);
+      }
+      
+      console.log('✅ Enhanced data loaded successfully with AI-suggested tags');
     } catch (error) {
-      console.error('Failed to initialize data:', error);
+      console.error('Failed to initialize enhanced data:', error);
+      
+      // Fallback to original data.js if enhanced data fails
+      try {
+        const { SALES_CYCLE_DATA } = await import('../../js/data.js');
+        this.set('personas', SALES_CYCLE_DATA.personas);
+        this.set('stages', SALES_CYCLE_DATA.stages);
+        this.set('currentIndustry', SALES_CYCLE_DATA.industry);
+        console.warn('Using fallback data structure');
+      } catch (fallbackError) {
+        console.error('All data sources failed:', fallbackError);
+      }
     }
   }
 

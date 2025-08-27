@@ -16,6 +16,7 @@
           "timeToValue": "4-6 weeks",
           "processes": ["Customer data entry", "Document verification", "System provisioning", "Welcome communications"],
           "page": 10,
+          "link": "",
           "tags": {
             "primary": ["account-opening", "customer-onboarding", "document-processing"],
             "secondary": ["data-entry", "verification", "system-integration"],

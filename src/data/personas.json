@@ -1,6 +1,7 @@
 {
   "version": "1.0",
   "lastModified": "2025-08-26",
+  "defaultIndustry": "banking",
   "personas": {
     "banking": [
       {
@@ -16,7 +17,24 @@
           "primary": ["operations", "efficiency", "ai-transformation"],
           "secondary": ["risk-management", "cost-reduction", "process-automation"],
           "pain_points": ["operational-resilience", "stp-rates", "cost-to-serve"],
-          "interests": ["measurable-roi", "ai-decisioning", "end-to-end-automation"]
+          "interests": ["measurable-roi", "ai-decisioning", "end-to-end-automation"],
+          "ai_suggested": {
+            "business_function": ["digital-transformation", "operations", "cost-management", "risk-management"],
+            "technology_focus": ["robotic-process-automation", "artificial-intelligence", "document-processing", "analytics-insights"],
+            "industry_vertical": ["retail-banking", "commercial-banking"],
+            "process_characteristics": ["high-volume", "cross-system", "regulatory-sensitive"],
+            "value_drivers": ["cost-reduction", "operational-excellence", "risk-mitigation"],
+            "deployment_context": ["enterprise-grade", "center-of-excellence"],
+            "decision_factors": ["roi", "implementation-time", "regulatory-compliance", "operational-impact"],
+            "communication_style": ["strategic", "metrics-driven", "roi-focused"],
+            "success_metrics": ["cost-savings", "stp-rates", "operational-efficiency", "risk-reduction"],
+            "related_personas": ["banking-cio-cto", "banking-cco", "banking-payments-ops-head"],
+            "complementary_content": ["loan-origination-automation", "payment-processing", "kyc-automation"],
+            "seasonal_relevance": ["budget-planning", "year-end-efficiency", "digital-transformation-initiatives"],
+            "regulatory_context": ["operational-risk", "model-risk-management", "audit-readiness"],
+            "competitive_factors": ["fintech-disruption", "operational-excellence", "customer-experience"],
+            "innovation_readiness": ["ai-adoption", "automation-scaling", "digital-first-operations"]
+          }
         },
         "priority": "high",
         "influence": "decision-maker"
@@ -34,7 +52,26 @@
           "primary": ["compliance", "aml-kyc", "regulatory"],
           "secondary": ["risk-management", "audit-trails", "explainable-ai"],
           "pain_points": ["false-positives", "alert-backlogs", "regulatory-scrutiny"],
-          "interests": ["governed-workflows", "audit-trails", "explainable-ai"]
+          "interests": ["governed-workflows", "audit-trails", "explainable-ai"],
+          "ai_suggested": {
+            "business_function": ["regulatory-compliance", "risk-management", "customer-acquisition"],
+            "technology_focus": ["artificial-intelligence", "document-processing", "security-governance", "analytics-insights"],
+            "industry_vertical": ["retail-banking", "commercial-banking", "investment-banking"],
+            "process_characteristics": ["regulatory-sensitive", "exception-handling", "high-volume"],
+            "value_drivers": ["risk-mitigation", "cost-reduction", "operational-excellence"],
+            "deployment_context": ["enterprise-grade", "hybrid-deployment", "center-of-excellence"],
+            "decision_factors": ["regulatory-compliance", "audit-trail", "explainability", "risk-reduction"],
+            "communication_style": ["detailed", "evidence-based", "risk-focused", "compliance-oriented"],
+            "success_metrics": ["false-positive-reduction", "regulatory-pass-rates", "audit-readiness", "alert-resolution-time"],
+            "related_personas": ["banking-coo", "banking-cio-cto", "banking-lob-gm"],
+            "complementary_content": ["aml-automation", "kyc-workflows", "regulatory-reporting", "adverse-media-screening"],
+            "seasonal_relevance": ["regulatory-exam-periods", "compliance-updates", "year-end-reporting"],
+            "regulatory_context": ["aml-regulations", "kyc-requirements", "sr-11-7", "occ-guidance", "explainable-ai"],
+            "competitive_factors": ["regulatory-fines-avoidance", "reputation-protection", "operational-resilience"],
+            "innovation_readiness": ["explainable-ai", "governed-automation", "audit-ready-processes"],
+            "use_case_affinity": ["transaction-monitoring", "customer-onboarding", "regulatory-reporting", "adverse-media"],
+            "pain_point_solutions": ["alert-prioritization", "false-positive-reduction", "automated-case-building", "regulatory-change-management"]
+          }
         },
         "priority": "high",
         "influence": "decision-maker"
