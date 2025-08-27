@@ -2283,7 +2283,7 @@ Tags:`;
 
   async testAPIConnection() {
     const apiKey = localStorage.getItem('claude_api_key');
-    const model = localStorage.getItem('claude_model') || 'claude-3-5-sonnet-20241022';
+    const model = localStorage.getItem('claude_model') || 'claude-3-haiku-20240307';
     
     if (!apiKey) {
       this.showNotification('Please save API settings first', 'error');
@@ -2297,8 +2297,13 @@ Tags:`;
       testButton.disabled = true;
       testButton.textContent = 'Testing...';
       
-      // Simple test request to Claude API
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      // Use CORS proxy for browser requests - this is a workaround for CORS issues
+      const proxyUrl = 'https://corsproxy.io/?';
+      const targetUrl = 'https://api.anthropic.com/v1/messages';
+      
+      console.log('Testing API with:', { model, apiKey: apiKey.substring(0, 20) + '...' });
+      
+      const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2318,16 +2323,37 @@ Tags:`;
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log('API test successful:', data);
         this.showNotification('API connection successful! ✅', 'success');
         const statusElement = document.getElementById('api-status');
         statusElement.textContent = 'Connected ✅';
         statusElement.className = 'text-sm text-green-600';
       } else {
-        const error = await response.json();
-        this.showNotification(`API test failed: ${error.error?.message || 'Unknown error'}`, 'error');
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const error = await response.json();
+          console.log('API test error response:', error);
+          // Check for more specific error details
+          if (error.error?.type) {
+            errorMessage = `${error.error.type}: ${error.error.message}`;
+          } else {
+            errorMessage = error.error?.message || errorMessage;
+          }
+          // Log the full error for debugging
+          console.error('Full API error:', error);
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+        }
+        this.showNotification(`API test failed: ${errorMessage}`, 'error');
       }
     } catch (error) {
-      this.showNotification(`Connection failed: ${error.message}`, 'error');
+      // Provide more helpful error messages
+      let errorMessage = error.message;
+      if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+        errorMessage = 'Network error: Unable to reach Claude API. This may be due to CORS restrictions or network connectivity issues.';
+      }
+      this.showNotification(`Connection failed: ${errorMessage}`, 'error');
     } finally {
       testButton.disabled = false;
       testButton.textContent = originalText;
