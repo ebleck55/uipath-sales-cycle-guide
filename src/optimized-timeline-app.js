@@ -166,6 +166,15 @@ class OptimizedTimelineApp {
    * Initialize optimization modules
    */
   async initializeOptimizationModules() {
+    // Initialize Unified Data Manager first
+    if (typeof UnifiedDataManager !== 'undefined') {
+      this.dataManager = new UnifiedDataManager();
+      await this.dataManager.init();
+      
+      // Subscribe to data changes
+      this.dataManager.subscribe(this.handleDataChange.bind(this));
+      console.log('✅ Unified Data Manager initialized');
+    }
     // Initialize modules if classes are available
     if (typeof PerformanceManager !== 'undefined' && this.features.performance) {
       const perfManager = new PerformanceManager();
@@ -211,38 +220,38 @@ class OptimizedTimelineApp {
   }
 
   /**
-   * Load application data with caching
+   * Load application data with unified data manager
    */
   async loadApplicationData() {
     try {
-      // Check if data manager is available for caching
-      const dataManager = this.modules.get('dataManager');
-      
-      if (dataManager) {
-        // Use cached data if available
-        const cachedData = await dataManager.getCachedData('salesCycleData');
-        if (cachedData) {
-          this.appData = cachedData;
-          console.log('📦 Loaded data from cache');
-        }
-      }
-      
-      // Fall back to global data
-      if (!this.appData && typeof SALES_CYCLE_DATA !== 'undefined') {
-        this.appData = SALES_CYCLE_DATA;
+      if (this.dataManager) {
+        // Load data from unified data manager
+        const categories = this.dataManager.getCategories();
+        const personas = this.dataManager.getPersonas();
         
-        // Cache the data if data manager is available
-        if (dataManager) {
-          await dataManager.cacheData('salesCycleData', this.appData);
-        }
-      }
-      
-      // Fall back to LOB options and personas database
-      if (!this.appData) {
+        // Convert to app data format
         this.appData = {
-          lobOptions: typeof LOB_OPTIONS !== 'undefined' ? LOB_OPTIONS : {},
-          personasDatabase: typeof PERSONAS_DATABASE !== 'undefined' ? PERSONAS_DATABASE : {}
+          categories: categories,
+          personas: this.groupPersonasByIndustry(personas),
+          lobOptions: this.buildLOBOptions(categories),
+          industries: categories.industries
         };
+        
+        console.log('📦 Loaded data from Unified Data Manager');
+      } else {
+        // Fall back to legacy data
+        if (typeof SALES_CYCLE_DATA !== 'undefined') {
+          this.appData = SALES_CYCLE_DATA;
+        } else if (typeof LOB_OPTIONS !== 'undefined' && typeof PERSONAS_DATABASE !== 'undefined') {
+          this.appData = {
+            lobOptions: LOB_OPTIONS,
+            personasDatabase: PERSONAS_DATABASE
+          };
+        } else {
+          this.appData = { lobOptions: {}, personasDatabase: {} };
+        }
+        
+        console.log('📦 Loaded legacy data');
       }
       
     } catch (error) {
@@ -486,8 +495,17 @@ class OptimizedTimelineApp {
    * Create persona section with optimized rendering
    */
   createPersonaSection(industry) {
-    const personasData = this.appData.personasDatabase?.[industry];
-    if (!personasData) return null;
+    let personasData;
+    
+    if (this.dataManager) {
+      // Use unified data manager
+      personasData = this.dataManager.getPersonas({ industry: industry });
+    } else {
+      // Fall back to legacy data
+      personasData = this.appData.personasDatabase?.[industry];
+    }
+    
+    if (!personasData || personasData.length === 0) return null;
     
     const section = document.createElement('section');
     section.className = `personas-section personas-${industry}`;
@@ -501,17 +519,28 @@ class OptimizedTimelineApp {
     const personasList = document.createElement('div');
     personasList.className = 'personas-list space-y-4';
     
-    // Create personas for each LOB
-    Object.entries(personasData).forEach(([lob, personas]) => {
-      if (Array.isArray(personas)) {
-        personas.forEach((persona, index) => {
-          const personaCard = this.createPersonaCard(persona, industry, index);
-          if (personaCard) {
-            personasList.appendChild(personaCard);
-          }
-        });
-      }
-    });
+    // Create personas
+    if (Array.isArray(personasData)) {
+      // Unified data manager format
+      personasData.forEach((persona, index) => {
+        const personaCard = this.createPersonaCard(persona, industry, index);
+        if (personaCard) {
+          personasList.appendChild(personaCard);
+        }
+      });
+    } else {
+      // Legacy format - grouped by LOB
+      Object.entries(personasData).forEach(([lob, personas]) => {
+        if (Array.isArray(personas)) {
+          personas.forEach((persona, index) => {
+            const personaCard = this.createPersonaCard(persona, industry, index);
+            if (personaCard) {
+              personasList.appendChild(personaCard);
+            }
+          });
+        }
+      });
+    }
     
     section.appendChild(personasList);
     return section;
@@ -933,7 +962,16 @@ class OptimizedTimelineApp {
     const lobSelector = this.$('#lob-selector');
     if (!lobSelector) return;
     
-    const options = this.appData.lobOptions?.[industry] || this.appData.lobOptions?.general || [];
+    let options = [];
+    
+    if (this.dataManager) {
+      // Use unified data manager
+      const lobs = this.dataManager.getLOBsForIndustry(industry);
+      options = [{ value: '', label: `All ${industry} LOBs` }, ...lobs.map(lob => ({ value: lob.id, label: lob.label }))];
+    } else {
+      // Fall back to legacy data
+      options = this.appData.lobOptions?.[industry] || this.appData.lobOptions?.general || [];
+    }
     
     lobSelector.innerHTML = options.map(option => 
       `<option value="${option.value}">${this.sanitizer.escapeHtml(option.label)}</option>`
@@ -1440,6 +1478,161 @@ class OptimizedTimelineApp {
         ]
       }
     ];
+  }
+
+  /**
+   * Handle data changes from unified data manager
+   */
+  handleDataChange(event) {
+    const { type, data } = event;
+    
+    console.log(`🔄 Data change received: ${type}`, data);
+    
+    switch (type) {
+      case 'categories_updated':
+        this.handleCategoriesUpdate(data);
+        break;
+      case 'persona_saved':
+      case 'persona_deleted':
+        this.handlePersonaUpdate(data);
+        break;
+      case 'admin_data_changed':
+        this.handleAdminDataChange(data);
+        break;
+      case 'data_imported':
+        this.handleDataImport(data);
+        break;
+    }
+  }
+
+  /**
+   * Handle categories update
+   */
+  handleCategoriesUpdate(data) {
+    // Update industry selector
+    this.updateIndustrySelector();
+    
+    // Update LOB options for current industry
+    this.updateLOBOptions(this.currentIndustry);
+    
+    // Show notification
+    this.showNotification('Categories updated from admin panel', 'info');
+  }
+
+  /**
+   * Handle persona update
+   */
+  handlePersonaUpdate(data) {
+    // Re-render personas section
+    this.renderPersonas();
+    
+    // Show notification
+    const action = data.id ? 'updated' : 'added';
+    this.showNotification(`Persona ${action} from admin panel`, 'info');
+  }
+
+  /**
+   * Handle admin data change
+   */
+  handleAdminDataChange(data) {
+    // Reload application data
+    this.loadApplicationData().then(() => {
+      // Re-render affected sections
+      this.render();
+      
+      // Show notification
+      this.showNotification('Content updated from admin panel', 'success');
+    });
+  }
+
+  /**
+   * Handle data import
+   */
+  handleDataImport(data) {
+    // Reload everything
+    this.loadApplicationData().then(() => {
+      this.render();
+      this.showNotification('Data imported successfully', 'success');
+    });
+  }
+
+  /**
+   * Update industry selector with current data
+   */
+  updateIndustrySelector() {
+    const industrySelector = this.$('#industry-selector');
+    if (!industrySelector || !this.dataManager) return;
+    
+    const industries = this.dataManager.getCategories().industries;
+    
+    industrySelector.innerHTML = industries.map(industry => 
+      `<option value="${industry.id}" ${industry.id === this.currentIndustry ? 'selected' : ''}>${this.sanitizer.escapeHtml(industry.label)}</option>`
+    ).join('');
+  }
+
+  /**
+   * Group personas by industry for legacy compatibility
+   */
+  groupPersonasByIndustry(personas) {
+    const grouped = {};
+    
+    personas.forEach(persona => {
+      const industry = persona.industry;
+      if (!grouped[industry]) {
+        grouped[industry] = [];
+      }
+      grouped[industry].push(persona);
+    });
+    
+    return grouped;
+  }
+
+  /**
+   * Build LOB options from categories
+   */
+  buildLOBOptions(categories) {
+    const lobOptions = {
+      general: [{ value: '', label: 'All Lines of Business' }]
+    };
+    
+    Object.entries(categories.linesOfBusiness).forEach(([industry, lobs]) => {
+      lobOptions[industry] = [
+        { value: '', label: `All ${industry.charAt(0).toUpperCase() + industry.slice(1)} LOBs` },
+        ...lobs.map(lob => ({ value: lob.id, label: lob.label }))
+      ];
+    });
+    
+    return lobOptions;
+  }
+
+  /**
+   * Show notification to user
+   */
+  showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg transition-all duration-300 ${
+      type === 'success' ? 'bg-green-100 text-green-800 border border-green-300' :
+      type === 'error' ? 'bg-red-100 text-red-800 border border-red-300' :
+      type === 'warning' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' :
+      'bg-blue-100 text-blue-800 border border-blue-300'
+    }`;
+    
+    notification.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-medium">${this.sanitizer.escapeHtml(message)}</span>
+        <button class="ml-4 text-current opacity-70 hover:opacity-100" onclick="this.parentElement.parentElement.remove()">&times;</button>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 5000);
   }
 }
 

@@ -45,6 +45,9 @@ class OptimizedAdminPanel {
     try {
       console.log('🔧 Initializing Optimized Admin Panel...');
       
+      // Initialize Unified Data Manager
+      await this.initializeUnifiedDataManager();
+      
       // Initialize core components
       this.initializeDataStore();
       this.setupEventListeners();
@@ -1092,6 +1095,294 @@ class OptimizedAdminPanel {
 
   showErrorMessage(message) {
     this.showNotification(message, 'error');
+  }
+
+  /**
+   * Initialize unified data manager
+   */
+  async initializeUnifiedDataManager() {
+    try {
+      // Check if UnifiedDataManager is available
+      if (typeof UnifiedDataManager !== 'undefined') {
+        this.unifiedDataManager = new UnifiedDataManager();
+        await this.unifiedDataManager.init();
+        
+        // Subscribe to data changes
+        this.unifiedDataManager.subscribe(this.handleUnifiedDataChange.bind(this));
+        
+        console.log('✅ Unified Data Manager connected to admin panel');
+        return true;
+      } else {
+        console.warn('⚠️ Unified Data Manager not available, using local data store');
+        return false;
+      }
+    } catch (error) {
+      console.error('Failed to initialize Unified Data Manager:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Handle unified data changes
+   */
+  handleUnifiedDataChange(event) {
+    const { type, data } = event;
+    console.log(`🔄 Unified data change in admin: ${type}`, data);
+    
+    // Update local data store to stay in sync
+    switch (type) {
+      case 'persona_saved':
+        this.dataStore.personas.set(data.id, data);
+        this.updatePersonaUI(data);
+        break;
+      case 'persona_deleted':
+        this.dataStore.personas.delete(data.id);
+        this.removePersonaFromUI(data.id);
+        break;
+      case 'categories_updated':
+        this.updateCategoriesUI(data);
+        break;
+    }
+  }
+
+  /**
+   * Save persona using unified data manager
+   */
+  async savePersonaToUnified(personaData) {
+    if (this.unifiedDataManager) {
+      try {
+        const savedPersona = this.unifiedDataManager.savePersona(personaData);
+        
+        // Notify parent window about the change
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'admin:persona-saved',
+            data: savedPersona
+          }, '*');
+        }
+        
+        return savedPersona;
+      } catch (error) {
+        console.error('Failed to save persona to unified data:', error);
+        throw error;
+      }
+    } else {
+      // Fall back to local save
+      return this.savePersonaLocal(personaData);
+    }
+  }
+
+  /**
+   * Delete persona using unified data manager
+   */
+  async deletePersonaFromUnified(personaId) {
+    if (this.unifiedDataManager) {
+      try {
+        const result = this.unifiedDataManager.deletePersona(personaId);
+        
+        // Notify parent window about the change
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'admin:persona-deleted',
+            data: { id: personaId }
+          }, '*');
+        }
+        
+        return result;
+      } catch (error) {
+        console.error('Failed to delete persona from unified data:', error);
+        throw error;
+      }
+    } else {
+      // Fall back to local delete
+      return this.deletePersonaLocal(personaId);
+    }
+  }
+
+  /**
+   * Update categories using unified data manager
+   */
+  async updateCategoriesInUnified(categoryType, updates) {
+    if (this.unifiedDataManager) {
+      try {
+        this.unifiedDataManager.updateCategories(categoryType, updates);
+        
+        // Notify parent window about the change
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'admin:categories-updated',
+            data: { categoryType, updates }
+          }, '*');
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Failed to update categories in unified data:', error);
+        throw error;
+      }
+    } else {
+      // Fall back to local update
+      return this.updateCategoriesLocal(categoryType, updates);
+    }
+  }
+
+  /**
+   * Add new industry using unified data manager
+   */
+  async addIndustryToUnified(industry) {
+    if (this.unifiedDataManager) {
+      try {
+        const newIndustry = this.unifiedDataManager.addIndustry(industry);
+        
+        // Notify parent window
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'admin:industry-added',
+            data: newIndustry
+          }, '*');
+        }
+        
+        // Update admin UI
+        this.updateIndustrySelector();
+        
+        return newIndustry;
+      } catch (error) {
+        console.error('Failed to add industry:', error);
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Add new LOB using unified data manager
+   */
+  async addLOBToUnified(industryId, lob) {
+    if (this.unifiedDataManager) {
+      try {
+        const newLOB = this.unifiedDataManager.addLOBToIndustry(industryId, lob);
+        
+        // Notify parent window
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'admin:lob-added',
+            data: { industryId, lob: newLOB }
+          }, '*');
+        }
+        
+        // Update admin UI
+        this.updateLOBSelectors();
+        
+        return newLOB;
+      } catch (error) {
+        console.error('Failed to add LOB:', error);
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Get categories from unified data manager
+   */
+  getUnifiedCategories() {
+    if (this.unifiedDataManager) {
+      return this.unifiedDataManager.getCategories();
+    }
+    return null;
+  }
+
+  /**
+   * Get personas from unified data manager
+   */
+  getUnifiedPersonas(filters = {}) {
+    if (this.unifiedDataManager) {
+      return this.unifiedDataManager.getPersonas(filters);
+    }
+    return [];
+  }
+
+  /**
+   * Update persona UI after change
+   */
+  updatePersonaUI(persona) {
+    // Find and update the persona card in the UI
+    const personaCard = document.querySelector(`[data-persona-id="${persona.id}"]`);
+    if (personaCard) {
+      const newCard = this.createPersonaCard(persona);
+      personaCard.parentNode.replaceChild(newCard, personaCard);
+    } else {
+      // Add new persona card
+      this.addPersonaCardToUI(persona);
+    }
+  }
+
+  /**
+   * Remove persona from UI
+   */
+  removePersonaFromUI(personaId) {
+    const personaCard = document.querySelector(`[data-persona-id="${personaId}"]`);
+    if (personaCard) {
+      personaCard.remove();
+    }
+  }
+
+  /**
+   * Update categories UI after change
+   */
+  updateCategoriesUI(data) {
+    // Update various selectors and dropdowns
+    this.updateIndustrySelector();
+    this.updateLOBSelectors();
+    this.updatePersonaLevelSelectors();
+  }
+
+  /**
+   * Update industry selector with current data
+   */
+  updateIndustrySelector() {
+    const categories = this.getUnifiedCategories();
+    if (!categories) return;
+    
+    const industrySelectors = document.querySelectorAll('.industry-selector');
+    industrySelectors.forEach(selector => {
+      selector.innerHTML = categories.industries.map(industry => 
+        `<option value="${industry.id}">${this.escapeHtml(industry.label)}</option>`
+      ).join('');
+    });
+  }
+
+  /**
+   * Update LOB selectors with current data
+   */
+  updateLOBSelectors() {
+    const categories = this.getUnifiedCategories();
+    if (!categories) return;
+    
+    const lobSelectors = document.querySelectorAll('.lob-selector');
+    lobSelectors.forEach(selector => {
+      const industry = selector.getAttribute('data-industry');
+      if (industry && categories.linesOfBusiness[industry]) {
+        const lobs = categories.linesOfBusiness[industry];
+        selector.innerHTML = [
+          '<option value="">All LOBs</option>',
+          ...lobs.map(lob => `<option value="${lob.id}">${this.escapeHtml(lob.label)}</option>`)
+        ].join('');
+      }
+    });
+  }
+
+  /**
+   * Update persona level selectors
+   */
+  updatePersonaLevelSelectors() {
+    const categories = this.getUnifiedCategories();
+    if (!categories) return;
+    
+    const levelSelectors = document.querySelectorAll('.persona-level-selector');
+    levelSelectors.forEach(selector => {
+      selector.innerHTML = categories.personaLevels.map(level => 
+        `<option value="${level.id}">${this.escapeHtml(level.label)}</option>`
+      ).join('');
+    });
   }
 
   // Initialize the admin panel
