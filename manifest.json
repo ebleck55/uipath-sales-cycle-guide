@@ -1,0 +1,109 @@
+{
+  "name": "UiPath Sales Cycle Guide - Optimized",
+  "short_name": "UiPath Sales",
+  "description": "A comprehensive interactive guide for UiPath sales professionals with advanced optimizations",
+  "start_url": "/index-optimized.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FA4616",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "sales"],
+  
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTIiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSIxMiIgeT0iMTIiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "sizes": "48x48",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSIxOCIgeT0iMTgiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iNDAiIGZpbGw9IiNGQTQ2MTYiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KPHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogPHBhdGggZD0iTTkgMTJsMiAyIDQtNCIvPgogPHBhdGggZD0iTTIxIDEyYzkgMCAwLTktOS05cy05IDktOSA5IDkgOSA5IDlhOSA5IDAgMCAwIDktOXoiLz4KICA8L3N0cm9rZT4KPC9zdmc+Cjwvc3ZnPg==",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTA0IiBmaWxsPSIjRkE0NjE2Ii8+CjxzdmcgeD0iMTI4IiB5PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiNmZmZmZmYiPgo8c3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiA8cGF0aCBkPSJNOSAxMmwyIDIgNC00Ii8+CiA8cGF0aCBkPSJNMjEgMTJjOSAwIDAtOS05LTlzLTkgOS05IDkgOSA5IDkgOWE5IDkgMCAwIDAgOS05eiIvPgogIDwvc3Ryb2tlPgo8L3N2Zz4KPC9zdmc+",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Admin Panel",
+      "short_name": "Admin",
+      "description": "Open the content management admin panel",
+      "url": "/src/admin/optimized-admin.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiMzYjgyZjYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS40OSAzLjE3Yy0uMzgtMS41Ni0yLjYtMS41Ni0yLjk4IDBhMS41MzIgMS41MzIgMCAwMS0yLjI4Ni45NDhjLTEuMzcyLS44MzYtMi45NDIuNzM0LTIuMTA2IDIuMTA2LjU0Ljg4Ni4wNjEgMi4wNDItLjk0NyAyLjI4Ny0xLjU2MS4zNzktMS41NjEgMi42IDAgMi45NzhhMS41MzIgMS41MzIgMCAwMS45NDcgMi4yODdjLS44MzYgMS4zNzIuNzM0IDIuOTQyIDIuMTA2IDIuMTA2YTEuNTMyIDEuNTMyIDAgMDEyLjI4Ny45NDdjLjM3OSAxLjU2MSAyLjYgMS41NjEgMi45NzggMGExLjUzMyAxLjUzMyAwIDAxMi4yODctLjk0N2MxLjM3Mi44MzYgMi45NDItLjczNCAyLjEwNi0yLjEwNmExLjUzMyAxLjUzMyAwIDAxLjk0Ny0yLjI4N2MxLjU2MS0uMzc5IDEuNTYxLTIuNiAwLTIuOTc4YTEuNTMyIDEuNTMyIDAgMDEtLjk0Ny0yLjI4N2MuODM2LTEuMzcyLS43MzQtMi45NDItMi4xMDYtMi4xMDZhMS41MzIgMS41MzIgMCAwMS0yLjI4Ny0uOTQ3ek0xMCAxM2EzIDMgMCAxMDAtNiAzIDMgMCAwMDAgNnoiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPgo8L3N2Zz4KPC9zdmc+",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Test Suite",
+      "short_name": "Tests",
+      "description": "Run the comprehensive test suite",
+      "url": "/test-optimized-suite.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiMxMGI5ODEiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj4KICA8cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTkuNjYzIDE3aDQuNjczTTEyIDN2MW02LjM2NCAxLjYzNmwtLjcwNy43MDdNMjEgMTJoLTFNNCAxMkgzbTMuMzQzLTUuNjU3bC0uNzA3LS43MDdtMi44MjggOS45YTUgNSAwIDExNy4wNzIgMGwtLjU0OC41NDdBMy4zNzQgMy4zNzQgMCAwMDE0IDE4LjQ2OVYxOWEyIDIgMCAxMS00IDB2LS41MzFjMC0uODk1LS4zNTYtMS43NTQtLjk4OC0yLjM4NmwtLjU0OC0uNTQ3eiIvPgo8L3N2Zz4KPC9zdmc+",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTQwIiBoZWlnaHQ9IjcyMCIgdmlld0JveD0iMCAwIDU0MCA3MjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1NDAiIGhlaWdodD0iNzIwIiBmaWxsPSIjZjlmYWZiIi8+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI1NDAiIGhlaWdodD0iODAiIGZpbGw9IiNmZmZmZmYiLz4KPHR0ZXh0IHg9IjI3MCIgeT0iNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjMTExODI3Ij5VaVBhdGggU2FsZXMgQ3ljbGUgR3VpZGU8L3R0ZXh0Pgo8cmVjdCB4PSIyMCIgeT0iMTAwIiB3aWR0aD0iNTAwIiBoZWlnaHQ9IjYwMCIgcng9IjEyIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNlNWU3ZWIiLz4KPHR0ZXh0IHg9IjUwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjMzc0MTUxIj5TYWxlcyBTdGFnZXM8L3R0ZXh0Pgo8Y2lyY2xlIGN4PSI4MCIgY3k9IjE4MCIgcj0iMTIiIGZpbGw9IiNGQTQ2MTYiLz4KPHR0ZXh0IHg9IjEwNSIgeT0iMTg2IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzM3NDE1MSI+RGlzY292ZXJ5PC90dGV4dD4KPGNpcmNsZSBjeD0iODAiIGN5PSIyMjAiIHI9IjEyIiBmaWxsPSIjZTVlN2ViIi8+Cjx0dGV4dCB4PSIxMDUiIHk9IjIyNiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMzNzQxNTEiPkJ1c2luZXNzIFF1YWxpZmljYXRpb248L3R0ZXh0Pgo8L3N2Zz4=",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI1OTMiIHZpZXdCb3g9IjAgMCAxMDI0IDU5MyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMjQiIGhlaWdodD0iNTkzIiBmaWxsPSIjZjlmYWZiIi8+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjgwIiBmaWxsPSIjZmZmZmZmIi8+Cjx0dGV4dCB4PSI1MTIiIHk9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzExMTgyNyI+VWlQYXRoIFNhbGVzIEN5Y2xlIEd1aWRlIC0gT3B0aW1pemVkPC90dGV4dD4KPHJlY3QgeD0iNDAiIHk9IjEwMCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0NzMiIHJ4PSIxMiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZTVlN2ViIi8+CjxyZWN0IHg9IjM2MCIgeT0iMTAwIiB3aWR0aD0iNjI0IiBoZWlnaHQ9IjQ3MyIgcng9IjEyIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNlNWU3ZWIiLz4KPHR0ZXh0IHg9IjcwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjMzc0MTUxIj5CdXllciBQZXJzb25hczwvdHRleHQ+Cjx0dGV4dCB4PSIzOTAiIHk9IjE0MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMzNzQxNTEiPlNhbGVzIFN0YWdlczwvdHRleHQ+CjwvcGF0aD4KPC9zdmc+",
+      "sizes": "1024x593",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
+    }
+  ],
+
+  "related_applications": [],
+  "prefer_related_applications": false,
+
+  "protocol_handlers": [
+    {
+      "protocol": "web+uipath-sales",
+      "url": "/index-optimized.html?data=%s"
+    }
+  ],
+
+  "file_handlers": [
+    {
+      "action": "/index-optimized.html",
+      "accept": {
+        "application/json": [".json"],
+        "text/csv": [".csv"]
+      }
+    }
+  ]
+}

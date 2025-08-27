@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UiPath Sales Cycle Guide - Optimized Edition</title>
+  
+  <!-- Security Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  
+  <!-- Performance Optimizations -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://api.anthropic.com">
+  
+  <!-- Critical CSS and Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Progressive Enhancement -->
+  <script>
+    // Feature detection and polyfills
+    if (!window.IntersectionObserver) {
+      document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver"><\/script>');
+    }
+    if (!window.ResizeObserver) {
+      document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=ResizeObserver"><\/script>');
+    }
+  </script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'uipath-orange': '#FA4616',
+            'uipath-orange-dark': '#E63946',
+            'uipath-teal': '#0BA2B3',
+            'uipath-teal-dark': '#0A8899',
+            'uipath-purple': '#6366F1',
+            'uipath-purple-dark': '#4F46E5'
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in',
+            'slide-in': 'slideIn 0.3s ease-out',
+            'pulse-slow': 'pulse 3s infinite'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- PWA Configuration -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FA4616">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="UiPath Sales Guide">
+  
+  <!-- Preload Critical Resources -->
+  <link rel="modulepreload" href="js/data.js">
+  <link rel="modulepreload" href="src/core/analytics.js">
+  <link rel="modulepreload" href="src/core/performance.js">
+  <link rel="modulepreload" href="src/core/data-manager.js">
+  <link rel="modulepreload" href="src/core/ux-enhancer.js">
+  <link rel="modulepreload" href="src/core/integration.js">
+  <link rel="modulepreload" href="src/optimized-timeline-app.js">
+  
+  <!-- Inline Critical CSS -->
+  <style>
+    /* Critical rendering path optimizations */
+    .loading-indicator {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease-out;
+    }
+    
+    .loading-indicator.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e2e8f0;
+      border-top: 4px solid #fa4616;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+    
+    /* Performance optimizations */
+    .optimized-content {
+      contain: layout style paint;
+    }
+    
+    .lazy-load {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .lazy-load.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Accessibility improvements */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .bg-white { background-color: #ffffff; }
+      .text-gray-600 { color: #000000; }
+      .border-gray-200 { border-color: #000000; }
+    }
+  </style>
+  
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "UiPath Sales Cycle Guide",
+    "description": "A comprehensive interactive guide for UiPath sales professionals",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "UiPath"
+    }
+  }
+  </script>
+</head>
+
+<body class="font-inter bg-gray-50 text-gray-900 antialiased">
+  <!-- Loading Indicator with Enhanced UX -->
+  <div id="app-loading" class="loading-indicator" role="status" aria-label="Application loading">
+    <div class="text-center">
+      <div class="spinner mb-4" aria-hidden="true"></div>
+      <div class="loading-text">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">UiPath Sales Guide</h2>
+        <p class="text-sm text-gray-600" id="loading-status">Initializing optimizations...</p>
+        <div class="loading-progress bg-gray-200 w-64 h-2 rounded-full mt-4 overflow-hidden">
+          <div id="loading-progress-bar" class="bg-orange-500 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Performance Monitor (Development) -->
+  <div id="performance-monitor" class="fixed bottom-4 right-4 z-40 hidden">
+    <div class="bg-black bg-opacity-80 text-white p-2 rounded text-xs font-mono">
+      <div>FPS: <span id="fps-counter">--</span></div>
+      <div>Memory: <span id="memory-counter">--</span>MB</div>
+      <div>Load: <span id="load-time">--</span>ms</div>
+    </div>
+  </div>
+
+  <!-- Security Warning Banner -->
+  <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 text-center text-sm" style="display: none;">
+    <span class="font-medium">⚠️ Security Notice:</span> 
+    Some security features are still initializing. Please wait for full initialization.
+  </div>
+
+  <!-- Skip Navigation for Accessibility -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-orange-600 text-white p-2 rounded-br z-50">
+    Skip to main content
+  </a>
+
+  <!-- Header with Enhanced Navigation -->
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40 optimized-content">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        
+        <!-- Brand and Title -->
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">UiPath Sales Cycle Guide</h1>
+              <p class="text-xs text-gray-500">Optimized Edition</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation and Controls -->
+        <nav class="flex items-center space-x-3" role="navigation" aria-label="Main navigation">
+          
+          <!-- Progress Indicator -->
+          <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
+            <span id="progress-text" class="font-medium">0% Complete</span>
+            <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Industry Selector -->
+          <div class="relative">
+            <select id="industry-selector" 
+                    class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    aria-label="Select industry">
+              <option value="banking">Banking</option>
+              <option value="insurance">Insurance</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Line of Business Selector -->
+          <div class="relative">
+            <select id="lob-selector" 
+                    class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    aria-label="Select line of business">
+              <option value="">All Lines of Business</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center space-x-2">
+            
+            <!-- Admin Panel Button -->
+            <a href="src/admin/optimized-admin.html" target="_blank" 
+               class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+               aria-label="Open admin panel">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Admin
+            </a>
+
+            <!-- Clear Progress Button -->
+            <button id="clear-form-btn" 
+                    class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
+                    data-action="clear-form"
+                    aria-label="Clear all progress">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              Clear
+            </button>
+
+            <!-- Export Button -->
+            <button id="export-btn" 
+                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                    data-action="export-data"
+                    aria-label="Export progress data">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Export
+            </button>
+
+            <!-- PWA Install Button -->
+            <button id="install-btn" 
+                    class="hidden inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
+                    aria-label="Install as app">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              Install
+            </button>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 optimized-content" role="main">
+    
+    <!-- Timeline Navigation -->
+    <section class="mb-8" aria-labelledby="timeline-heading">
+      <h2 id="timeline-heading" class="sr-only">Sales cycle timeline</h2>
+      <div id="timeline-container" class="timeline-navigation bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="timeline-header mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Sales Cycle Timeline</h3>
+          <p class="text-sm text-gray-600">Navigate through the sales stages using the timeline below or keyboard shortcuts (← →)</p>
+        </div>
+        
+        <div id="timeline-stages" class="flex items-center justify-between overflow-x-auto pb-4">
+          <!-- Timeline stages will be dynamically generated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left Column: Personas (1/3) -->
+      <aside class="lg:col-span-1" role="complementary" aria-labelledby="personas-heading">
+        <div class="sticky top-24">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6">
+              <h2 id="personas-heading" class="text-lg font-semibold text-gray-900 mb-4">
+                Buyer Personas
+              </h2>
+              <p class="text-sm text-gray-600 mb-4">
+                Click to expand persona details and understand your buyers better.
+              </p>
+            </div>
+            
+            <div id="personas-container" class="px-6 pb-6 space-y-4 max-h-96 overflow-y-auto">
+              <!-- Personas will be dynamically loaded -->
+              <div class="lazy-load" data-lazy="personas">
+                <div class="text-center py-8">
+                  <div class="animate-spin rounded-full h-8 w-8 border-2 border-orange-500 border-t-transparent mx-auto mb-4"></div>
+                  <p class="text-sm text-gray-500">Loading personas...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Sales Stages (2/3) -->
+      <section class="lg:col-span-2" aria-labelledby="stages-heading">
+        <h2 id="stages-heading" class="sr-only">Sales cycle stages</h2>
+        
+        <!-- Stage Navigation Breadcrumb -->
+        <nav aria-label="Stage navigation" class="mb-6">
+          <ol id="stage-breadcrumb" class="flex items-center space-x-2 text-sm">
+            <!-- Breadcrumb will be dynamically generated -->
+          </ol>
+        </nav>
+        
+        <div id="sales-stages-container" class="space-y-6">
+          <!-- Sales stages will be dynamically loaded -->
+          <div class="lazy-load" data-lazy="stages">
+            <div class="text-center py-12">
+              <div class="animate-pulse-slow rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent mx-auto mb-4"></div>
+              <p class="text-sm text-gray-500">Loading sales stages...</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stage Navigation Controls -->
+        <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-200">
+          <button id="prev-stage-btn" 
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  disabled
+                  aria-label="Previous stage">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Previous Stage
+          </button>
+          
+          <div class="flex items-center space-x-4">
+            <span id="stage-counter" class="text-sm text-gray-500">Stage 1 of 5</span>
+            <div class="flex space-x-1">
+              <!-- Stage dots will be generated dynamically -->
+            </div>
+          </div>
+          
+          <button id="next-stage-btn" 
+                  class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  aria-label="Next stage">
+            Next Stage
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer with Enhanced Information -->
+  <footer class="bg-white border-t border-gray-200 mt-16" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- App Information -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-900 mb-4">UiPath Sales Cycle Guide</h3>
+          <p class="text-xs text-gray-600 mb-3">
+            Optimized edition with enhanced performance, security, and accessibility features.
+          </p>
+          <div class="text-xs text-gray-500">
+            <p>Version: <span id="app-version">2.0.0</span></p>
+            <p>Last Updated: <span id="last-updated">--</span></p>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-900 mb-4">Features</h3>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>✅ Real-time progress tracking</li>
+            <li>✅ Offline support</li>
+            <li>✅ Keyboard navigation</li>
+            <li>✅ Mobile optimized</li>
+            <li>✅ Accessibility compliant</li>
+            <li>✅ Performance monitored</li>
+          </ul>
+        </div>
+
+        <!-- System Status -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-900 mb-4">System Status</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Connection:</span>
+              <span id="connection-status" class="font-medium text-green-600">Online</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Performance:</span>
+              <span id="performance-status" class="font-medium text-green-600">Optimal</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Storage:</span>
+              <span id="storage-status" class="font-medium text-blue-600">Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Copyright and Credits -->
+      <div class="border-t border-gray-200 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500">
+        <p>&copy; 2024 UiPath. All rights reserved.</p>
+        <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+          <span>Powered by Claude Code</span>
+          <button id="keyboard-shortcuts-btn" 
+                  class="text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                  aria-label="View keyboard shortcuts">
+            Shortcuts
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div id="shortcuts-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" role="dialog" aria-labelledby="shortcuts-title" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 id="shortcuts-title" class="text-lg font-semibold">Keyboard Shortcuts</h2>
+            <button id="close-shortcuts" class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 rounded" aria-label="Close shortcuts">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span>Next Stage</span>
+              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">→ or Ctrl+→</kbd>
+            </div>
+            <div class="flex justify-between">
+              <span>Previous Stage</span>
+              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">← or Ctrl+←</kbd>
+            </div>
+            <div class="flex justify-between">
+              <span>Toggle Persona</span>
+              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Space</kbd>
+            </div>
+            <div class="flex justify-between">
+              <span>Export Data</span>
+              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Ctrl+E</kbd>
+            </div>
+            <div class="flex justify-between">
+              <span>Clear Progress</span>
+              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Ctrl+R</kbd>
+            </div>
+            <div class="flex justify-between">
+              <span>Close/Escape</span>
+              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Escape</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accessibility Announcements -->
+  <div id="sr-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Application Scripts (Optimized Loading Order) -->
+  
+  <!-- Core Data -->
+  <script src="js/data.js" defer></script>
+  
+  <!-- Optimization Modules -->
+  <script src="src/core/analytics.js" defer></script>
+  <script src="src/core/performance.js" defer></script>
+  <script src="src/core/data-manager.js" defer></script>
+  <script src="src/core/ux-enhancer.js" defer></script>
+  <script src="src/core/integration.js" defer></script>
+  
+  <!-- Main Application -->
+  <script src="src/optimized-timeline-app.js" defer></script>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    // Service Worker registration with optimization
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const registration = await navigator.serviceWorker.register('/sw-optimized.js');
+          console.log('✅ Service Worker registered:', registration);
+          
+          // Handle updates
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdateNotification();
+              }
+            });
+          });
+          
+        } catch (error) {
+          console.warn('Service Worker registration failed:', error);
+        }
+      });
+    }
+    
+    function showUpdateNotification() {
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 left-4 right-4 z-50 bg-blue-600 text-white p-4 rounded-lg shadow-lg';
+      notification.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span>New version available!</span>
+          <button onclick="window.location.reload()" class="bg-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-900">
+            Update
+          </button>
+        </div>
+      `;
+      document.body.appendChild(notification);
+    }
+  </script>
+  
+  <!-- PWA Installation -->
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove('hidden');
+    });
+    
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('PWA installed');
+      }
+      
+      deferredPrompt = null;
+      installBtn.classList.add('hidden');
+    });
+  </script>
+  
+  <!-- Loading Progress and Performance -->
+  <script>
+    // Loading progress simulation
+    const updateLoadingProgress = (() => {
+      const progressBar = document.getElementById('loading-progress-bar');
+      const statusText = document.getElementById('loading-status');
+      let progress = 0;
+      
+      const steps = [
+        { progress: 20, text: 'Loading optimization modules...' },
+        { progress: 40, text: 'Initializing security features...' },
+        { progress: 60, text: 'Loading content data...' },
+        { progress: 80, text: 'Setting up user interface...' },
+        { progress: 100, text: 'Ready!' }
+      ];
+      
+      return () => {
+        const step = steps.find(s => s.progress > progress) || steps[steps.length - 1];
+        progress = Math.min(progress + 20, 100);
+        
+        if (progressBar) progressBar.style.width = progress + '%';
+        if (statusText) statusText.textContent = step.text;
+        
+        if (progress >= 100) {
+          setTimeout(() => {
+            const loading = document.getElementById('app-loading');
+            if (loading) {
+              loading.classList.add('hidden');
+              setTimeout(() => loading.remove(), 300);
+            }
+          }, 500);
+        }
+      };
+    })();
+    
+    // Update progress every 500ms
+    const progressInterval = setInterval(() => {
+      updateLoadingProgress();
+      if (document.getElementById('loading-progress-bar')?.style.width === '100%') {
+        clearInterval(progressInterval);
+      }
+    }, 500);
+    
+    // Performance monitoring for development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      const showPerformanceMonitor = () => {
+        const monitor = document.getElementById('performance-monitor');
+        if (monitor) monitor.classList.remove('hidden');
+        
+        let lastTime = performance.now();
+        let frames = 0;
+        
+        const updateMetrics = () => {
+          frames++;
+          const now = performance.now();
+          
+          if (now - lastTime >= 1000) {
+            const fps = Math.round(frames * 1000 / (now - lastTime));
+            document.getElementById('fps-counter').textContent = fps;
+            
+            if (performance.memory) {
+              const memory = Math.round(performance.memory.usedJSHeapSize / 1048576);
+              document.getElementById('memory-counter').textContent = memory;
+            }
+            
+            frames = 0;
+            lastTime = now;
+          }
+          
+          requestAnimationFrame(updateMetrics);
+        };
+        
+        requestAnimationFrame(updateMetrics);
+      };
+      
+      // Show after 3 seconds
+      setTimeout(showPerformanceMonitor, 3000);
+    }
+    
+    // App initialization completion
+    document.addEventListener('app:ready', () => {
+      console.log('🚀 Optimized UiPath Sales Guide is ready!');
+      updateLoadingProgress();
+      
+      // Update footer information
+      document.getElementById('last-updated').textContent = new Date().toLocaleDateString();
+      
+      // Initialize keyboard shortcuts modal
+      initializeShortcutsModal();
+      
+      // Update system status
+      updateSystemStatus();
+    });
+    
+    function initializeShortcutsModal() {
+      const shortcutsBtn = document.getElementById('keyboard-shortcuts-btn');
+      const modal = document.getElementById('shortcuts-modal');
+      const closeBtn = document.getElementById('close-shortcuts');
+      
+      shortcutsBtn?.addEventListener('click', () => {
+        modal?.classList.remove('hidden');
+      });
+      
+      closeBtn?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+      });
+      
+      modal?.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal?.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+        }
+      });
+    }
+    
+    function updateSystemStatus() {
+      // Connection status
+      const updateConnectionStatus = () => {
+        const status = document.getElementById('connection-status');
+        if (status) {
+          status.textContent = navigator.onLine ? 'Online' : 'Offline';
+          status.className = navigator.onLine ? 'font-medium text-green-600' : 'font-medium text-red-600';
+        }
+      };
+      
+      updateConnectionStatus();
+      window.addEventListener('online', updateConnectionStatus);
+      window.addEventListener('offline', updateConnectionStatus);
+      
+      // Storage status
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        navigator.storage.estimate().then(estimate => {
+          const status = document.getElementById('storage-status');
+          if (status) {
+            const usedMB = Math.round((estimate.usage || 0) / 1048576);
+            const totalMB = Math.round((estimate.quota || 0) / 1048576);
+            status.textContent = `${usedMB}/${totalMB}MB`;
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
