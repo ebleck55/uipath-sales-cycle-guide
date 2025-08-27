@@ -5,416 +5,523 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UiPath Sales Cycle Guide - Optimized Edition</title>
   
-  <!-- Security Headers -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  
-  <!-- Performance Optimizations -->
+  <!-- Preconnect to external domains for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.tailwindcss.com">
-  <link rel="dns-prefetch" href="https://api.anthropic.com">
   
-  <!-- Critical CSS and Fonts -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  
-  <!-- Progressive Enhancement -->
-  <script>
-    // Feature detection and polyfills
-    if (!window.IntersectionObserver) {
-      document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver"><\/script>');
-    }
-    if (!window.ResizeObserver) {
-      document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=ResizeObserver"><\/script>');
-    }
-  </script>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'uipath-orange': '#FA4616',
-            'uipath-orange-dark': '#E63946',
-            'uipath-teal': '#0BA2B3',
-            'uipath-teal-dark': '#0A8899',
-            'uipath-purple': '#6366F1',
-            'uipath-purple-dark': '#4F46E5'
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.5s ease-in',
-            'slide-in': 'slideIn 0.3s ease-out',
-            'pulse-slow': 'pulse 3s infinite'
-          }
-        }
-      }
-    }
-  </script>
   
-  <!-- PWA Configuration -->
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
+  
+  <!-- Theme color for mobile browsers -->
   <meta name="theme-color" content="#FA4616">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="UiPath Sales Guide">
   
-  <!-- Preload Critical Resources -->
-  <link rel="modulepreload" href="js/data.js">
-  <link rel="modulepreload" href="src/core/analytics.js">
-  <link rel="modulepreload" href="src/core/performance.js">
-  <link rel="modulepreload" href="src/core/data-manager.js">
-  <link rel="modulepreload" href="src/core/ux-enhancer.js">
-  <link rel="modulepreload" href="src/core/integration.js">
-  <link rel="modulepreload" href="src/optimized-timeline-app.js">
+  <!-- Security note: CSP will be applied via JavaScript for GitHub Pages compatibility -->
   
-  <!-- Inline Critical CSS -->
-  <style>
-    /* Critical rendering path optimizations */
-    .loading-indicator {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.3s ease-out;
-    }
-    
-    .loading-indicator.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #e2e8f0;
-      border-top: 4px solid #fa4616;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes slideIn {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(0); }
-    }
-    
-    /* Performance optimizations */
-    .optimized-content {
-      contain: layout style paint;
-    }
-    
-    .lazy-load {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    
-    .lazy-load.loaded {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    /* Accessibility improvements */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-    
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-      .bg-white { background-color: #ffffff; }
-      .text-gray-600 { color: #000000; }
-      .border-gray-200 { border-color: #000000; }
-    }
-  </style>
+  <!-- Preload critical resources -->
+  <link rel="modulepreload" href="src/app.js">
+  <link rel="modulepreload" href="src/security/csp-config.js">
   
-  <!-- Structured Data for SEO -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "UiPath Sales Cycle Guide",
-    "description": "A comprehensive interactive guide for UiPath sales professionals",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "author": {
-      "@type": "Organization",
-      "name": "UiPath"
-    }
-  }
-  </script>
+  <!-- SVG Icons (embedded for performance and security) -->
+  <svg style="display: none;">
+    <defs>
+      <g id="edit-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
+      </g>
+      <g id="chevron-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </g>
+      <g id="copy-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7m-6 4h6m-6-4h6m-3-4h.01M3 3h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+      </g>
+      <g id="trash-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </g>
+      <g id="menu-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </g>
+      <g id="close-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </g>
+    </defs>
+  </svg>
 </head>
-
-<body class="font-inter bg-gray-50 text-gray-900 antialiased">
-  <!-- Loading Indicator with Enhanced UX -->
-  <div id="app-loading" class="loading-indicator" role="status" aria-label="Application loading">
+<body class="font-inter bg-gray-50 text-gray-900">
+  <!-- Loading Indicator -->
+  <div id="app-loading" class="loading-indicator fixed inset-0 bg-white z-50 flex items-center justify-center">
     <div class="text-center">
-      <div class="spinner mb-4" aria-hidden="true"></div>
-      <div class="loading-text">
-        <h2 class="text-lg font-semibold text-gray-800 mb-2">UiPath Sales Guide</h2>
-        <p class="text-sm text-gray-600" id="loading-status">Initializing optimizations...</p>
-        <div class="loading-progress bg-gray-200 w-64 h-2 rounded-full mt-4 overflow-hidden">
-          <div id="loading-progress-bar" class="bg-orange-500 h-full transition-all duration-300" style="width: 0%"></div>
-        </div>
-      </div>
+      <div class="spinner border-4 border-orange-200 border-t-orange-600 rounded-full w-12 h-12 mx-auto mb-4 animate-spin"></div>
+      <p class="text-gray-600">Loading UiPath Sales Guide...</p>
     </div>
   </div>
 
-  <!-- Performance Monitor (Development) -->
-  <div id="performance-monitor" class="fixed bottom-4 right-4 z-40 hidden">
-    <div class="bg-black bg-opacity-80 text-white p-2 rounded text-xs font-mono">
-      <div>FPS: <span id="fps-counter">--</span></div>
-      <div>Memory: <span id="memory-counter">--</span>MB</div>
-      <div>Load: <span id="load-time">--</span>ms</div>
-    </div>
+  <!-- Security Warning (will be hidden if security is properly initialized) -->
+  <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 text-center">
+    ⚠️ Security features are initializing. Please wait...
   </div>
 
-  <!-- Security Warning Banner -->
-  <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 text-center text-sm" style="display: none;">
-    <span class="font-medium">⚠️ Security Notice:</span> 
-    Some security features are still initializing. Please wait for full initialization.
-  </div>
-
-  <!-- Skip Navigation for Accessibility -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-orange-600 text-white p-2 rounded-br z-50">
-    Skip to main content
-  </a>
-
-  <!-- Header with Enhanced Navigation -->
-  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40 optimized-content">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        
-        <!-- Brand and Title -->
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-gray-900">UiPath Sales Cycle Guide</h1>
-              <p class="text-xs text-gray-500">Optimized Edition</p>
-            </div>
+        <!-- Title -->
+        <div class="flex items-center">
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">UiPath Sales Cycle Guide</h1>
           </div>
         </div>
 
-        <!-- Navigation and Controls -->
-        <nav class="flex items-center space-x-3" role="navigation" aria-label="Main navigation">
+        <!-- Admin and App Buttons -->
+        <div class="flex items-center space-x-3">
+          <!-- Admin Access Button -->
+          <a href="src/admin/optimized-admin.html" target="_blank" 
+             class="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center">
+            ⚙️ Admin
+          </a>
           
-          <!-- Progress Indicator -->
-          <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-            <span id="progress-text" class="font-medium">0% Complete</span>
-            <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-300" style="width: 0%"></div>
-            </div>
-          </div>
+          <!-- PWA Install Button (hidden by default) -->
+          <button id="install-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 transition-colors">
+            Install App
+          </button>
+        </div>
 
-          <!-- Industry Selector -->
-          <div class="relative">
-            <select id="industry-selector" 
-                    class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    aria-label="Select industry">
-              <option value="banking">Banking</option>
-              <option value="insurance">Insurance</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
-              </svg>
-            </div>
-          </div>
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <use href="#menu-icon"></use>
+          </svg>
+        </button>
+      </div>
+    </div>
 
-          <!-- Line of Business Selector -->
-          <div class="relative">
-            <select id="lob-selector" 
-                    class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    aria-label="Select line of business">
-              <option value="">All Lines of Business</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex items-center space-x-2">
-            
-            <!-- Admin Panel Button -->
-            <a href="src/admin/optimized-admin.html" target="_blank" 
-               class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-               aria-label="Open admin panel">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              Admin
-            </a>
-
-            <!-- Clear Progress Button -->
-            <button id="clear-form-btn" 
-                    class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
-                    data-action="clear-form"
-                    aria-label="Clear all progress">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-              </svg>
-              Clear
-            </button>
-
-            <!-- Export Button -->
-            <button id="export-btn" 
-                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                    data-action="export-data"
-                    aria-label="Export progress data">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-              Export
-            </button>
-
-            <!-- PWA Install Button -->
-            <button id="install-btn" 
-                    class="hidden inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
-                    aria-label="Install as app">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-              </svg>
-              Install
-            </button>
-          </div>
-        </nav>
+    <!-- Mobile Menu - Navigation only -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+      <div class="px-4 py-3">
+        <p class="text-sm text-gray-500 text-center">Use the Customer Information section below to configure your sales context</p>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Area -->
-  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 optimized-content" role="main">
-    
-    <!-- Timeline Navigation -->
-    <section class="mb-8" aria-labelledby="timeline-heading">
-      <h2 id="timeline-heading" class="sr-only">Sales cycle timeline</h2>
-      <div id="timeline-container" class="timeline-navigation bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="timeline-header mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Sales Cycle Timeline</h3>
-          <p class="text-sm text-gray-600">Navigate through the sales stages using the timeline below or keyboard shortcuts (← →)</p>
+  <!-- Customer Information Section -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-gray-700">Customer Information</h2>
+        <button id="update-content-btn" class="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors">
+          Update Content
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- 1. Vertical -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Vertical</label>
+          <div class="space-y-2">
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="banking">
+              Banking
+            </button>
+            <button class="industry-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-industry="insurance">
+              Insurance
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Line of Business -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Line of Business</label>
+          <select id="lob-selector" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+            <option value="">Select Vertical first</option>
+          </select>
+        </div>
+
+        <!-- 3. Project Type -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Project Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="rpa">
+              RPA
+            </button>
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="idp">
+              IDP
+            </button>
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="agentic">
+              Agentic
+            </button>
+            <button class="project-type-btn px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="maestro">
+              Maestro
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Customer Type -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Customer Type</label>
+          <div class="space-y-2">
+            <button class="customer-type-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="new-logo">
+              New Logo
+            </button>
+            <button class="customer-type-btn w-full px-3 py-2 text-sm font-medium rounded-md border-2 border-gray-200 transition-colors hover:border-gray-300" data-type="existing">
+              Existing
+            </button>
+          </div>
+          
+          <!-- Deployment (shows when customer type is selected) -->
+          <div id="deployment-container" class="hidden mt-3">
+            <label class="block text-sm font-medium text-gray-600 mb-2">Deployment</label>
+            <select id="deployment-type" class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <option value="">Select Deployment</option>
+              <option value="on-prem">On-Premises</option>
+              <option value="automation-suite">Automation Suite</option>
+              <option value="automation-cloud">Automation Cloud</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LLM Prompt Bar -->
+  <div id="llm-prompt-bar" class="shadow-lg sticky top-16 z-30 transition-all duration-300" style="background-color: #182126;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex items-center space-x-4">
+        <!-- Prompt Input -->
+        <div class="flex-1 relative">
+          <input 
+            type="text" 
+            id="llm-prompt-input"
+            placeholder="Ask AI about sales strategies, objections, personas, or anything else..."
+            class="w-full px-4 py-2 pl-4 pr-24 bg-white bg-opacity-90 backdrop-blur-sm rounded-full border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:bg-white placeholder-gray-500 text-gray-900"
+          />
+          
+          <!-- Send Button -->
+          <button 
+            id="llm-send-btn"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
+          >
+            Ask
+          </button>
         </div>
         
-        <div id="timeline-stages" class="flex items-center justify-between overflow-x-auto pb-4">
-          <!-- Timeline stages will be dynamically generated -->
+        <!-- Quick Actions -->
+        <div class="hidden lg:flex items-center space-x-2">
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="How do I handle objections for this topic?">
+            Objection Handling
+          </button>
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="What business processes are most relevant here?">
+            Business Process
+          </button>
+          <button class="llm-quick-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors" data-prompt="Find relevant content and resources for this context">
+            Find Content
+          </button>
+          <button class="llm-quick-btn company-research-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
+            Company Research
+          </button>
+          <button class="llm-quick-btn competitive-analysis-btn px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs rounded-full transition-colors">
+            Competitive
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Research Modal -->
+  <div id="company-research-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">🏢 Company Research</h3>
+          <button id="company-research-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="company-url-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Company Website URL
+          </label>
+          <input 
+            type="url" 
+            id="company-url-input"
+            placeholder="https://example.com"
+            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Enter the company's main website URL for comprehensive research
+          </p>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            id="company-research-cancel"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="company-research-start"
+            class="flex-1 px-4 py-2 text-white rounded-full transition-colors"
+            style="background-color: #182126;"
+          >
+            <span class="research-btn-text">Start Research</span>
+            <span class="research-btn-loading hidden">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Researching...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Competitive Analysis Modal -->
+  <div id="competitive-analysis-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">⚔️ Competitive Analysis</h3>
+          <button id="competitive-analysis-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <label for="competitor-name-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Competitor Name
+          </label>
+          <input 
+            type="text" 
+            id="competitor-name-input"
+            placeholder="e.g., Blue Prism, Automation Anywhere, Microsoft Power Platform"
+            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            Enter competitor name for contextual competitive analysis based on your customer info
+          </p>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            id="competitive-analysis-cancel"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="competitive-analysis-start"
+            class="flex-1 px-4 py-2 text-white rounded-full transition-colors"
+            style="background-color: #182126;"
+          >
+            <span class="competitive-btn-text">Analyze</span>
+            <span class="competitive-btn-loading hidden">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Analyzing...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Status Bar -->
+  <div id="admin-status" class="hidden bg-orange-100 border-b border-orange-200 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="h-5 w-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <use href="#edit-icon"></use>
+        </svg>
+        <span class="text-sm font-medium text-orange-800">Edit Mode Active</span>
+      </div>
+      <div class="text-sm text-orange-700">
+        Click pencil icons to edit content
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Profile Completion Bar -->
+  <div id="profile-completion-bar" class="bg-white border-b border-gray-200 shadow-sm sticky top-[120px] z-20 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+      <div class="flex items-center justify-between">
+        <!-- Progress Section -->
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Customer Profile</span>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="flex-1 max-w-xs">
+            <div class="flex items-center space-x-2">
+              <div class="flex-1 bg-gray-200 rounded-full h-2">
+                <div id="profile-progress" class="bg-gradient-to-r from-orange-500 to-blue-600 h-2 rounded-full transition-all duration-500" style="width: 20%"></div>
+              </div>
+              <span id="profile-percentage" class="text-xs font-medium text-gray-600 min-w-[30px]">20%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Missing Items -->
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-gray-500">Complete your profile for better AI recommendations:</span>
+          <div id="missing-items" class="flex items-center space-x-1">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              🏢 Customer Type
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              📋 LOB
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+              ⚙️ Project Type
+            </span>
+          </div>
+          <button id="dismiss-profile-bar" class="p-1 text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Timeline Navigation -->
+    <section id="timeline-section" class="mb-8">
+      <div class="bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl p-8 shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Sales Cycle Journey</h2>
+        <div id="timeline-container">
+          <!-- Timeline will be rendered here by JavaScript -->
         </div>
       </div>
     </section>
 
-    <!-- Two-Column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <!-- Left Column: Personas (1/3) -->
-      <aside class="lg:col-span-1" role="complementary" aria-labelledby="personas-heading">
-        <div class="sticky top-24">
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="p-6">
-              <h2 id="personas-heading" class="text-lg font-semibold text-gray-900 mb-4">
-                Buyer Personas
-              </h2>
-              <p class="text-sm text-gray-600 mb-4">
-                Click to expand persona details and understand your buyers better.
-              </p>
-            </div>
-            
-            <div id="personas-container" class="px-6 pb-6 space-y-4 max-h-96 overflow-y-auto">
-              <!-- Personas will be dynamically loaded -->
-              <div class="lazy-load" data-lazy="personas">
-                <div class="text-center py-8">
-                  <div class="animate-spin rounded-full h-8 w-8 border-2 border-orange-500 border-t-transparent mx-auto mb-4"></div>
-                  <p class="text-sm text-gray-500">Loading personas...</p>
-                </div>
+    <!-- Stage Content Area -->
+    <section id="stage-content-section">
+      <div id="stage-content">
+        <!-- Stage content will be rendered here dynamically -->
+      </div>
+    </section>
+
+    <!-- Two Column Layout for Personas and Use Cases -->
+    <div class="mt-12 grid lg:grid-cols-2 gap-8">
+      <!-- Left Column: Decision Makers & Personas -->
+      <section id="personas-section">
+        <div class="bg-white rounded-lg shadow-lg">
+          <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="personas-section">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                  </svg>
+                  Decision Makers & Personas
+                </h2>
               </div>
             </div>
           </div>
+          <div class="collapsible-content hidden px-6 pb-6">
+            <div id="personas-container" class="grid gap-4">
+              <!-- Personas will be rendered here by JavaScript -->
+            </div>
+          </div>
         </div>
-      </aside>
+      </section>
 
-      <!-- Right Column: Sales Stages (2/3) -->
-      <section class="lg:col-span-2" aria-labelledby="stages-heading">
-        <h2 id="stages-heading" class="sr-only">Sales cycle stages</h2>
-        
-        <!-- Stage Navigation Breadcrumb -->
-        <nav aria-label="Stage navigation" class="mb-6">
-          <ol id="stage-breadcrumb" class="flex items-center space-x-2 text-sm">
-            <!-- Breadcrumb will be dynamically generated -->
-          </ol>
-        </nav>
-        
-        <div id="sales-stages-container" class="space-y-6">
-          <!-- Sales stages will be dynamically loaded -->
-          <div class="lazy-load" data-lazy="stages">
-            <div class="text-center py-12">
-              <div class="animate-pulse-slow rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent mx-auto mb-4"></div>
-              <p class="text-sm text-gray-500">Loading sales stages...</p>
+
+      <!-- Right Column: LOB Use Cases -->
+      <section id="use-cases-section">
+        <div class="bg-white rounded-lg shadow-lg">
+          <div class="collapsible-header p-6 cursor-pointer hover:bg-gray-50 transition-colors" data-section="use-cases-section">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <svg class="chevron-icon w-5 h-5 mr-3 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  LOB Use Cases
+                </h2>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <!-- Stage Navigation Controls -->
-        <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-200">
-          <button id="prev-stage-btn" 
-                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  disabled
-                  aria-label="Previous stage">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Previous Stage
-          </button>
-          
-          <div class="flex items-center space-x-4">
-            <span id="stage-counter" class="text-sm text-gray-500">Stage 1 of 5</span>
-            <div class="flex space-x-1">
-              <!-- Stage dots will be generated dynamically -->
+          <div class="collapsible-content hidden px-6 pb-6">
+            <div id="use-cases-container">
+              <!-- Use cases will be dynamically populated based on industry toggle -->
+
             </div>
           </div>
-          
-          <button id="next-stage-btn" 
-                  class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  aria-label="Next stage">
-            Next Stage
-            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </button>
         </div>
       </section>
     </div>
   </main>
+
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modal-title" class="text-lg leading-6 font-medium text-gray-900">Edit Content</h3>
+        <button class="modal-close text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <use href="#close-icon"></use>
+          </svg>
+        </button>
+      </div>
+      <div id="modal-content-area" class="mt-2 px-2 py-3">
+        <!-- Rich Text Editor -->
+        <div id="editor-container" class="hidden">
+          <div id="editor" class="bg-white" style="height: 300px;"></div>
+        </div>
+        <!-- Fallback textarea for basic editing -->
+        <textarea id="modal-textarea" class="hidden w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" rows="10" placeholder="Enter your content here..."></textarea>
+      </div>
+      <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
+        <button id="modal-cancel" class="modal-close px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+          Cancel
+        </button>
+        <button id="modal-save" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Container -->
+  <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2">
+    <!-- Notifications will be inserted here by JavaScript -->
+  </div>
 
   <!-- AI Chatbot -->
   <div id="ai-chatbot" class="fixed bottom-6 right-6 z-40">
@@ -528,352 +635,96 @@
     </div>
   </div>
 
-  <!-- Footer with Enhanced Information -->
-  <footer class="bg-white border-t border-gray-200 mt-16" role="contentinfo">
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        <!-- App Information -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-900 mb-4">UiPath Sales Cycle Guide</h3>
-          <p class="text-xs text-gray-600 mb-3">
-            Optimized edition with enhanced performance, security, and accessibility features.
-          </p>
-          <div class="text-xs text-gray-500">
-            <p>Version: <span id="app-version">2.0.0</span></p>
-            <p>Last Updated: <span id="last-updated">--</span></p>
-          </div>
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center mb-4 md:mb-0">
+          <span class="text-sm text-gray-600">Sales Cycle Guide v2.0</span>
         </div>
-
-        <!-- Features -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-900 mb-4">Features</h3>
-          <ul class="text-xs text-gray-600 space-y-1">
-            <li>✅ Real-time progress tracking</li>
-            <li>✅ Offline support</li>
-            <li>✅ Keyboard navigation</li>
-            <li>✅ Mobile optimized</li>
-            <li>✅ Accessibility compliant</li>
-            <li>✅ Performance monitored</li>
-          </ul>
-        </div>
-
-        <!-- System Status -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-900 mb-4">System Status</h3>
-          <div class="space-y-2 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="text-gray-600">Connection:</span>
-              <span id="connection-status" class="font-medium text-green-600">Online</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-600">Performance:</span>
-              <span id="performance-status" class="font-medium text-green-600">Optimal</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-600">Storage:</span>
-              <span id="storage-status" class="font-medium text-blue-600">Available</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Copyright and Credits -->
-      <div class="border-t border-gray-200 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500">
-        <p>&copy; 2024 UiPath. All rights reserved.</p>
-        <div class="flex items-center space-x-4 mt-4 sm:mt-0">
-          <span>Powered by Claude Code</span>
-          <button id="keyboard-shortcuts-btn" 
-                  class="text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                  aria-label="View keyboard shortcuts">
-            Shortcuts
+        <div class="flex items-center space-x-4 text-sm text-gray-600">
+          <span id="app-status" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+            ✓ Secure
+          </span>
+          <span id="connection-status" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+            Online
+          </span>
+          <!-- Edit Mode Toggle -->
+          <button id="admin-mode-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Enter Edit Mode
           </button>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- Keyboard Shortcuts Modal -->
-  <div id="shortcuts-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" role="dialog" aria-labelledby="shortcuts-title" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 id="shortcuts-title" class="text-lg font-semibold">Keyboard Shortcuts</h2>
-            <button id="close-shortcuts" class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 rounded" aria-label="Close shortcuts">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
+  <!-- Application Scripts -->
+  <!-- Load data first -->
+  <script src="js/data.js"></script>
+  
+  <!-- Load Unified Data Manager -->
+  <script src="src/unified-data-manager.js"></script>
+  
+  <!-- Load AI Integration -->
+  <script src="js/ai-integration.js"></script>
+  
+  <!-- Load optimized timeline application -->
+  <script src="src/optimized-timeline-app.js"></script>
+
+  <!-- Hide loading indicator once app is ready -->
+  <script>
+    document.addEventListener('app:ready', () => {
+      const loading = document.getElementById('app-loading');
+      const securityWarning = document.getElementById('security-warning');
+      
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      if (securityWarning) {
+        securityWarning.style.display = 'none';
+      }
+      
+      // Update app status
+      const appStatus = document.getElementById('app-status');
+      if (appStatus) {
+        appStatus.textContent = '✓ Ready';
+        appStatus.className = 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs';
+      }
+    });
+
+    // Update connection status
+    window.addEventListener('online', () => {
+      const status = document.getElementById('connection-status');
+      if (status) {
+        status.textContent = 'Online';
+        status.className = 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs';
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      const status = document.getElementById('connection-status');
+      if (status) {
+        status.textContent = 'Offline';
+        status.className = 'px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs';
+      }
+    });
+
+    // Handle any module loading errors
+    window.addEventListener('error', (event) => {
+      if (event.filename && event.filename.includes('src/')) {
+        console.error('Module loading error:', event);
+        document.getElementById('app-loading').innerHTML = `
+          <div class="text-center">
+            <div class="text-red-600 text-xl mb-4">⚠️</div>
+            <p class="text-red-600 font-medium">Failed to load application modules</p>
+            <p class="text-gray-600 text-sm mt-2">Please refresh the page and try again</p>
+            <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+              Refresh Page
             </button>
           </div>
-          
-          <div class="space-y-3 text-sm">
-            <div class="flex justify-between">
-              <span>Next Stage</span>
-              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">→ or Ctrl+→</kbd>
-            </div>
-            <div class="flex justify-between">
-              <span>Previous Stage</span>
-              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">← or Ctrl+←</kbd>
-            </div>
-            <div class="flex justify-between">
-              <span>Toggle Persona</span>
-              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Space</kbd>
-            </div>
-            <div class="flex justify-between">
-              <span>Export Data</span>
-              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Ctrl+E</kbd>
-            </div>
-            <div class="flex justify-between">
-              <span>Clear Progress</span>
-              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Ctrl+R</kbd>
-            </div>
-            <div class="flex justify-between">
-              <span>Close/Escape</span>
-              <kbd class="bg-gray-100 px-2 py-1 rounded text-xs">Escape</kbd>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Accessibility Announcements -->
-  <div id="sr-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Application Scripts (Optimized Loading Order) -->
-  
-  <!-- Core Data -->
-  <script src="js/data.js" defer></script>
-  
-  <!-- Unified Data Manager (Admin Integration) -->
-  <script src="src/unified-data-manager.js" defer></script>
-  
-  <!-- AI Integration -->
-  <script src="js/ai-integration.js" defer></script>
-  
-  <!-- Optimization Modules -->
-  <script src="src/core/analytics.js" defer></script>
-  <script src="src/core/performance.js" defer></script>
-  <script src="src/core/data-manager.js" defer></script>
-  <script src="src/core/ux-enhancer.js" defer></script>
-  <script src="src/core/integration.js" defer></script>
-  
-  <!-- Main Application -->
-  <script src="src/optimized-timeline-app.js" defer></script>
-  
-  <!-- Service Worker Registration -->
-  <script>
-    // Service Worker registration with optimization
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const registration = await navigator.serviceWorker.register('/sw-optimized.js');
-          console.log('✅ Service Worker registered:', registration);
-          
-          // Handle updates
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                showUpdateNotification();
-              }
-            });
-          });
-          
-        } catch (error) {
-          console.warn('Service Worker registration failed:', error);
-        }
-      });
-    }
-    
-    function showUpdateNotification() {
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-4 left-4 right-4 z-50 bg-blue-600 text-white p-4 rounded-lg shadow-lg';
-      notification.innerHTML = `
-        <div class="flex items-center justify-between">
-          <span>New version available!</span>
-          <button onclick="window.location.reload()" class="bg-blue-800 px-3 py-1 rounded text-sm hover:bg-blue-900">
-            Update
-          </button>
-        </div>
-      `;
-      document.body.appendChild(notification);
-    }
-  </script>
-  
-  <!-- PWA Installation -->
-  <script>
-    let deferredPrompt;
-    const installBtn = document.getElementById('install-btn');
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.classList.remove('hidden');
-    });
-    
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      if (outcome === 'accepted') {
-        console.log('PWA installed');
+        `;
       }
-      
-      deferredPrompt = null;
-      installBtn.classList.add('hidden');
     });
-  </script>
-  
-  <!-- Loading Progress and Performance -->
-  <script>
-    // Loading progress simulation
-    const updateLoadingProgress = (() => {
-      const progressBar = document.getElementById('loading-progress-bar');
-      const statusText = document.getElementById('loading-status');
-      let progress = 0;
-      
-      const steps = [
-        { progress: 20, text: 'Loading optimization modules...' },
-        { progress: 40, text: 'Initializing security features...' },
-        { progress: 60, text: 'Loading content data...' },
-        { progress: 80, text: 'Setting up user interface...' },
-        { progress: 100, text: 'Ready!' }
-      ];
-      
-      return () => {
-        const step = steps.find(s => s.progress > progress) || steps[steps.length - 1];
-        progress = Math.min(progress + 20, 100);
-        
-        if (progressBar) progressBar.style.width = progress + '%';
-        if (statusText) statusText.textContent = step.text;
-        
-        if (progress >= 100) {
-          setTimeout(() => {
-            const loading = document.getElementById('app-loading');
-            if (loading) {
-              loading.classList.add('hidden');
-              setTimeout(() => loading.remove(), 300);
-            }
-          }, 500);
-        }
-      };
-    })();
-    
-    // Update progress every 500ms
-    const progressInterval = setInterval(() => {
-      updateLoadingProgress();
-      if (document.getElementById('loading-progress-bar')?.style.width === '100%') {
-        clearInterval(progressInterval);
-      }
-    }, 500);
-    
-    // Performance monitoring for development
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      const showPerformanceMonitor = () => {
-        const monitor = document.getElementById('performance-monitor');
-        if (monitor) monitor.classList.remove('hidden');
-        
-        let lastTime = performance.now();
-        let frames = 0;
-        
-        const updateMetrics = () => {
-          frames++;
-          const now = performance.now();
-          
-          if (now - lastTime >= 1000) {
-            const fps = Math.round(frames * 1000 / (now - lastTime));
-            document.getElementById('fps-counter').textContent = fps;
-            
-            if (performance.memory) {
-              const memory = Math.round(performance.memory.usedJSHeapSize / 1048576);
-              document.getElementById('memory-counter').textContent = memory;
-            }
-            
-            frames = 0;
-            lastTime = now;
-          }
-          
-          requestAnimationFrame(updateMetrics);
-        };
-        
-        requestAnimationFrame(updateMetrics);
-      };
-      
-      // Show after 3 seconds
-      setTimeout(showPerformanceMonitor, 3000);
-    }
-    
-    // App initialization completion
-    document.addEventListener('app:ready', () => {
-      console.log('🚀 Optimized UiPath Sales Guide is ready!');
-      updateLoadingProgress();
-      
-      // Update footer information
-      document.getElementById('last-updated').textContent = new Date().toLocaleDateString();
-      
-      // Initialize keyboard shortcuts modal
-      initializeShortcutsModal();
-      
-      // Update system status
-      updateSystemStatus();
-    });
-    
-    function initializeShortcutsModal() {
-      const shortcutsBtn = document.getElementById('keyboard-shortcuts-btn');
-      const modal = document.getElementById('shortcuts-modal');
-      const closeBtn = document.getElementById('close-shortcuts');
-      
-      shortcutsBtn?.addEventListener('click', () => {
-        modal?.classList.remove('hidden');
-      });
-      
-      closeBtn?.addEventListener('click', () => {
-        modal?.classList.add('hidden');
-      });
-      
-      modal?.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.add('hidden');
-        }
-      });
-      
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal?.classList.contains('hidden')) {
-          modal.classList.add('hidden');
-        }
-      });
-    }
-    
-    function updateSystemStatus() {
-      // Connection status
-      const updateConnectionStatus = () => {
-        const status = document.getElementById('connection-status');
-        if (status) {
-          status.textContent = navigator.onLine ? 'Online' : 'Offline';
-          status.className = navigator.onLine ? 'font-medium text-green-600' : 'font-medium text-red-600';
-        }
-      };
-      
-      updateConnectionStatus();
-      window.addEventListener('online', updateConnectionStatus);
-      window.addEventListener('offline', updateConnectionStatus);
-      
-      // Storage status
-      if ('storage' in navigator && 'estimate' in navigator.storage) {
-        navigator.storage.estimate().then(estimate => {
-          const status = document.getElementById('storage-status');
-          if (status) {
-            const usedMB = Math.round((estimate.usage || 0) / 1048576);
-            const totalMB = Math.round((estimate.quota || 0) / 1048576);
-            status.textContent = `${usedMB}/${totalMB}MB`;
-          }
-        });
-      }
-    }
   </script>
 </body>
 </html>
