@@ -1,17 +1,81 @@
 /**
  * Admin UI Service
- * Manages admin panel UI components and interactions
+ * Integrates the robust admin interface from src/admin/ into the Timeline Edition
  */
 
 export class AdminUIService {
   constructor() {
     this.panelVisible = false;
+    this.adminInterface = null;
   }
 
   /**
-   * Creates the admin status bar HTML
+   * Loads and integrates the full admin interface from src/admin/
    */
-  createStatusBar() {
+  async loadFullAdminInterface() {
+    try {
+      // Load the admin HTML content
+      const adminResponse = await fetch('./src/admin/admin.html');
+      const adminHtml = await adminResponse.text();
+      
+      // Extract the body content from admin.html
+      const parser = new DOMParser();
+      const adminDoc = parser.parseFromString(adminHtml, 'text/html');
+      const adminBody = adminDoc.body;
+      
+      return adminBody.innerHTML;
+    } catch (error) {
+      console.error('Failed to load admin interface:', error);
+      return this.getFallbackAdminInterface();
+    }
+  }
+
+  /**
+   * Creates a comprehensive admin panel with the full admin interface
+   */
+  async createFullAdminPanel() {
+    const adminContent = await this.loadFullAdminInterface();
+    
+    return `
+      <!-- Full Integrated Admin Panel -->
+      <div id="integrated-admin-panel" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+          <div class="bg-white rounded-lg shadow-xl w-full max-w-7xl h-[90vh] overflow-hidden">
+            
+            <!-- Admin Header -->
+            <div class="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4 flex justify-between items-center text-white">
+              <div class="flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <div>
+                  <h2 class="text-xl font-bold">Timeline Edition - Content Admin</h2>
+                  <p class="text-orange-100 text-sm">Advanced content management & configuration</p>
+                </div>
+              </div>
+              <button id="close-admin-panel" class="text-white hover:text-orange-200 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Full Admin Interface Container -->
+            <div id="admin-interface-container" class="h-full overflow-y-auto">
+              ${adminContent}
+            </div>
+
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Fallback admin interface if full admin can't be loaded
+   */
+  getFallbackAdminInterface() {
     return `
       <!-- Admin Status Bar -->
       <div id="admin-status-bar" class="bg-blue-600 text-white px-4 py-2 text-center text-sm hidden">
@@ -368,20 +432,105 @@ export class AdminUIService {
     `;
   }
 
-  injectAdminUI() {
+  async injectAdminUI() {
     // Check if admin panel already exists
     if (document.getElementById('integrated-admin-panel')) {
       console.log('Admin panel already exists, skipping injection');
       return;
     }
 
-    // Inject admin panel at end of body
-    document.body.insertAdjacentHTML('beforeend', this.createAdminPanel());
+    console.log('🔧 Loading full admin interface...');
     
-    console.log('✅ Admin UI injected successfully');
+    // Load admin CSS if not already loaded
+    await this.loadAdminCSS();
+    
+    // Create and inject the full admin panel
+    const adminPanelHTML = await this.createFullAdminPanel();
+    document.body.insertAdjacentHTML('beforeend', adminPanelHTML);
+    
+    console.log('✅ Full admin interface injected successfully');
+    
+    // Initialize the admin interface after injection
+    await this.initializeAdminInterface();
     
     // Bind events after injection
     this.bindAdminPanelEvents();
+  }
+
+  /**
+   * Load admin CSS styles
+   */
+  async loadAdminCSS() {
+    try {
+      // Check if admin CSS is already loaded
+      if (document.querySelector('link[href*="admin"]')) {
+        return;
+      }
+
+      // Extract CSS from admin.html
+      const adminResponse = await fetch('./src/admin/admin.html');
+      const adminHtml = await adminResponse.text();
+      
+      const parser = new DOMParser();
+      const adminDoc = parser.parseFromString(adminHtml, 'text/html');
+      
+      // Extract style tags and add them
+      const styles = adminDoc.querySelectorAll('style');
+      styles.forEach(style => {
+        const newStyle = document.createElement('style');
+        newStyle.textContent = style.textContent;
+        document.head.appendChild(newStyle);
+      });
+      
+      console.log('✅ Admin CSS loaded');
+    } catch (error) {
+      console.warn('⚠️ Could not load admin CSS:', error);
+    }
+  }
+
+  /**
+   * Load admin dependencies
+   */
+  async loadAdminDependencies() {
+    try {
+      // Load ContentAPI if not already available
+      if (!window.ContentAPI) {
+        const contentAPI = await import('../api/contentAPI.js');
+        window.ContentAPI = contentAPI.ContentAPI || contentAPI.default;
+      }
+      console.log('✅ Admin dependencies loaded');
+    } catch (error) {
+      console.warn('⚠️ Could not load admin dependencies:', error);
+    }
+  }
+
+  /**
+   * Initialize the full admin interface functionality
+   */
+  async initializeAdminInterface() {
+    try {
+      console.log('🔧 Initializing admin interface functionality...');
+      
+      // Import and initialize the AdminInterface class
+      // First load the ContentAPI dependency
+      await this.loadAdminDependencies();
+      
+      const adminModule = await import('../admin/admin.js');
+      const AdminInterface = adminModule.AdminInterface || adminModule.default;
+      
+      // Wait for the admin container to be in DOM
+      const adminContainer = document.getElementById('admin-interface-container');
+      if (adminContainer) {
+        // Initialize the admin interface
+        this.adminInterface = new AdminInterface();
+        console.log('✅ Admin interface functionality initialized');
+      } else {
+        console.error('❌ Admin interface container not found');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize admin interface:', error);
+      // Continue without admin functionality
+    }
   }
 
   bindAdminPanelEvents() {

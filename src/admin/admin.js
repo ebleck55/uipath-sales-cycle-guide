@@ -3806,8 +3806,20 @@ IMPORTANT: Return ONLY the JSON object, no additional text or formatting.`;
   }
 }
 
-// Initialize admin interface when page loads
+// Export the AdminInterface class for modular use
+export { AdminInterface };
+export default AdminInterface;
+
+// Initialize admin interface when page loads (for standalone admin.html)
 let adminInterface;
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Only auto-initialize if we're in the standalone admin page
+    if (window.location.pathname.includes('admin.html')) {
+      adminInterface = new AdminInterface();
+    }
+  });
+} else if (window.location.pathname.includes('admin.html')) {
+  // Initialize immediately if DOM is already ready and we're in admin.html
   adminInterface = new AdminInterface();
-});
+}

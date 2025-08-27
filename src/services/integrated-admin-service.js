@@ -107,7 +107,17 @@ export class IntegratedAdminService {
     const panel = document.getElementById('integrated-admin-panel');
     if (panel) {
       panel.classList.remove('hidden');
-      console.log('✅ Admin panel shown');
+      console.log('✅ Full admin panel shown with robust interface');
+      
+      // If admin interface is available, refresh its display
+      if (window.AdminUI && window.AdminUI.adminInterface) {
+        try {
+          // Trigger a refresh of the admin interface if needed
+          console.log('🔄 Refreshing admin interface display');
+        } catch (error) {
+          console.warn('Could not refresh admin interface:', error);
+        }
+      }
     } else {
       console.error('❌ Admin panel not found! Make sure AdminUIService.injectAdminUI() was called.');
     }

@@ -379,4 +379,10 @@ class ContentAPI {
 }
 
 // Export for use in other modules
-window.ContentAPI = ContentAPI;
+export { ContentAPI };
+export default ContentAPI;
+
+// Also make available globally for backwards compatibility
+if (typeof window !== 'undefined') {
+  window.ContentAPI = ContentAPI;
+}
