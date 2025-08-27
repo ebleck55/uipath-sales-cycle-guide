@@ -81,7 +81,11 @@ export class IntegratedAdminService {
         statusBar.classList.remove('hidden');
       }
       
-      this.showAdminPanel();
+      // Show admin panel automatically when entering admin mode
+      setTimeout(() => {
+        this.showAdminPanel();
+      }, 100); // Small delay to ensure UI is ready
+      
       this.updateAnalyticsDisplay();
       this.trackActivity('Admin mode activated');
     } else {
@@ -103,6 +107,9 @@ export class IntegratedAdminService {
     const panel = document.getElementById('integrated-admin-panel');
     if (panel) {
       panel.classList.remove('hidden');
+      console.log('✅ Admin panel shown');
+    } else {
+      console.error('❌ Admin panel not found! Make sure AdminUIService.injectAdminUI() was called.');
     }
   }
 

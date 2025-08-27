@@ -951,13 +951,16 @@
         const { AdminUIService } = await import('./src/services/admin-ui-service.js');
         
         // Create and initialize admin services
+        console.log('🔧 Creating admin services...');
         const adminUI = new AdminUIService();
         const adminService = new IntegratedAdminService();
         
-        // Inject admin UI elements
+        // Inject admin UI elements first
+        console.log('🔧 Injecting admin UI...');
         adminUI.injectAdminUI();
         
         // Initialize admin functionality
+        console.log('🔧 Initializing admin service...');
         await adminService.initialize();
         
         // Export for global access
@@ -965,6 +968,24 @@
         window.AdminUI = adminUI;
         
         console.log('✅ Admin integration loaded successfully!');
+        
+        // Add debugging functions for testing
+        window.testAdmin = () => {
+          console.log('🧪 Testing admin integration...');
+          console.log('IntegratedAdmin service:', window.IntegratedAdmin);
+          console.log('AdminUI service:', window.AdminUI);
+          
+          const panel = document.getElementById('integrated-admin-panel');
+          console.log('Admin panel element:', panel);
+          
+          const toggle = document.getElementById('admin-mode-toggle');
+          console.log('Admin toggle button:', toggle);
+          
+          if (window.IntegratedAdmin) {
+            console.log('🧪 Attempting to show admin panel...');
+            window.IntegratedAdmin.showAdminPanel();
+          }
+        };
         
       } catch (error) {
         console.warn('⚠️ Admin integration failed to load:', error);
@@ -980,10 +1001,14 @@
           const { IntegratedAdminService } = await import('./src/services/integrated-admin-service.js');
           const { AdminUIService } = await import('./src/services/admin-ui-service.js');
           
+          console.log('🔄 Creating fallback admin services...');
           const adminUI = new AdminUIService();
           const adminService = new IntegratedAdminService();
           
+          console.log('🔄 Injecting fallback admin UI...');
           adminUI.injectAdminUI();
+          
+          console.log('🔄 Initializing fallback admin service...');
           await adminService.initialize();
           
           window.IntegratedAdmin = adminService;

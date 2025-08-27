@@ -369,13 +369,65 @@ export class AdminUIService {
   }
 
   injectAdminUI() {
-    // Inject admin status bar after header
-    const header = document.querySelector('header');
-    if (header) {
-      header.insertAdjacentHTML('afterend', this.createStatusBar());
+    // Check if admin panel already exists
+    if (document.getElementById('integrated-admin-panel')) {
+      console.log('Admin panel already exists, skipping injection');
+      return;
     }
 
     // Inject admin panel at end of body
     document.body.insertAdjacentHTML('beforeend', this.createAdminPanel());
+    
+    console.log('✅ Admin UI injected successfully');
+    
+    // Bind events after injection
+    this.bindAdminPanelEvents();
+  }
+
+  bindAdminPanelEvents() {
+    // Bind close button
+    const closeBtn = document.getElementById('close-admin-panel');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        const panel = document.getElementById('integrated-admin-panel');
+        if (panel) panel.classList.add('hidden');
+      });
+    }
+
+    // Bind tab switching
+    document.querySelectorAll('.integrated-admin-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const tabName = e.currentTarget.getAttribute('data-tab');
+        this.switchTab(tabName);
+      });
+    });
+
+    console.log('✅ Admin panel events bound');
+  }
+
+  switchTab(tabName) {
+    // Update tab buttons
+    document.querySelectorAll('.integrated-admin-tab').forEach(tab => {
+      tab.classList.remove('border-blue-500', 'text-blue-600');
+      tab.classList.add('border-transparent', 'text-gray-500');
+    });
+
+    const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+    if (activeTab) {
+      activeTab.classList.remove('border-transparent', 'text-gray-500');
+      activeTab.classList.add('border-blue-500', 'text-blue-600');
+    }
+
+    // Update content
+    document.querySelectorAll('.integrated-admin-tab-content').forEach(content => {
+      content.classList.add('hidden');
+    });
+
+    const activeContent = document.getElementById(`${tabName}-tab`);
+    if (activeContent) {
+      activeContent.classList.remove('hidden');
+    }
+
+    console.log(`✅ Switched to ${tabName} tab`);
   }
 }
