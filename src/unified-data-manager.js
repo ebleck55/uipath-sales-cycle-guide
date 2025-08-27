@@ -93,7 +93,7 @@ class UnifiedDataManager {
       
       // Metadata
       lastModified: Date.now(),
-      version: '1.0.0'
+      version: '2.0.0'  // Increment to invalidate old cached data
     };
     
     this.subscribers = new Set();
@@ -141,9 +141,14 @@ class UnifiedDataManager {
       const stored = localStorage.getItem('uipath-unified-data');
       if (stored) {
         const data = JSON.parse(stored);
-        if (this.isValidDataStructure(data)) {
+        // Check version compatibility
+        if (this.isValidDataStructure(data) && data.version === this.dataStore.version) {
           this.dataStore = { ...this.dataStore, ...data };
           console.log('📦 Loaded data from localStorage');
+        } else {
+          // Clear old/incompatible cached data
+          localStorage.removeItem('uipath-unified-data');
+          console.log('🗑️ Cleared outdated cached data');
         }
       }
       
@@ -445,6 +450,51 @@ class UnifiedDataManager {
     window.addEventListener('beforeunload', () => {
       this.persistData();
     });
+  }
+
+  /**
+   * Force refresh data (clear cache and reload)
+   */
+  async forceRefresh() {
+    console.log('🔄 Force refreshing data...');
+    
+    // Clear cached data
+    localStorage.removeItem('uipath-unified-data');
+    
+    // Reset data store to defaults
+    this.initialized = false;
+    this.dataStore = {
+      // Reset to default structure...
+      categories: {
+        industries: [
+          { id: 'banking', label: 'Banking', enabled: true },
+          { id: 'insurance', label: 'Insurance', enabled: true },
+          { id: 'corporate', label: 'Corporate', enabled: true }
+        ],
+        linesOfBusiness: {
+          banking: [
+            { id: 'consumer-banking', label: 'Consumer Banking', enabled: true },
+            { id: 'commercial-banking', label: 'Commercial Banking', enabled: true },
+            { id: 'capital-markets', label: 'Capital Markets', enabled: true },
+            { id: 'wealth-management', label: 'Wealth Management', enabled: true },
+            { id: 'operations', label: 'Operations', enabled: true },
+            { id: 'compliance-risk', label: 'Compliance & Risk', enabled: true },
+            { id: 'payments', label: 'Payments', enabled: true },
+            { id: 'lending', label: 'Lending', enabled: true },
+            { id: 'trading', label: 'Trading Operations', enabled: true }
+          ],
+          // ... other industries
+        }
+      }
+    };
+    
+    // Re-initialize
+    await this.init();
+    
+    // Notify subscribers
+    this.notifySubscribers('force_refresh', {});
+    
+    console.log('✅ Data refreshed successfully');
   }
 
   /**
