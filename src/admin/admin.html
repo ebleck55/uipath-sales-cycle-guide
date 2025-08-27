@@ -3,15 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UiPath Sales Guide - Legacy Admin (Deprecated)</title>
-  
-  <script>
-    // Auto-redirect to optimized admin panel
-    if (window.location.search !== '?legacy=true') {
-      const optimizedUrl = window.location.href.replace('admin.html', 'optimized-admin.html');
-      window.location.href = optimizedUrl;
-    }
-  </script>
+  <title>UiPath Sales Guide - Content Admin</title>
   
   <!-- Preconnect to external domains for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2364,6 +2356,12 @@
     (async function() {
       try {
         console.log('🔄 Loading admin interface...');
+        
+        // Load Unified Data Manager first
+        const { UnifiedDataManager } = await import('../unified-data-manager.js');
+        window.unifiedDataManager = new UnifiedDataManager();
+        await window.unifiedDataManager.init();
+        console.log('✅ UnifiedDataManager loaded');
         
         // Load ContentAPI
         const { ContentAPI } = await import('../api/contentAPI.js');
