@@ -1636,6 +1636,51 @@ class OptimizedTimelineApp {
   }
 }
 
+// ==================== API KEY MANAGEMENT FOR AI INTEGRATION ====================
+/**
+ * Get stored API key for AI integration compatibility
+ * This function is expected by js/ai-integration.js
+ */
+function getStoredApiKey() {
+  // Check for API key stored by the AI integration module
+  const stored = localStorage.getItem('claude_api_key');
+  if (stored) {
+    try {
+      // Try to decode if it's base64 encoded
+      return atob(stored);
+    } catch (e) {
+      // If decoding fails, return as-is (legacy format)
+      return stored;
+    }
+  }
+  return null;
+}
+
+/**
+ * Store API key securely
+ */
+function storeApiKey(apiKey) {
+  if (apiKey) {
+    // Store with base64 encoding for basic obfuscation
+    localStorage.setItem('claude_api_key', btoa(apiKey));
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Clear stored API key
+ */
+function clearStoredApiKey() {
+  localStorage.removeItem('claude_api_key');
+  console.log('API key cleared. Reload the page to enter a new one.');
+}
+
+// Make functions available globally for AI integration
+window.getStoredApiKey = getStoredApiKey;
+window.storeApiKey = storeApiKey;
+window.clearStoredApiKey = clearStoredApiKey;
+
 // ==================== INITIALIZATION ====================
 let optimizedApp = null;
 
@@ -1657,6 +1702,19 @@ function initializeOptimizedApp() {
   // Make globally available
   window.OptimizedTimelineApp = OptimizedTimelineApp;
   window.optimizedApp = optimizedApp;
+  
+  // Initialize AI integration if available
+  setTimeout(() => {
+    if (typeof initializeAI === 'function') {
+      try {
+        const ai = initializeAI();
+        window.aiIntegration = ai;
+        console.log('✅ AI Integration initialized');
+      } catch (error) {
+        console.warn('AI Integration initialization failed:', error.message);
+      }
+    }
+  }, 100);
   
   console.log('🚀 Optimized Timeline App ready for initialization');
 }
